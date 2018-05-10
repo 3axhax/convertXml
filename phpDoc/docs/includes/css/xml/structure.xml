@@ -1,0 +1,1398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project title="Cleantalk.org/css" version="2.8.5">
+  <partials/>
+  <file path="ccs.php" generated-path="ccs.html" hash="f70a6909579fb15e07dc9ad54e546307" package="Cleantalk\Base">
+    <docblock line="0">
+      <description>Main CleanTalk class</description>
+      <long-description></long-description>
+      <tag name="package" line="0" description="Cleantalk"/>
+      <tag name="subpackage" line="0" description="Base"/>
+      <tag name="author" line="0" description="Сleantalk team (shagimuratov@cleantalk.ru)"/>
+      <tag name="copyright" line="0" description="(C) 2011 - 2018 Сleantalk team (http://cleantalk.ru)"/>
+      <tag name="license" line="0" description="GNU/GPL: http://www.gnu.org/copyleft/gpl.html"/>
+    </docblock>
+    <function namespace="" line="1389" package="Cleantalk">
+      <name>api_cmp</name>
+      <full_name>\api_cmp()</full_name>
+      <docblock line="1389">
+        <description>Функция сортировки плоученных тарифов по количеству одобренных запросов в день.</description>
+        <long-description></long-description>
+        <tag name="package" line="1389" description="Cleantalk"/>
+        <tag name="param" line="1389" description="&lt;p&gt;тариф №1&lt;/p&gt;" type="array" variable="$a">
+          <type>array</type>
+        </tag>
+        <tag name="param" line="1389" description="&lt;p&gt;тариф №2&lt;/p&gt;" type="array" variable="$b">
+          <type>array</type>
+        </tag>
+        <tag name="return" line="1389" description="" type="integer">
+          <type>integer</type>
+        </tag>
+      </docblock>
+      <argument line="0" by_reference="false">
+        <name>$a</name>
+        <default></default>
+        <type>array</type>
+      </argument>
+      <argument line="0" by_reference="false">
+        <name>$b</name>
+        <default></default>
+        <type>array</type>
+      </argument>
+    </function>
+    <class final="false" abstract="false" namespace="" line="31" package="Cleantalk">
+      <extends/>
+      <name>CCS</name>
+      <full_name>\CCS</full_name>
+      <docblock line="31">
+        <description>Class CCS</description>
+        <long-description>Main CleanTalk class</long-description>
+        <tag name="package" line="31" description="Cleantalk"/>
+      </docblock>
+      <property static="false" visibility="public" namespace="" line="35" package="Cleantalk">
+        <name>$db</name>
+        <full_name>\CCS::db</full_name>
+        <default>null</default>
+        <docblock line="35">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="35" description="&lt;p&gt;Указатель на подключение к БД&lt;/p&gt;" type="\Database" variable="">
+            <type>\Database</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="40" package="Cleantalk">
+        <name>$checks</name>
+        <full_name>\CCS::checks</full_name>
+        <default>null</default>
+        <docblock line="40">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="40" description="&lt;p&gt;Вспомогательные методы для проверок данных&lt;/p&gt;" type="\Checks" variable="">
+            <type>\Checks</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="45" package="Cleantalk">
+        <name>$utils</name>
+        <full_name>\CCS::utils</full_name>
+        <default>null</default>
+        <docblock line="45">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="45" description="&lt;p&gt;Вспомогательные методы&lt;/p&gt;" type="\Utils" variable="">
+            <type>\Utils</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="50" package="Cleantalk">
+        <name>$page_info</name>
+        <full_name>\CCS::page_info</full_name>
+        <default>array()</default>
+        <docblock line="50">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="50" description="&lt;p&gt;Массив данных для передачи в шаблон&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="56" package="Cleantalk">
+        <name>$work_tariffs</name>
+        <full_name>\CCS::work_tariffs</full_name>
+        <default>null</default>
+        <docblock line="56">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="56" description="&lt;ul&gt;&#10;&lt;li&gt;Список разрешенных тарифов для подписки с сайта&lt;/li&gt;&#10;&lt;/ul&gt;" type="" variable="$work_tariffs"/>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="61" package="Cleantalk">
+        <name>$remote_addr</name>
+        <full_name>\CCS::remote_addr</full_name>
+        <default>''</default>
+        <docblock line="61">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="61" description="&lt;p&gt;адресс запроса&lt;/p&gt;" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="66" package="Cleantalk">
+        <name>$pmFeedWithStoplist</name>
+        <full_name>\CCS::pmFeedWithStoplist</full_name>
+        <default>0</default>
+        <docblock line="66">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="66" description="&lt;p&gt;pmFeedWithStoplist&lt;/p&gt;" type="integer" variable="">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="71" package="Cleantalk">
+        <name>$max_word_size</name>
+        <full_name>\CCS::max_word_size</full_name>
+        <default>32</default>
+        <docblock line="71">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="71" description="&lt;p&gt;max_word_size&lt;/p&gt;" type="integer" variable="">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="77" package="Cleantalk">
+        <name>$last_modified</name>
+        <full_name>\CCS::last_modified</full_name>
+        <default>null</default>
+        <docblock line="77">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="77" description="&lt;p&gt;Время последней модификации страницы сайта&lt;/p&gt;" type="string" variable="$last_modified">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="83" package="Cleantalk">
+        <name>$if_modified_since</name>
+        <full_name>\CCS::if_modified_since</full_name>
+        <default>null</default>
+        <docblock line="83">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="83" description="&lt;p&gt;Запрос на проверку изменения документа с даты последнего посещения&lt;/p&gt;" type="string" variable="$if_modified_since">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="89" package="Cleantalk">
+        <name>$page_url</name>
+        <full_name>\CCS::page_url</full_name>
+        <default>'/'</default>
+        <docblock line="89">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="89" description="&lt;p&gt;URL страницы от корня сайта&lt;/p&gt;" type="string" variable="$page_url">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="95" package="Cleantalk">
+        <name>$user_info</name>
+        <full_name>\CCS::user_info</full_name>
+        <default>null</default>
+        <docblock line="95">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="95" description="&lt;p&gt;Информация о пользователе&lt;/p&gt;" type="array" variable="$user_info">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="101" package="Cleantalk">
+        <name>$tariffs</name>
+        <full_name>\CCS::tariffs</full_name>
+        <default>null</default>
+        <docblock line="101">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="101" description="&lt;p&gt;Список тарифов&lt;/p&gt;" type="array" variable="$tariffs">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="107" package="Cleantalk">
+        <name>$payment_methods</name>
+        <full_name>\CCS::payment_methods</full_name>
+        <default>null</default>
+        <docblock line="107">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="107" description="&lt;p&gt;Способы оплаты&lt;/p&gt;" type="array" variable="$payment_methods">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="113" package="Cleantalk">
+        <name>$is_auth</name>
+        <full_name>\CCS::is_auth</full_name>
+        <default>false</default>
+        <docblock line="113">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="113" description="&lt;p&gt;Авторизованный пользователь&lt;/p&gt;" type="boolean" variable="$is_auth">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="119" package="Cleantalk">
+        <name>$options</name>
+        <full_name>\CCS::options</full_name>
+        <default>null</default>
+        <docblock line="119">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="119" description="&lt;p&gt;Опции сервиса из таблицы options&lt;/p&gt;" type="array" variable="$options">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="125" package="Cleantalk">
+        <name>$app_mode</name>
+        <full_name>\CCS::app_mode</full_name>
+        <default>false</default>
+        <docblock line="125">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="125" description="&lt;p&gt;Режим работы с приложением.&lt;/p&gt;" type="integer" variable="$app_mode">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="131" package="Cleantalk">
+        <name>$app_return</name>
+        <full_name>\CCS::app_return</full_name>
+        <default>null</default>
+        <docblock line="131">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="131" description="&lt;p&gt;ответ приложения&lt;/p&gt;" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="137" package="Cleantalk">
+        <name>$lead_source</name>
+        <full_name>\CCS::lead_source</full_name>
+        <default>null</default>
+        <docblock line="137">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="137" description="&lt;p&gt;Источник захода на сайт&lt;/p&gt;" type="string" variable="$lead_source">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="143" package="Cleantalk">
+        <name>$ajax_template</name>
+        <full_name>\CCS::ajax_template</full_name>
+        <default>null</default>
+        <docblock line="143">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="143" description="&lt;p&gt;Шаблон для вывода данных по AJAX запросу&lt;/p&gt;" type="string" variable="$ajax_template">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="149" package="Cleantalk">
+        <name>$ajax</name>
+        <full_name>\CCS::ajax</full_name>
+        <default>null</default>
+        <docblock line="149">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="149" description="&lt;p&gt;Флаг AJAX запроса к сервису&lt;/p&gt;" type="boolean" variable="$ajax">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="155" package="Cleantalk">
+        <name>$friend_id</name>
+        <full_name>\CCS::friend_id</full_name>
+        <default>null</default>
+        <docblock line="155">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="155" description="&lt;p&gt;Идентификатор реферала по программе Приведи друга&lt;/p&gt;" type="integer" variable="$friend_id">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="161" package="Cleantalk">
+        <name>$link</name>
+        <full_name>\CCS::link</full_name>
+        <default>null</default>
+        <docblock line="161">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="161" description="&lt;p&gt;адресс текущей страницы&lt;/p&gt;" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="167" package="Cleantalk">
+        <name>$noc_headers</name>
+        <full_name>\CCS::noc_headers</full_name>
+        <default>null</default>
+        <docblock line="167">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="167" description="&lt;p&gt;noc_headers&lt;/p&gt;" type="null" variable="">
+            <type>null</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="173" package="Cleantalk">
+        <name>$apps</name>
+        <full_name>\CCS::apps</full_name>
+        <default>null</default>
+        <docblock line="173">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="173" description="&lt;p&gt;список ативных приложений для CMS&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="179" package="Cleantalk">
+        <name>$api</name>
+        <full_name>\CCS::api</full_name>
+        <default>null</default>
+        <docblock line="179">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="179" description="&lt;p&gt;списки активных API&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="184" package="Cleantalk">
+        <name>$dbh_e</name>
+        <full_name>\CCS::dbh_e</full_name>
+        <default>null</default>
+        <docblock line="184">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="184" description="&lt;p&gt;указатель на дополнительное подключение к БД&lt;/p&gt;" type="object" variable="">
+            <type>object</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="189" package="Cleantalk">
+        <name>$cookie_domain</name>
+        <full_name>\CCS::cookie_domain</full_name>
+        <default>null</default>
+        <docblock line="189">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="189" description="&lt;p&gt;(Под)домен для cookie&lt;/p&gt;" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="194" package="Cleantalk">
+        <name>$ct_lang</name>
+        <full_name>\CCS::ct_lang</full_name>
+        <default>null</default>
+        <docblock line="194">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="194" description="&lt;p&gt;Язык сайта&lt;/p&gt;" type="string" variable="">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="199" package="Cleantalk">
+        <name>$bl_counts</name>
+        <full_name>\CCS::bl_counts</full_name>
+        <default>null</default>
+        <docblock line="199">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="199" description="&lt;p&gt;Массив счетчиков&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="204" package="Cleantalk">
+        <name>$user_id</name>
+        <full_name>\CCS::user_id</full_name>
+        <default>null</default>
+        <docblock line="204">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="204" description="&lt;p&gt;Id пользователя&lt;/p&gt;" type="integer" variable="">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="209" package="Cleantalk">
+        <name>$country_code</name>
+        <full_name>\CCS::country_code</full_name>
+        <default>null</default>
+        <docblock line="209">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="209" description="&lt;p&gt;код страны&lt;/p&gt;" type="integer" variable="">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property static="false" visibility="public" namespace="" line="214" package="Cleantalk">
+        <name>$ct_langs</name>
+        <full_name>\CCS::ct_langs</full_name>
+        <default>array('en' =&gt; 'English - English', 'ru' =&gt; 'Russian - Русский')</default>
+        <docblock line="214">
+          <description></description>
+          <long-description></long-description>
+          <tag name="var" line="214" description="&lt;p&gt;Массив языков сайта&lt;/p&gt;" type="array" variable="">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="226" package="Cleantalk">
+        <name>__construct</name>
+        <full_name>\CCS::__construct()</full_name>
+        <docblock line="226">
+          <description>CCS constructor.</description>
+          <long-description>Конструктор класса CCS
+Создает поключение к Базе Данных,
+заполняетя свойства checks и utils соответсвующими объектами</long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="247" package="Cleantalk">
+        <name>safe_vars</name>
+        <full_name>\CCS::safe_vars()</full_name>
+        <docblock line="247">
+          <description>Зачищаем переменные от иньекций</description>
+          <long-description></long-description>
+          <tag name="param" line="247" description="&lt;p&gt;Входной массив переменных&lt;/p&gt;" type="array" variable="$in">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="247" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$in</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="270" package="Cleantalk">
+        <name>check_access</name>
+        <full_name>\CCS::check_access()</full_name>
+        <docblock line="270">
+          <description>Функция проверки доступа</description>
+          <long-description></long-description>
+          <tag name="param" line="270" description="&lt;p&gt;Признак админа&lt;/p&gt;" type="integer" variable="$is_admin">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="270" description="" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$is_admin</name>
+          <default>false</default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="291" package="Cleantalk">
+        <name>post_log</name>
+        <full_name>\CCS::post_log()</full_name>
+        <docblock line="291">
+          <description>Записываем в журнал системы сообщение</description>
+          <long-description></long-description>
+          <tag name="param" line="291" description="&lt;p&gt;Строка для записи в жруал&lt;/p&gt;" type="string" variable="$message">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="291" description="" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$message</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="312" package="Cleantalk">
+        <name>var_dump</name>
+        <full_name>\CCS::var_dump()</full_name>
+        <docblock line="312">
+          <description>Функция отображения отладочной информации</description>
+          <long-description></long-description>
+          <tag name="param" line="312" description="&lt;p&gt;Заголовок сообщения&lt;/p&gt;" type="string" variable="$title">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="312" description="&lt;p&gt;Содержание сообщения&lt;/p&gt;" type="boolean|array" variable="$var">
+            <type>boolean</type>
+            <type>array</type>
+          </tag>
+          <tag name="param" line="312" description="&lt;p&gt;Массив для сообщения&lt;/p&gt;" type="boolean|array" variable="$info">
+            <type>boolean</type>
+            <type>array</type>
+          </tag>
+          <tag name="return" line="312" description="0|1 Не запущен режим отладки | запущен режим отладки" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$title</name>
+          <default>""</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$var</name>
+          <default>false</default>
+          <type>boolean|array</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$info</name>
+          <default>false</default>
+          <type>boolean|array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="336" package="Cleantalk">
+        <name>ccs_init</name>
+        <full_name>\CCS::ccs_init()</full_name>
+        <docblock line="336">
+          <description>Инициализация класса CCS</description>
+          <long-description></long-description>
+          <tag name="param" line="336" description="" type="" variable="$start"/>
+          <tag name="return" line="336" description="" type=""/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$start</name>
+          <default>false</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="546" package="Cleantalk">
+        <name>display</name>
+        <full_name>\CCS::display()</full_name>
+        <docblock line="546">
+          <description>Функция отображения шаблона</description>
+          <long-description></long-description>
+          <tag name="param" line="546" description="&lt;p&gt;Имя шаблона&lt;/p&gt;" type="string" variable="$template">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="546" description="&lt;p&gt;Адресс шаблона&lt;/p&gt;" type="string" variable="$page_template">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="546" description="" type=""/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$template</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$page_template</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="689" package="Cleantalk">
+        <name>check_referral</name>
+        <full_name>\CCS::check_referral()</full_name>
+        <docblock line="689">
+          <description>Ссылка на друга</description>
+          <long-description></long-description>
+          <tag name="param" line="689" description="&lt;p&gt;Числовой идентификатор друга&lt;/p&gt;" type="integer" variable="$friend_id">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="689" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$friend_id</name>
+          <default>null</default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="727" package="Cleantalk">
+        <name>set_lead_source</name>
+        <full_name>\CCS::set_lead_source()</full_name>
+        <docblock line="727">
+          <description>Функция записывает в Куку источник захода на сайт</description>
+          <long-description></long-description>
+          <tag name="param" line="727" description="&lt;p&gt;Источник захода на сайт&lt;/p&gt;" type="string" variable="$lead_source">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="727" description="" type="string" variable="$unknown_option">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="727" description="" type="string" variable="$set_if_null">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="727" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$lead_source</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$unknown_option</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$set_if_null</name>
+          <default>false</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="797" package="Cleantalk">
+        <name>set_last_modified</name>
+        <full_name>\CCS::set_last_modified()</full_name>
+        <docblock line="797">
+          <description>Функция сохранения в кеше даты последней модификации страницы</description>
+          <long-description></long-description>
+          <tag name="param" line="797" description="&lt;p&gt;Дата последней модификации страницы&lt;/p&gt;" type="string" variable="$time">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="797" description="&lt;p&gt;Адресс страницы&lt;/p&gt;" type="string" variable="$page_url">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="797" description="" type=""/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$time</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$page_url</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="820" package="Cleantalk">
+        <name>page_is_modified</name>
+        <full_name>\CCS::page_is_modified()</full_name>
+        <docblock line="820">
+          <description>Функция возвращает 304 в случаи если страница не изменилась с момента последнего просмотра ее пользователем</description>
+          <long-description></long-description>
+          <tag name="param" line="820" description="&lt;p&gt;Время последнего изменения страницы&lt;/p&gt;" type="string" variable="$last_modified">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="820" description="&lt;p&gt;Выдавать ли 304&lt;/p&gt;" type="boolean" variable="$show_304">
+            <type>boolean</type>
+          </tag>
+          <tag name="return" line="820" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$last_modified</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$show_304</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="856" package="Cleantalk">
+        <name>get_lang</name>
+        <full_name>\CCS::get_lang()</full_name>
+        <docblock line="856">
+          <description>Функция подключения языковых файлов страниц</description>
+          <long-description></long-description>
+          <tag name="param" line="856" description="&lt;p&gt;Язык для подключения&lt;/p&gt;" type="string" variable="$user_lang">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="856" description="&lt;p&gt;Класс для которого используется языковой файл&lt;/p&gt;" type="string" variable="$class">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="856" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$user_lang</name>
+          <default>'en'</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$class</name>
+          <default>'main'</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="881" package="Cleantalk">
+        <name>switch_starters</name>
+        <full_name>\CCS::switch_starters()</full_name>
+        <docblock line="881">
+          <description>Функция переключения начальных тарифов</description>
+          <long-description></long-description>
+          <tag name="param" line="881" description="" type="" variable=""/>
+          <tag name="return" line="881" description="" type=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="900" package="Cleantalk">
+        <name>save_engine</name>
+        <full_name>\CCS::save_engine()</full_name>
+        <docblock line="900">
+          <description>Функция сохранения информации о выбранной платформе</description>
+          <long-description></long-description>
+          <tag name="param" line="900" description="&lt;p&gt;Платформа&lt;/p&gt;" type="string" variable="$engine">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="900" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$engine</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="918" package="Cleantalk">
+        <name>check_email</name>
+        <full_name>\CCS::check_email()</full_name>
+        <docblock line="918">
+          <description>Функция проверки email</description>
+          <long-description></long-description>
+          <tag name="param" line="918" description="&lt;p&gt;Email для проверки&lt;/p&gt;" type="string" variable="$email">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="918" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$email</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="937" package="Cleantalk">
+        <name>check_partner</name>
+        <full_name>\CCS::check_partner()</full_name>
+        <docblock line="937">
+          <description>Функция проверяет идентификатор партнера в URL, если такой имеет то записывает информацию о партнере в куку и таблицу partners_clicks</description>
+          <long-description></long-description>
+          <tag name="return" line="937" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="977" package="Cleantalk">
+        <name>get_subpage</name>
+        <full_name>\CCS::get_subpage()</full_name>
+        <docblock line="977">
+          <description>Функция подготовки подстраницы</description>
+          <long-description></long-description>
+          <tag name="return" line="977" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1033" package="Cleantalk">
+        <name>get_bill_pay</name>
+        <full_name>\CCS::get_bill_pay()</full_name>
+        <docblock line="1033">
+          <description>Возвращает информацию о счете
+Создает счет если он отсутствует
+Если выставлен флаг $rest, то выставляем счет на разницу между существующим балансом и стоимостью тарифа</description>
+          <long-description></long-description>
+          <tag name="param" line="1033" description="&lt;p&gt;Id тарифа&lt;/p&gt;" type="integer" variable="$tariff_id">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1033" description="&lt;p&gt;флаг, при котором происходит учёт существующего баланса&lt;/p&gt;" type="boolean" variable="$rest">
+            <type>boolean</type>
+          </tag>
+          <tag name="param" line="1033" description="&lt;p&gt;Массив данных о пользователе&lt;/p&gt;" type="array" variable="$user_info">
+            <type>array</type>
+          </tag>
+          <tag name="param" line="1033" description="&lt;p&gt;флаг нового счета&lt;/p&gt;" type="boolean" variable="$new">
+            <type>boolean</type>
+          </tag>
+          <tag name="param" line="1033" description="&lt;p&gt;сумма счета&lt;/p&gt;" type="float" variable="$sum">
+            <type>float</type>
+          </tag>
+          <tag name="return" line="1033" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$tariff_id</name>
+          <default>null</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$rest</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$user_info</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$new</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$sum</name>
+          <default>null</default>
+          <type>float</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1112" package="Cleantalk">
+        <name>get_bill</name>
+        <full_name>\CCS::get_bill()</full_name>
+        <docblock line="1112">
+          <description>Возвращает информацию о счете
+Создает счет если он отсутствует
+Если выставлен флаг $rest, то выставляем счет на разницу между существующим балансом и стоимостью тарифа</description>
+          <long-description></long-description>
+          <tag name="param" line="1112" description="&lt;p&gt;Id тарифа&lt;/p&gt;" type="integer" variable="$tariff_id">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;флаг, при котором происходит учёт существующего баланса&lt;/p&gt;" type="boolean" variable="$rest">
+            <type>boolean</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;Оплачиваемый период&lt;/p&gt;" type="integer" variable="$period">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;Id промо акции&lt;/p&gt;" type="integer" variable="$promo_id">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;используется ли бонус&lt;/p&gt;" type="boolean" variable="$use_bonus">
+            <type>boolean</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;флаг начисления бонуса&lt;/p&gt;" type="boolean" variable="$give_bonus">
+            <type>boolean</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;комментарий к счету&lt;/p&gt;" type="string" variable="$comment">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;автопродление счета&lt;/p&gt;" type="integer" variable="$auto_bill">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;размер скидки&lt;/p&gt;" type="integer" variable="$discount">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;Валюта счета&lt;/p&gt;" type="string" variable="$currency">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="1112" description="&lt;p&gt;время окончания счета&lt;/p&gt;" type="integer" variable="$paid_till">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="1112" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$tariff_id</name>
+          <default>null</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$rest</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$period</name>
+          <default>1</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$promo_id</name>
+          <default>null</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$use_bonus</name>
+          <default></default>
+          <type>boolean</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$give_bonus</name>
+          <default>true</default>
+          <type>boolean</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$comment</name>
+          <default>\messages::bill_comment</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$auto_bill</name>
+          <default>0</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$discount</name>
+          <default>0</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$currency</name>
+          <default>'USD'</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$paid_till</name>
+          <default>null</default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1311" package="Cleantalk">
+        <name>get_mc_counters</name>
+        <full_name>\CCS::get_mc_counters()</full_name>
+        <docblock line="1311">
+          <description>Функция получения счетчиков из Memcache</description>
+          <long-description></long-description>
+          <tag name="return" line="1311" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1368" package="Cleantalk">
+        <name>get_tariff_info</name>
+        <full_name>\CCS::get_tariff_info()</full_name>
+        <docblock line="1368">
+          <description>Функция получает информацию о тарифе</description>
+          <long-description></long-description>
+          <tag name="param" line="1368" description="&lt;p&gt;Id тарифа&lt;/p&gt;" type="integer" variable="$tariff_id">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="1368" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$tariff_id</name>
+          <default></default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1383" package="Cleantalk">
+        <name>get_tariffs_api</name>
+        <full_name>\CCS::get_tariffs_api()</full_name>
+        <docblock line="1383">
+          <description>Функция возвращает тарифы для Database API</description>
+          <long-description></long-description>
+          <tag name="return" line="1383" description="Массив отсортированных тарифов" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1419" package="Cleantalk">
+        <name>get_tariffs_security</name>
+        <full_name>\CCS::get_tariffs_security()</full_name>
+        <docblock line="1419">
+          <description>Функция возвращает тарифы для Security</description>
+          <long-description></long-description>
+          <tag name="return" line="1419" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1452" package="Cleantalk">
+        <name>get_tariffs</name>
+        <full_name>\CCS::get_tariffs()</full_name>
+        <docblock line="1452">
+          <description>Функция заполняет системную переменную тарифами доступными с сайта</description>
+          <long-description></long-description>
+          <tag name="param" line="1452" description="&lt;p&gt;Платформа&lt;/p&gt;" type="string" variable="$engine">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="1452" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$engine</name>
+          <default>'unknown'</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1768" package="Cleantalk">
+        <name>get_default_tariff_id</name>
+        <full_name>\CCS::get_default_tariff_id()</full_name>
+        <docblock line="1768">
+          <description>Функция обработки выбранного тарифного плана</description>
+          <long-description></long-description>
+          <tag name="return" line="1768" description="" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1816" package="Cleantalk">
+        <name>user_info</name>
+        <full_name>\CCS::user_info()</full_name>
+        <docblock line="1816">
+          <description>Функция получает массив данных о пользователе</description>
+          <long-description></long-description>
+          <tag name="param" line="1816" description="&lt;p&gt;E-mail пользователя&lt;/p&gt;" type="string" variable="$email">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="1816" description="" type="boolean" variable="$main_info">
+            <type>boolean</type>
+          </tag>
+          <tag name="return" line="1816" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$email</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$main_info</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1856" package="Cleantalk">
+        <name>get_cached_data</name>
+        <full_name>\CCS::get_cached_data()</full_name>
+        <docblock line="1856">
+          <description>Возвращает данные из кеша</description>
+          <long-description></long-description>
+          <tag name="param" line="1856" description="&lt;p&gt;указатель на данные в кеше&lt;/p&gt;" type="string" variable="$key">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="1856" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$key</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1870" package="Cleantalk">
+        <name>get_apps</name>
+        <full_name>\CCS::get_apps()</full_name>
+        <docblock line="1870">
+          <description>Загружает в память список активных приложений для CMS</description>
+          <long-description></long-description>
+          <tag name="param" line="1870" description="&lt;p&gt;флаг для сохранения страницы в кеше&lt;/p&gt;" type="boolean" variable="$set_last_modified">
+            <type>boolean</type>
+          </tag>
+          <tag name="return" line="1870" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$set_last_modified</name>
+          <default>true</default>
+          <type>boolean</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="1960" package="Cleantalk">
+        <name>get_api</name>
+        <full_name>\CCS::get_api()</full_name>
+        <docblock line="1960">
+          <description>Загружает в память список активных API</description>
+          <long-description></long-description>
+          <tag name="return" line="1960" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2006" package="Cleantalk">
+        <name>get_mobile_apps</name>
+        <full_name>\CCS::get_mobile_apps()</full_name>
+        <docblock line="2006">
+          <description>Подготовка и кеширование мобильных приложений</description>
+          <long-description></long-description>
+          <tag name="return" line="2006" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="protected" namespace="" line="2039" package="Cleantalk">
+        <name>get_bl_top20_spam_brute</name>
+        <full_name>\CCS::get_bl_top20_spam_brute()</full_name>
+        <docblock line="2039">
+          <description>Метод возвращает 10 самых активных IP в Antispam и 10 самых активных в Security</description>
+          <long-description></long-description>
+          <tag name="return" line="2039" description="" type="array|boolean">
+            <type>array</type>
+            <type>boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2069" package="Cleantalk">
+        <name>get_bl_new_submited</name>
+        <full_name>\CCS::get_bl_new_submited()</full_name>
+        <docblock line="2069">
+          <description>Список последних добавленных записей</description>
+          <long-description></long-description>
+          <tag name="return" line="2069" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2135" package="Cleantalk">
+        <name>get_bl_new_updated</name>
+        <full_name>\CCS::get_bl_new_updated()</full_name>
+        <docblock line="2135">
+          <description>Список последних обновлённых записей</description>
+          <long-description></long-description>
+          <tag name="return" line="2135" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2167" package="Cleantalk">
+        <name>get_bl_top20_2days</name>
+        <full_name>\CCS::get_bl_top20_2days()</full_name>
+        <docblock line="2167">
+          <description>Список top 20 записей</description>
+          <long-description></long-description>
+          <tag name="return" line="2167" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2217" package="Cleantalk">
+        <name>get_bl_reviews_last</name>
+        <full_name>\CCS::get_bl_reviews_last()</full_name>
+        <docblock line="2217">
+          <description>Список отзывов в черных списках.</description>
+          <long-description></long-description>
+          <tag name="param" line="2217" description="&lt;p&gt;кол-во котзывов&lt;/p&gt;" type="" variable="$limit"/>
+          <tag name="return" line="2217" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$limit</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2245" package="Cleantalk">
+        <name>get_services_count</name>
+        <full_name>\CCS::get_services_count()</full_name>
+        <docblock line="2245">
+          <description>Функция возвращает количество активных сайтов</description>
+          <long-description></long-description>
+          <tag name="return" line="2245" description="" type="integer">
+            <type>integer</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2275" package="Cleantalk">
+        <name>list_to_items</name>
+        <full_name>\CCS::list_to_items()</full_name>
+        <docblock line="2275">
+          <description>Функция преобразует список из цифр в список цифр разделенных запятой</description>
+          <long-description></long-description>
+          <tag name="param" line="2275" description="&lt;p&gt;Входящий список&lt;/p&gt;" type="string" variable="$in">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="2275" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$in</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2306" package="Cleantalk">
+        <name>call_class_function</name>
+        <full_name>\CCS::call_class_function()</full_name>
+        <docblock line="2306">
+          <description>Функция вызывает функцию в классе по имени переменной</description>
+          <long-description></long-description>
+          <tag name="param" line="2306" description="&lt;p&gt;Вызываемая функция&lt;/p&gt;" type="string" variable="$call_function">
+            <type>string</type>
+          </tag>
+          <tag name="param" line="2306" description="&lt;p&gt;флаг указывающий показывать ли страницу 404, при отсутствии функции&lt;/p&gt;" type="boolean" variable="$show_page_not_found">
+            <type>boolean</type>
+          </tag>
+          <tag name="return" line="2306" description="" type=""/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$call_function</name>
+          <default>null</default>
+          <type>string</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$show_page_not_found</name>
+          <default>false</default>
+          <type>boolean</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2336" package="Cleantalk">
+        <name>init_dbh_extra</name>
+        <full_name>\CCS::init_dbh_extra()</full_name>
+        <docblock line="2336">
+          <description>Инициализируем подключение к доп. хосту</description>
+          <long-description></long-description>
+          <tag name="return" line="2336" description="" type="resource">
+            <type>resource</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2360" package="Cleantalk">
+        <name>DateToTimestamp</name>
+        <full_name>\CCS::DateToTimestamp()</full_name>
+        <docblock line="2360">
+          <description>Преобразование даты в Timestamp</description>
+          <long-description></long-description>
+          <tag name="param" line="2360" description="" type="string" variable="$date">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="2360" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$date</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2379" package="Cleantalk">
+        <name>generatePassword</name>
+        <full_name>\CCS::generatePassword()</full_name>
+        <docblock line="2379">
+          <description>Функция генерации пароля</description>
+          <long-description></long-description>
+          <tag name="param" line="2379" description="&lt;p&gt;Длина пароля&lt;/p&gt;" type="integer" variable="$length">
+            <type>integer</type>
+          </tag>
+          <tag name="param" line="2379" description="&lt;p&gt;Сложность пароля (строчные буквы + прописные + цифры + знаки)&lt;/p&gt;" type="integer" variable="$strength">
+            <type>integer</type>
+          </tag>
+          <tag name="return" line="2379" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$length</name>
+          <default>9</default>
+          <type>integer</type>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$strength</name>
+          <default>0</default>
+          <type>integer</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2417" package="Cleantalk">
+        <name>valid_email</name>
+        <full_name>\CCS::valid_email()</full_name>
+        <docblock line="2417">
+          <description>Функция проверки email на валидность</description>
+          <long-description></long-description>
+          <tag name="param" line="2417" description="" type="string" variable="$email">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="2417" description="" type=""/>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$email</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2453" package="Cleantalk">
+        <name>stringToDB</name>
+        <full_name>\CCS::stringToDB()</full_name>
+        <docblock line="2453">
+          <description>Функция подготовки строки к выборке из базы</description>
+          <long-description></long-description>
+          <tag name="param" line="2453" description="" type="string" variable="$string">
+            <type>string</type>
+          </tag>
+          <tag name="return" line="2453" description="" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$string</name>
+          <default></default>
+          <type>string</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2467" package="Cleantalk">
+        <name>__destruct</name>
+        <full_name>\CCS::__destruct()</full_name>
+        <docblock line="2467">
+          <description>Метод разрушения класса
+закрывает кеш</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2478" package="Cleantalk">
+        <name>get_sidemenu</name>
+        <full_name>\CCS::get_sidemenu()</full_name>
+        <docblock line="2478">
+          <description>Функция возвращает массив с элементами меню и подменю в разделе Help</description>
+          <long-description></long-description>
+          <tag name="return" line="2478" description="" type="array">
+            <type>array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2510" package="Cleantalk">
+        <name>set_sidemenu</name>
+        <full_name>\CCS::set_sidemenu()</full_name>
+        <docblock line="2510">
+          <description>Метод по URL определяет активный пункт бокового меню</description>
+          <long-description></long-description>
+          <tag name="param" line="2510" description="&lt;p&gt;ссылка на массив описывающий боковое меню&lt;/p&gt;" type="array" variable="$sidemenu">
+            <type>array</type>
+          </tag>
+          <tag name="return" line="2510" description="" type="boolean">
+            <type>boolean</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="true">
+          <name>$sidemenu</name>
+          <default></default>
+          <type>array</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="" line="2544" package="Cleantalk">
+        <name>number_lng</name>
+        <full_name>\CCS::number_lng()</full_name>
+        <docblock line="2544">
+          <description>Возвращает числительное в зависимости от текущего ct_lang.</description>
+          <long-description>Примеры передаваемых числительных:
+  en: ['site', 'sites']
+  ru: ['сайт', 'сайта', 'сайтов']</long-description>
+          <tag name="param" line="2544" description="&lt;p&gt;integer Число&lt;/p&gt;" type="" variable="$number"/>
+          <tag name="param" line="2544" description="&lt;p&gt;string Числительные&lt;/p&gt;" type="" variable="$titles"/>
+          <tag name="return" line="2544" description="Подходящее числительное" type="string">
+            <type>string</type>
+          </tag>
+        </docblock>
+        <argument line="0" by_reference="false">
+          <name>$number</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="0" by_reference="false">
+          <name>$titles</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <source>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</source>
+  </file>
+  <package name="Cleantalk" full_name="Cleantalk">
+    <package name="Base" full_name="Cleantalk\Base"/>
+  </package>
+  <package name="global" full_name="global"/>
+  <namespace name="global" full_name="global"/>
+  <deprecated count="0"/>
+</project>
