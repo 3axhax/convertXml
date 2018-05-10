@@ -12,13 +12,16 @@
     </div>
 </form>
 
-<?php /*if (($ans !== true) && ($ans)) :*/?><!--
-    <?php /*$status = \components\Report::instance()->getCountError()*/?>
+<?php if (($ans !== true) && ($ans)) :?>
+    <?php $status = \components\Report::instance()->getCountError()?>
     <br>
-    <div class="alert alert-<?/*= ($status != 0) ? 'danger' : 'success'*/?> alert-dismissible col-lg-offset-2 col-lg-4" role="alert">
+    <div class="alert alert-<?= ($status != 0) ? 'danger' : 'success'?> alert-dismissible col-lg-offset-2 col-lg-4" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <?/*=$ans*/?>
+        <?=$ans?>
     </div>
---><?php /*endif;*/?>
+<?php endif;?>
+<div class="col-lg-offset-1 col-lg-10">
 <pre>
-    <?php print_r($ans)?>
+    <?php print_r($res)?>
+</pre>
+</div>

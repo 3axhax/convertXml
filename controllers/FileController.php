@@ -14,31 +14,21 @@ class FileController extends SiteController
 
         $this->setTitle('Загрузка XML файла');
         $ans = '';
+        $res = '';
         if ($_REQUEST)
         {
             if ($_FILES['importfile']['error'] == 0) {
                 $file = $_FILES['importfile']['tmp_name'];
-                print_r($_FILES);
                 $xml = new ReadXML($file);
-                $ans = $xml->getXMLElements();
+                $res = $xml->getFileData();
+                //$ans = (string)$xml->getXMLElements()->file->class->method[1]['visibility'];
+                //$ans = $xml->getXMLElements();
+                Report::instance()->addMessage('Download success');
             }
-            else $ans = 'Error download file code: ' . $_FILES['importfile']['error'];
-            //$ans = Report::instance()->getReportMessage();
+            else Report::instance()->addErrorMessage('Error download file code: ' . $_FILES['importfile']['error']);
+            $ans = Report::instance()->getErrorMessage();
         }
         else {$ans = true; $xml_file = '';}
-        return $this->render('file/index', ['ans' => $ans]);
-    }
-    public function actionAddFile()
-    {
-        if ($_REQUEST)
-        {
-            $file = $_FILES['importfile']['tmp_name'];
-            $xml = new ReadXML($file);
-            $xml->getBooksFromFile();
-            $ans = Report::instance()->getReportMessage();
-        }
-        else {$ans = true; $xml_file = '';}
-        $this->setTitle('Добавить файл данных');
-        return $this->render('books/add_file', ['ans' => $ans]);
+        return $this->render('file/index', ['ans' => $ans, 'res' => $res]);
     }
 }

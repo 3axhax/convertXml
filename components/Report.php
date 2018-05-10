@@ -12,22 +12,30 @@ namespace components;
 class Report
 {
     static private $errorMessage = '';
+    static private $errorCount = 0;
     static private $instance;
     
-    static public function instance()
-    {
-        if (! isset(self::$instance))
-        {
+    static public function instance() {
+        if (! isset(self::$instance)) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    public function addErrorMessage($message)
-    {
+
+    public function addErrorMessage($message) {
+        self::$errorMessage .= 'Error! '.$message.'<br>';
+        self::$errorCount++;
+    }
+
+    public function addMessage($message) {
         self::$errorMessage .= $message.'<br>';
     }
-    public function getErrorMessage()
-    {
+
+    public function getCountError() {
+        return self::$errorCount;
+    }
+
+    public function getErrorMessage() {
         return self::$errorMessage;
     }
 }
