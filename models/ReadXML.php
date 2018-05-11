@@ -46,7 +46,8 @@ class ReadXML
                     if (isset($class->property)) {
                         $j = 0;
                         foreach ($class->property as $property) {
-                            $file_data['class'][$i]['property'][$j] = (string)$property->name;
+                            $file_data['class'][$i]['property'][$j]['name'] = (string)$property->name;
+                            $file_data['class'][$i]['property'][$j]['description'] = (string)$property->docblock->tag['description'];
                             $j++;
                         }
                     }
@@ -83,33 +84,5 @@ class ReadXML
             Report::instance()->addErrorMessage('Convert file fail');
             return false;
         }
-    }
-    public function getBooksFromFile()
-    {
-        libxml_use_internal_errors(true);
-        try {
-            $xml_file = new SimpleXMLElement(file_get_contents($this->filePath));
-        }
-        catch (\Exception $e)
-        {
-            $rep = Report::instance();
-            $rep->addCountError();
-            $rep->addErrorMessage('Ошибка загрузки файла: '.$e->getMessage());
-            return false;
-        }
-        $books = array();
-        foreach ($xml_file->book as $book)
-        {
-            $books[] = new Book((string) $book->isbn, (string) $book->name, (string) $book->description, (string) $book->price, (string) $book->language, $this->getSeries($book), (int) $book['id']);
-        }
-        return $books;
-    }
-    private function getSeries($book)
-    {
-        foreach ($book->param as $param)
-        {
-            if ((string) $param['name'] == 'Серия') return (string) $param;
-        }
-        return 'Series don\'t set';
     }
 }
