@@ -1,0 +1,13 @@
+					<div style="float: left; margin-right: 1em;">{$l_share|default:"Рассказать друзьям"}:</div>&nbsp;
+                    <div style="float: left;">
+						<ul class="share">
+							<li><a href="http://twitter.com/home/?status={$l_share_subject}+http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><img src="/images/icons/twitter24.png" alt="Twitter" valign="bottom" /></a></li>
+							<li><a href="http://www.facebook.com/sharer.php?u=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><img src="/images/icons/facebook24.png" alt="Facebook" valign="bottom" /></a></li>
+							<li><a href="https://plus.google.com/share?url=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><img src="/images/icons/gplus24.png" alt="Google+" valign="bottom" /></a></li>
+                            {if $ct_lang == 'ru'}
+							<li><a href="http://vkontakte.ru/share.php?url=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><img src="/images/icons/vkontakte24.png" alt="Вконтакте" valign="bottom" /></a></li>
+							<li><a href="http://www.odnoklassniki.ru/dk?st.cmd=addShare&st._surl=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><img src="/images/icons/odnoklassniki24.png" alt="Одноклассники" valign="bottom" /></a></li>
+							<li><a href="http://www.livejournal.com/update.bml?event=http://{$ct_host}/?pid={$user_info.user_id}&subject={$l_share_subject}" target="_blank"><img src="/images/icons/livejournal24.png" alt="Livejournal" valign="bottom" /></a></li>
+                            {/if}
+						</ul>
+                    </div>

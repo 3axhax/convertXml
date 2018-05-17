@@ -1,0 +1,749 @@
+<div class="container-fluid">
+	<div class="log-header row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">            
+			<h2>{$l_personal_lists}</h2>
+			<p class="text-muted">{$l_private_text}</p>
+			<br />
+		</div>
+	</div>
+	<ul class="nav nav-tabs" id="personal-lists-tabs">
+	<input type="hidden" id="service_type" value="{$service_type}">
+	{foreach $record_type_service_display  item=i key=k}
+		<li role="presentation"{if $k == $service_type} class="active"{/if}><a href="?service_type={$k}" data-service_type="{$k}">{$i}</a></li>
+	{/foreach}
+	</ul>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <p class="text-muted" style="margin: 0 1em 1em;">
+            {if $service_type=='spamfirewall'}
+                {$l_spamfirewall_description}
+            {else if $service_type=='securityfirewall'}
+                {$l_securityfirewall_description}
+            {else}
+                {$l_antispam_description}
+            {/if}
+            </p>
+        </div>        
+    </div>
+
+    <div class="row" id="filter-block">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {$l_filter_title}
+                </div>
+                <div class="panel-body">
+                    <select id="service_id" class="selectpicker form-control" data-live-search="true" data-width="auto">
+                        <option value="">{$l_choose_site}</option>
+                        <optgroup label="---">
+                        {foreach from=$services item=oneservice}
+                            <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                        {/foreach}
+                        </optgroup>
+                        {if $granted_services}
+                            <optgroup label="---{$l_granted_services}---">
+                                {foreach from=$granted_services item=oneservice}
+                                    <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{if $oneservice.hostname}{$oneservice.hostname}{else}#{$oneservice.service_id}{/if}</option>
+                                {/foreach}
+                            </optgroup>
+                        {/if}
+                    </select>
+                    <select id="record_type" name="record_type" class="selectpicker form-control" data-width="auto">
+                        <option value="">{$l_choose_record_type}</option>
+                        {foreach $record_type_labels as $type_key=>$type_label}
+                            {if $service_type=='antispam' && ($type_key==5)}{continue}{/if}
+                            {if !in_array($type_key,$record_type_service[$service_type])}{continue}{/if}
+                            <option value="{$type_key}" {if $type_key==$record_type} selected{/if}>{$type_label}</option>
+                        {/foreach}                        
+                    </select>
+                    <select class="form-control filter_private selectpicker" id="status">
+                        <option value="">{$l_choose_status}</option>
+                        <optgroup label="---">
+                        <option value="allow" {if $status eq allow}selected{/if}>{$l_allow}</option>
+                        <option value="deny" {if $status eq deny}selected{/if}>{$l_deny}</option>
+                        </optgroup>
+                    </select>
+                    <input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 230px" name="customdates" id="customdates" {if $start_from && $end_to}value="{$start_from} - {$end_to}"{/if}>
+                    <input type="hidden" id="search_service_id" value="{$service_id}">
+                    <input type="text" id="search_record" placeholder="{$l_search_record}" class="form-control" value="{$record|escape}">
+              
+                
+                    <button class="btn btn-primary btn-sm button_filter" type="button" id="button-filter">{$l_stat_show}</button>                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="geo-list" style="display:none;">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {$l_countries_form_title}
+                </div>
+                <div class="panel-body">				        
+    		        
+                </div>
+            </div>
+        </div>
+	</div>
+    <div class="row" id="import-csv" style="display: none;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">{$l_format_desc}</div>            
+                <div class="panel-body">
+                {if $grantwrite}
+                <form method="post" enctype="multipart/form-data" id="csv-form">
+                    <div style="width: 345px;float: left;margin-right: 2em;">
+                        <div class="input-group image-preview">
+                            <input type="text" class="form-control filename" disabled="disabled" id="filename">
+                            <span class="input-group-btn">                            
+                                <button type="button" class="btn btn-default clear" style="display:none;">
+                                    <span class="glyphicon glyphicon-remove"></span> {$l_clear}
+                                </button>                            
+                                <div class="btn btn-default input">
+                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                    <span class="input-title" data-browse="{$l_browse}" data-change="{$l_change}">{$l_browse}</span>
+                                    <input type="file" accept=".csv" name="upfile"/> 
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    <select class="selectpicker form-control" data-live-search="true" data-width="auto" name="service_id">
+                        <option value="all">{$l_choose_site}</option>
+                        <optgroup label="---">
+                        {foreach from=$services item=oneservice}
+                            <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                        {/foreach}
+                        </optgroup>
+                        {if $granted_services}
+                            <optgroup label="---{$l_granted_services}---">
+                                {foreach from=$granted_services item=oneservice}
+                                    <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{if $oneservice.hostname}{$oneservice.hostname}{else}#{$oneservice.service_id}{/if}</option>
+                                {/foreach}
+                            </optgroup>
+                        {/if}
+                    </select>      
+                    <button type="submit" class="btn btn-primary btn-sm disabled">{$l_save}</button>
+                        
+                    <br>
+                    <button type="button" class="btn btn-primary pull-right" id="close-csv-form"><i class="fa fa-times" aria-hidden="true"></i> {$l_cancel}</button>
+                    <em class="text-muted">
+                    {if $service_type == 'spamfirewall' || $service_type == 'securityfirewall'}
+                        {$l_addrecord_hint_spamfirewall}
+                    {else}
+                        {$l_addrecord_hint}
+                    {/if}
+                    </em><br>
+                    <span class="gray"><em class="text-muted">{$l_add_instruction}</em></span>
+                    <input type="hidden" name="action" value="upload_csv">
+                </form>
+                {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="add-form" style="display: none;">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {$l_add_new_filter}
+                </div>
+                <div class="panel-body">
+                    <select id="add_record_type" class="selectpicker form-control" data-width="auto">
+                        <option value="">{$l_select_record_type}</option>
+                        {foreach $record_type_labels as $type_key=>$type_label}
+                            {if $service_type=='antispam' && ($type_key==5)}{continue}{/if}
+                            {if !in_array($type_key,$record_type_service[$service_type])}{continue}{/if}
+                            <option value="{$type_key}">{$type_label}</option>
+                        {/foreach}                        
+                    </select>
+                    <a href="#" class="text-muted hidden" id="list_btn" style="margin-left: 2em; text-decoration-style: dotted;">{$l_use_list}</a>
+                    {if !$stop_word_enabled}
+                    <div class="alert alert-warning text-center hidden" style="margin-top: 15px;margin-bottom: 65px;" id="stop_word_hint">
+                        <i class="fa fa-lock" aria-hidden="true"></i> {$l_stop_list_purchase_hint} <a href="/my/bill/recharge?package=1&extra_package=1&utm_source=cleantalk.org&utm_medium=button_words_stop_list&utm_campaign=control_panel">{$l_extra_package}</a>.
+                    </div>
+                    {/if}
+					<form method="post" action="/my/show_private" id="add_record_form" class="add-form hidden">
+                        <div id="list_box" class="hidden">
+                            <select id="words" class="selectpicker form-control" data-width="220px" data-live-search="true" data-size="10" multiple data-actions-box="true" data-selected-text-format="count > 2" >
+                                {foreach $stop_list as $word}
+                                    <option selected>{$word}</option>
+                                {/foreach}
+                            </select>
+                            <button type="button" style="margin: 0 2em 15px;" class="btn btn-default" id="add_list">{$l_add_selected}</button>
+                        </div>
+                        <input type="hidden" name="add_record_type">
+                        <div><em class="text-muted">{$l_add_hint}</em></div>
+						<textarea id="add_record" name="add_record" placeholder="{$l_add_record}" rows="2" cols="30" class="form-control"{if $grantwrite}{else} disabled{/if}>{if $add_record}{$add_record}{else}{$smarty.get.add_record}{/if}</textarea>
+                        
+                        
+                        
+                        <input type="text" name="note" placeholder="{$l_note_hint}" class="form-control" maxlength="100">
+                        <select id="add_record_service_id" class="selectpicker form-control" data-live-search="true" data-width="auto" name="service_id">
+                            <option value="all">{$l_add_allsites}</option>
+                            <optgroup label="---">
+                            {foreach from=$services item=oneservice}
+                                <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                            {/foreach}
+                            </optgroup>
+                            {if $granted_services}
+                                <optgroup label="---{$l_granted_services}---">
+                                    {foreach from=$granted_services item=oneservice}
+                                        <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{if $oneservice.hostname}{$oneservice.hostname}{else}#{$oneservice.service_id}{/if}</option>
+                                    {/foreach}
+                                </optgroup>
+                            {/if}
+                        </select>                            
+                    	<input type="hidden" name="action" value="add_record">                        	
+                    	<input type="hidden" id="add_status" name="add_status" value="">
+                        
+                        <button type="button" style="margin: 0 2em 15px;" class="btn btn-danger add_records" id="deny"{if !$grantwrite} disabled="disabled"{/if}>{$l_deny}</button>
+                        {if $service_type!='spamfirewall'}
+                        <button type="button" style="margin-right: 112px;" class="btn btn-success add_records" id="allow"{if !$grantwrite} disabled="disabled"{/if}>{$l_allow}</button>
+                        {/if}
+                        
+                    </form>       
+                    <form method="post" id="countries_form_add" class="add-form hidden">            
+                        <input type="hidden" name="add_countries" value="1">
+                        <input type="hidden" name="action" value="add_record">
+                        <select class="selectpicker form-control" data-width="220px" data-live-search="true" data-size="10" multiple data-actions-box="true" data-selected-text-format="count > 2" id="countries-select" name="selected-countries[]">
+                        {foreach $countries_data as $country}
+                            <option value="{$country.countrycode}" class="flag {$country.countrycode|lower}">{$country.langname}</option>
+                        {/foreach}
+                        </select>
+                        <select class="selectpicker form-control" data-width="220px" data-size="10" id="countries-status-select" name="countries_status">
+                            <option value="deny">{$l_deny}</option>
+                            <option value="allow">{$l_allow}</option>
+                            <option value="deny_except">{$l_deny_except}</option>
+                            <option value="allow_except">{$l_allow_except}</option>                         
+                        </select>
+                        <select id="geo_service_id" class="selectpicker form-control" data-live-search="true" data-width="220px" name="service_id">
+                            <option value="all">{$l_add_allsites}</option>
+                            <optgroup label="---">
+                            {foreach from=$services item=oneservice}
+                                <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                            {/foreach}
+                            </optgroup>
+                            {if $granted_services}
+                                <optgroup label="---{$l_granted_services}---">
+                                    {foreach from=$granted_services item=oneservice}
+                                        <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{if $oneservice.hostname}{$oneservice.hostname}{else}#{$oneservice.service_id}{/if}</option>
+                                    {/foreach}
+                                </optgroup>
+                            {/if}
+                        </select>
+                        <button type="button" style="margin-right: 112px;" class="btn btn-default" id="add-country">{$l_add}</button>
+                    </form>        
+                    <button type="button" class="btn btn-primary pull-right" id="close-add-form"><i class="fa fa-times" aria-hidden="true"></i> {$l_cancel}</button>
+                </div>
+            </div>
+		</div>
+	</div>
+    <div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br />
+			<table class="w100">
+                <tr>
+                    <td class="w20">
+                        <div style="margin-bottom: 3px;">
+                            {if $privaterecs && $grantwrite}
+                                <button type="button" id="delbulk" class="btn btn-default btn-sm disabled" style="margin-right: 2em;"><i class="fa fa-trash-o" aria-hidden="true"></i> {$l_delete_selected}</button>
+                            {else}
+                                <input type="hidden" id="delbulk">
+                            {/if}
+                            {if $services || $granted_services}
+								<button type="button" class="btn btn-primary btn-sm" id="new-record" style="margin-right: 2em;"><i class="fa fa-file-text-o" aria-hidden="true"></i> {$l_add_new_filter}</button>
+                                <button type="button" class="btn btn-primary btn-sm" id="show-csv" style="margin-right: 2em;"><i class="fa fa-cloud-upload" aria-hidden="true"></i> {$l_format_desc}</button>
+                            {/if}
+                        </div>
+                    </td>
+                    <td class="">
+                        &nbsp;
+                    </td>
+                    <td class="right">
+                        {$records_found}
+                        {if $privaterecs && $grantwrite}
+                            <div style="display: inline-block;" title="{$l_export_data_hint}" data-toggle="tooltip">
+                                {$l_export_data}:
+                                <a href="{$smarty.server.REQUEST_URI}&mode=csv"><img src="/images/icons/csv.png" alt="" style="height: 24px;"/></a>
+                            </div>
+                        {/if}
+
+                    </td>
+					{if $pages && $pages|count > 1}
+                    <td class="w30 right">
+						<nav aria-label="Page navigation">
+						  <ul class="pagination pagination-sm" style="margin: 0em;">
+						  	{if $page_prev}
+							<li>								
+								<a href="{$request_uri_page_free}&page={$page_prev}" aria-label="Previous">								
+								<span aria-hidden="true">&laquo;</span>
+							  </a>
+							</li>
+							{/if}
+							{foreach from=$pages item=page}
+							<li {if $page==$page_cur}class="active"{/if}><a href="{$request_uri_page_free}&page={$page}">{$page}</a></li>
+							{/foreach}
+							{if $page_next}
+							<li>
+							  <a href="{$request_uri_page_free}&page={$page_next}" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							  </a>
+							</li>
+							{/if}
+						  </ul>
+						</nav>
+                    </td>
+					{/if}
+                </tr>
+            </table>
+            <div class="modal fade" tabindex="-1" id="comment-modal" role="dialog" aria-labelledby="commentModal">
+                <div class="modal-dialog" role="document">
+                    <form method="post" action="/my/show_private">
+                        <input type="hidden" name="record_id" value="">
+                        <input type="hidden" name="service_id" value="{$service_id}">
+                        <input type="hidden" name="action" value="note">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <span class="text-muted">Created:</span> <span id="comment-modal-created"></span>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="text-muted">Status:</span> <span class="" id="comment-modal-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <textarea class="form-control" name="note"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+			<table class="table w100" id="records-table">
+                <thead>
+				<tr class="active main_page_theader">
+					<th class="no-sort">
+                        {if $grantwrite}
+                            <input type="checkbox" id="checkall">
+                        {/if}
+                    </th>
+    				<th id="th_record" title="{$l_record_hint}" data-toggle="tooltip" data-placement="right" data-container="body">{$l_record}</th>
+                    <th id="th_record_type" title="{$l_record_type_hint}" data-toggle="tooltip" data-placement="right" data-container="body">{$l_record_type}</th>
+    				<th id="th_created" title="{$l_created_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_created}</th>
+    				<th id="th_hits" title="{$l_7_hits_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_7_hits}</th>
+    				<th id="th_status" title="{$l_status_hint}" data-toggle="tooltip" data-placement="left" data-container="body">
+        				{$l_status}
+        				<span class="tooltip" ttext="{$l_private_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+    				<th id="th_service" title="{$l_service_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_service}
+        				<span class="tooltip" ttext="{$l_service_type_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+                    <th id="th_site" title="{$l_site_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_site}</th>
+                    <th class="no-sort" title="{$l_note_hint_private}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_note}</th>
+    				<th class="no-sort" title="{$l_delete_record_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_delete_record}</th>
+				</tr>
+                </thead>
+                <tbody>
+                {foreach from=$privaterecs item=onerec}
+                <tr id="record_{$onerec.record_id}">
+                    <td class="center">
+                        {if $grantwrite}
+                        <input type="checkbox" class="recordcb" value="{$onerec.record_id}" data-service_id="{$onerec.service_id}">
+                        {/if}
+                    </td>
+                    <td width="20%" align="left">
+                    	<span id="onlyrec_{$onerec.record_id}">{if $onerec.record_type==8}{$onerec.sourcerecord}{else}{$onerec.record}{/if}</span>
+                        {if $onerec.countrycode}
+                        (<span class="flag {$onerec.countrycode|lower}"></span>{if $onerec.countryname}&nbsp;{$onerec.countryname}{/if})
+                        {/if}
+                    </td>
+                    <td>
+                        {$record_type_labels[$onerec.record_type]}
+                    </td>
+                    <td class="center" data-sort='{$onerec.created_time}'>{$onerec.created}</td>
+                    <td class="center" data-sort="{$onerec.hits}">
+                        {if $onerec.hits && $onerec.record_type eq 8}
+                            <a href="/my/show_requests?int=week{$etip}&ipemailnick=%3D{$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.countrycode && $onerec.product_id eq 1 && $onerec.record_type eq 3}
+                            <a href="/my/show_requests?int=week&country={$onerec.countrycode}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type neq 6 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?int=week&ipemailnick={$onerec.sourcerecord|upper}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 6}
+                            <a href="/my/show_sfw?ip={$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 7 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?ipemailnick={$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 1 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?ipemailnick={$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 1 && $onerec.product_id eq 4}
+                            <a href="/my/logs_firewall?ip={$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 7 && $onerec.product_id eq 4}
+                            <a href="/my/logs_firewall?ip={$onerec.sourcerecord}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.countrycode && $onerec.record_type eq 3}
+                            <a href="/my/logs_firewall?service={$onerec.service_id}&country={$onerec.countrycode|upper}">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits}
+                            {$onerec.hits}
+                        {else}
+                        	0
+						{/if}
+                    </td>
+                    <td data-sort="{$onerec.status}">
+                        {if $grantwrite && !in_array($onerec.record_type,array(8,6))}
+                            <div id="allow_{$onerec.record_id}" style="display:{if $onerec.status eq allow}block{else}none{/if};"><a href="#/" id="cs_{$onerec.service_id}_{$onerec.record_id}_0" class="green chrecstatus">{$l_allow}</a></div>
+                            <div id="deny_{$onerec.record_id}" style="display:{if $onerec.status eq deny}block{else}none{/if};"><a href="#/" id="cs_{$onerec.service_id}_{$onerec.record_id}_1" class="red chrecstatus">{$l_deny}</a></div>
+                        {else}
+                            {if $onerec.status eq allow}
+                                <span class="green">{$l_allow}</span>
+                            {else}
+                                <span class="red">{$l_deny}</span>
+                            {/if}
+                        {/if}
+                    </td>
+                    <td class="service_tools">
+                        {$onerec.service_type_display}
+                    </td>
+                    <td data-sort="{$onerec.service_id}">
+                        #{$onerec.service_id} {$onerec.hostname}
+                    </td>
+                    <td>
+                        <span id="note_{$onerec.service_id}_{$onerec.record_id}">{$onerec.note}</span>
+                        {if $grantwrite}
+                        <a href="#" class="edit-note" data-toggle="modal" data-target="#comment-modal"
+                                data-id="{$onerec.record_id}"
+                                data-title="{$onerec.record}"
+                                data-created="{$onerec.created}"
+                                data-status="{if $onerec.status eq allow}{$l_allow}{else}{$l_deny}{/if}"
+                                data-status-class="{if $onerec.status eq allow}text-success{else}text-danger{/if}"
+                                data-note="#note_{$onerec.service_id}_{$onerec.record_id}"
+                        ><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                        {/if}
+                    </td>
+                    <td align="center" class="service_tools">
+                        {if $grantwrite}
+                            <a href="#/" id="delete_{$onerec.service_id}_{$onerec.record_id}" class="delete_record text-warning" title="{$l_delete}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        {else}
+                            -
+                        {/if}
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+			</table>
+            {if count($privaterecs)>10}
+            <div class="text-center"><button class="btn btn-default" id="top-btn"><i class="fa fa-arrow-up" aria-hidden="true"></i></button></div>
+            {/if}
+		</div>
+	</div>
+</div>
+<div class="loading"></div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Information modal" id="information_message">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert alert-success" style="margin-bottom: 0">{$addedrecords}{if $existrecords}{if $addedrecords}<br>{/if}{$existrecords}{/if}{if $wrongrecords}{if $addedrecords || $existrecords}<br>{/if}{$wrongrecords}{/if}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="Progress modal" id="progress_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="{$l_cancel}"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{$l_adding_filters}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="{$l_cancel}">{$l_cancel}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{if $service_type=='securityfirewall'} 
+    {if !$licenses.security || !$licenses.security.moderate}
+        {include file="tools/license_modal.html" renew_url=$modal_license}
+    {/if}
+{else}
+    {if !$licenses.antispam || !$licenses.antispam.moderate}
+        {include file="tools/license_modal.html"}
+    {/if}
+{/if}
+
+<input type="hidden" id="deleted_recs_text" value="{$deleted_recs_text}">
+<script src="/js/tablesort/tablesort.min.js"></script>
+<script src="/js/tablesort/tablesort.date.js"></script>
+<script src="/js/tablesort/tablesort.number.js"></script>
+<script type="text/javascript">
+var stop_word_enabled = {if $stop_word_enabled}true{else}false{/if};
+var l_list = '{$l_list}';
+var fld = {if $sort}'{$sort.field}'{else}false{/if};
+var cls = {if $sort}'{$sort.class}'{else}false{/if};
+var table = document.getElementById('records-table');
+var sort = new Tablesort(table);
+var delete_confirm = '{$l_delete_confirm}';
+var l_add = '{$l_add}';
+function tableListen() {
+    table.addEventListener('afterSort', function () {
+        var th = null;
+        var srt = null;
+        if (document.getElementsByClassName('sort-down').length) {
+            th = document.getElementsByClassName('sort-down')[0];
+            srt = 'down';
+        } else if (document.getElementsByClassName('sort-up').length) {
+            th = document.getElementsByClassName('sort-up')[0];
+            srt = 'up';
+        }
+        if (th && srt) {
+            th = th.innerHTML.match(/^\s*([\wа-я ]+)/i)[1];
+            document.cookie = "showPrivateSort=" + th + "|" + srt + "; path=/";
+        }
+    });
+}
+
+window.addEventListener('load', function () {
+    new PrivateLists({$licenses_moderate});
+
+    $('#comment-modal').on('show.bs.modal', function (e) {
+        var btn = $(e.relatedTarget);
+        var modal = $(this);
+
+        modal.find('input[name=record_id]').val(btn.data('id'));
+        modal.find('h4').text('Private note for the ' + btn.data('title'));
+        modal.find('#comment-modal-created').text(btn.data('created'));
+        modal.find('#comment-modal-status').text(btn.data('status')).attr('class', btn.data('status-class'));
+        modal.find('textarea').val($(btn.data('note')).text());
+    });
+    {if !empty($smarty.get.add_record)}
+    	$('#new-record').trigger('click');
+        $('#add_record_type').val('1').trigger('change');
+    {/if}
+    {if !empty($smarty.get.add_word)}
+        $('#new-record').trigger('click');
+        $('#add_record_type').val('8').trigger('change');
+    {/if}
+    $('#customdates').daterangepicker({
+        locale: {
+            format: 'MMM DD, YYYY',
+            monthNames: [{$l_log_months}],
+            cancelLabel: 'Clear'
+        },
+        autoUpdateInput: false,      
+        {if $start_from}startDate: '{$start_from}',{/if}
+        {if $start_from}endDate: '{$end_to}'{/if}
+    }, function (start, end) {
+        $('#customdates').val(start.format('MMM DD, YYYY') + ' - ' + end.format('MMM DD, YYYY'));
+    }); 
+    $('#customdates').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    
+    $('[data-toggle="tooltip"]').tooltip();	
+});
+
+if (fld) {
+    window.addEventListener('load', function () {
+        switch (fld) {
+            case '{$l_status}':
+                $('#th_status').trigger('click');
+                if (cls == 'sort-up') $('#th_status').trigger('click');
+                break;
+            case '{$l_record}':
+                $('#th_record').trigger('click');
+                if (cls == 'sort-up') $('#th_record').trigger('click');
+                break;
+            case '{$l_record_type}':
+                $('#th_record_type').trigger('click');
+                if (cls == 'sort-up') $('#th_record_type').trigger('click');
+                break;
+            case '{$l_created}':
+                $('#th_created').trigger('click');
+                if (cls == 'sort-up') $('#th_created').trigger('click');
+                break;
+            case '{$l_7_hits}':
+                $('#th_hits').trigger('click');
+                if (cls == 'sort-up') $('#th_hits').trigger('click');
+                break;
+            case '{$l_service}':
+                $('#th_service').trigger('click');
+                if (cls == 'sort-up') $('#th_service').trigger('click');
+                break;
+            case '{$l_site}':
+                $('#th_site').trigger('click');
+                if (cls == 'sort-up') $('#th_site').trigger('click');
+                break;
+        }
+        tableListen();
+    });
+} else {
+    tableListen();
+}
+</script>
+<style>
+.modal-license {
+    text-align: center;
+    padding: 0 !important;
+}
+.modal-license:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
+}
+.modal-license .modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+.modal-license .modal-footer {
+    text-align: center !important;
+}
+.modal-license .modal-footer a.btn {
+    text-decoration: none;
+}
+.modal-license .modal-footer a.text-muted {
+    font-size: 12px;
+}
+#records-table tbody tr .edit-note {
+    visibility: hidden;
+}
+#records-table tbody tr:hover .edit-note {
+    visibility: visible;
+}
+#geo-list .label i.fa:hover{
+	cursor: pointer;
+	color: #777;
+}
+#geo-list .label{
+    font-weight: normal;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	display: inline-block;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+#personal-lists-tabs a{
+	text-decoration: none;
+}	
+#personal-lists-tabs{
+	margin-bottom: 15px;
+}
+.right {
+    text-align: right;
+}
+.w100 {
+    width: 100%;
+}
+.red {
+    color: #cc3300;
+}
+.green {
+    color: #49c73b;
+}
+#filter-block .form-control,
+#csv-form .bootstrap-select{
+    display: inline-block;
+    width: auto;
+}
+.loading{
+    display: none;
+    opacity: 0.25;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    background: white;
+    z-index: 9999;
+}
+.loading:before {
+    content: url(/images/loader.gif);
+    position: absolute;
+    z-index: 9999;
+    left: 50%;
+    margin-left: -32px;
+    top: 180px;
+}
+#records-table .flag:before{
+    float: none;
+    display: inline-block;
+    margin: 0;
+    margin-bottom: -1px;
+}
+.input {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.input input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.input-title {
+    margin-left:2px;
+}
+#filter-block .form-control,
+#filter-block .btn,
+#add_record_form .btn,
+#add_record_form .form-control,
+#countries_form_add .btn,
+#countries_form_add .form-control{
+    margin-bottom: 15px;
+    vertical-align: middle;
+}
+#filter-block .panel-body,
+#add_record_form .panel-body{
+    padding: 15px 15px 0 15px;
+}
+.add-form{
+    margin-top: 15px;
+}
+</style>

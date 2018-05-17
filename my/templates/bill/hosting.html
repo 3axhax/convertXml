@@ -1,0 +1,276 @@
+<style>
+    table.loading > tbody {
+        opacity: 0.25;
+    }
+    table.loading:before {
+        content: url(/images/loader.gif);
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        margin-left: -32px;
+        top: 180px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row" style="padding-top: 6em">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <table width="100%" class="loading" id="bill-table">
+                <thead>
+                <tr>
+                    <th class="center" style="padding-bottom: 1em"><h2>{$l_hosting_bill_title}</h2></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="right">
+                        Period:
+                        <select name="period" id="period_field">
+                            <option value="1" {if $period eq 1}selected{/if}>{$l_hosting_bill_period_1}</option>
+                            <option value="3" {if $period eq 3}selected{/if}>{$l_hosting_bill_period_3}</option>
+                            <option value="6" {if $period eq 6}selected{/if}>{$l_hosting_bill_period_6}</option>
+                            <option value="12" {if $period eq 12}selected{/if}>{$l_hosting_bill_period_12}</option>
+                        </select>
+                        Package:
+                        <select name="product" id="product_field">
+                            {foreach $products item=p}
+                            <option value="{$p.id}"{if $p.selected} selected{/if}>{number_format($p['ips'], 0, '.', ' ')} {$l_hosting_bill_ips}</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="table" style="margin-top: 1em">
+                            <tr class="active main_page_theader">
+                                <th width="60%">
+                                    {$l_hosting_bill_license_name}
+                                </th>
+                                <th width="13%" class="paymobile">
+                                    {$l_hosting_bill_period}
+                                </th>
+                                <th class="paymobile">
+                                    {$l_hosting_bill_cost_per_month}
+                                </th>
+                                <th class="paymobile">
+                                    {$l_hosting_bill_total}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td id="license_col"></td>
+                                <td id="months_col"></td>
+                                <td id="cost_col"></td>
+                                <td id="total_col"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="right">
+                        <hr>
+                        {$l_hosting_bill_total_to_pay}: <span id="total_f"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" style="padding-top: 5em">
+                        <table class="w80">
+                            <tr>
+                                <td align="center">
+                                    <table class="w100 pay_choices">
+                                        <tr>
+                                            <th>
+                                                <div class="paymobile">{$l_onetime_payment_paypal}</div>
+                                                <img src="/images/paypal_02.png" alt="" class="logos">
+                                                <br>
+                                                <span class="hint_black paymobile">{$l_payment_process}</span>
+                                            </th>
+                                            <td class="money_back">
+                                                <form method="post" class="charge_form" id="charge">
+                                                    <input type="hidden" name="pp_tariff_id" id="pp_tariff_id" value="">
+                                                    <input type="hidden" name="pp_period" id="pp_period" value="">
+                                                    <a href="#" id="pp_btn"><img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}"></a>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                </td>
+                            </tr>
+                            {if $ct_lang != 'ru'}
+                            <tr>
+                                <td align="center">
+                                    <table class="w100 pay_choices">
+                                        <tr>
+                                            <th class="h_left_v_top">
+                                                <div class="paymobile">Make a one time credit/debit card payment</div>
+                                                <img src="/images/icons/payment-stripe.png" alt="" class="logos">
+                                                <br>
+                                                <span class="hint_black paymobile">{$l_payment_process}</span>
+                                            </th>
+                                            <td class="money_back">
+                                                <form action="/my/bill/hosting" method="POST" id="stripe-form" name="stripe_form">
+                                                    <script
+                                                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                                        data-key="{$stripe_public_key}"
+                                                        data-amount="{$bill.cost_usd_cents}"
+                                                        data-name="{$smarty.server.SERVER_NAME}"
+                                                        data-description="{$bill.comment_short}"
+                                                        data-image="/images/cleantalk-logo-128.png">
+                                                    </script>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            {/if}
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" style="padding-top: 5em">
+                        <table width="80%">
+                            <tr>
+                                <td valign="top" align="right">
+                                    <br>
+                                    <img src="/images/icons/lock.png" alt="" />
+                                    <div class="money_back_stamp">
+                                        {include file="money_back_image.html"}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>{$l_secure_payment}</div>
+                                    <div class="gray">
+                                        {$l_secure_page}
+                                        <br /><br />
+                                        {$money_back_title}
+                                    </div>
+                                </td>
+                                <td class="paymobile">
+                                    &nbsp;
+                                </td>
+                                <td class="paymobile">
+                                    {include file="money_back_image.html"}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+</div>
+<script>
+    'use strict';
+    var products = {$products_json};
+    var paid_till = new Date({$paid_till_ts} * 1000);
+
+    var product_el = document.getElementById('product_field');
+    var period_el = document.getElementById('period_field');
+    var license_el = document.getElementById('license_col');
+
+    var stripe = document.getElementById('stripe-form');
+
+    var months = [{$l_hosting_bill_months}];
+
+    function date_format(d) {
+        var dd = d.getDate();
+        if (dd < 10) dd = '0' + dd;
+        var yy = d.getFullYear();
+
+        return "{$l_hosting_bill_date}".replace('d', dd).replace('y', yy).replace('m', months[d.getMonth()]);
+    }
+
+    {literal}
+    function number_wc(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+    {/literal}
+
+    function pf(x) {
+        return parseFloat(Math.round(x * 100) / 100).toFixed(2);
+    }
+
+    function license_text(ips, from, to) {
+        return "{$l_hosting_bill_text}"
+            .replace(':IP:', number_wc(ips))
+            .replace(':FROM:', date_format(from))
+            .replace(':TO:', date_format(to));
+    }
+
+    function license_comment(ips, cost, period) {
+        return "{$l_hosting_bill_comment}"
+            .replace(':IP:', number_wc(ips))
+            .replace(':COST:', cost)
+            .replace(':PERIOD:', period);
+    }
+
+    function cost(format, value) {
+        return format.replace(/:VALUE:/g, value).replace(':SIGN:', '{$currency.sign}').replace(':CURRENCY:', '{$currency.id}');
+    }
+
+    function updateLicense() {
+        var product_id = product_el.value;
+        var product_cost = 0;
+        var currency_sign = '';
+        var product_ips = 0;
+
+        for (var i = 0; i < products.length; i++) {
+            if (products[i]['id'] == product_id) {
+                product_cost = products[i]['cost'];
+                product_ips = products[i]['ips'];
+                currency_sign = products[i]['sign'];
+                break;
+            }
+        }
+
+        document.getElementById('pp_tariff_id').value = product_id;
+        document.getElementById('pp_period').value = period_el.value;
+
+        var pm = new Date(new Date(paid_till).setMonth(paid_till.getMonth() + parseInt(period_el.value)));
+        license_el.innerHTML = license_text(product_ips, paid_till, pm);
+
+        var period = period_el.options[period_el.selectedIndex].text;
+        document.getElementById('months_col').innerHTML = period;
+
+        var total_cost = period_el.value * product_cost;
+        var comment = license_comment(product_ips, '$' + total_cost, period);
+
+        document.getElementById('cost_col').innerHTML = cost('{$l_hosting_bill_cost_format}', product_cost);
+        document.getElementById('total_col').innerHTML = cost('{$l_hosting_bill_cost_format}', pf(total_cost));
+        document.getElementById('total_f').innerHTML = cost('{$l_hosting_bill_cost_format_full}', pf(total_cost));
+
+        if (stripe) {
+            var script = document.createElement('script');
+            script.src = 'https://checkout.stripe.com/checkout.js';
+            script.className = 'stripe-button';
+            script.setAttribute('data-key', '{$stripe_public_key}');
+            script.setAttribute('data-amount', (total_cost * 100).toString());
+            script.setAttribute('data-name', '{$smarty.server.SERVER_NAME}');
+            script.setAttribute('data-description', comment);
+            script.setAttribute('data-image', '/images/cleantalk-logo-128.png');
+            stripe.innerHTML = '';
+            stripe.appendChild(script);
+
+            document.stripe_form.action = '/my/bill/hosting?period=' + period_el.value + '&product=' + product_id;
+        }
+    }
+
+    document.getElementById('pp_btn').addEventListener('click', function (e) {
+        if (!e.target.style.opacity) {
+            e.target.style.opacity = 0.5;
+            $('#bill-table').addClass('loading');
+            document.getElementById('charge').submit();
+        }
+        e.preventDefault();
+    });
+
+    window.addEventListener('load', function () {
+        document.getElementById('bill-table').className = '';
+        product_el.addEventListener('change', updateLicense);
+        period_el.addEventListener('change', updateLicense);
+        updateLicense();
+    });
+</script>

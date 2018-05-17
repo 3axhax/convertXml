@@ -1,0 +1,233 @@
+<div style="width: 100%;">
+  <div class="qheader" id="wantbonus">Do you want bonus? Just answer and get bonus</div>
+  <div id="step1"{if $quiz_done} class="qnotshow"{/if}>
+  <div class="qquestion">
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/off.gif" alt="off" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="off" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="off" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="off" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="off" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    1 of 5.
+    <br><br>
+    <b>Has Cleantalk detailed anti-spam log?</b>
+    <br><br>
+    <div align="center"><a class="qgreen" onclick="show_next(1,1); return false;">Yes</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="qred" onclick="show_next(1,0); return false;">No</a></div>
+  </div>
+  </div>
+  <div class="qwrong" id="wrong1">
+    <div align="center" class="qheader">Oh it was wrong</div>
+    <br>
+    The “Logs” page in your dashboard contains information on every action that was taken on your site, here you can see what was blocked and what was let through and the reasons for it. 
+    <br><br>
+    <div align="center" class="qheader">Go back and try again!!!</div>
+  </div>
+
+  <!-- STEP 2   -->
+
+  <div id="step2" class="qnotshow">
+  <div class="qquestion">
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td><span id="letter21"></span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    2 of 5.
+    <br><br>
+    <b>Can you mark some requests in the log as spam?</b>
+    <br><br>
+    <div align="center"><a class="qgreen" onclick="show_next(2,1); return false;">Yes</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="qred" onclick="show_next(2,0); return false;">No</a></div>
+  </div>
+  <div class="qwrong" id="wrong2">
+    <div align="center" class="qheader">Oh it was wrong</div>
+    <br>
+    If you spot any spam comments that got through, you can mark them as spam. The same, if you see anything that was blocked but shouldn’t have been, you can mark it as “Not Spam”. 
+    <br><br>
+    <div align="center" class="qheader">Go back and try again!!!</div> 
+  </div>
+  </div>
+
+  <!-- STEP 3  -->
+
+  <div id="step3" class="qnotshow">
+  <div class="qquestion">
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td><span id="letter31"></span></td>
+          <td><span id="letter32"></span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    3 of 5.
+    <br><br>
+    <b>Do you know how to check that CleanTalk works?</b>
+    <br><br>
+    <div align="center"><a class="qgreen" onclick="show_next(3,1); return false;">Yes</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="qred" onclick="show_next(3,0); return false;">No</a></div>
+  </div>
+  <div class="qwrong" id="wrong3">
+    Just use test email s@example.com for testing your submit forms.
+    <br><br>
+    <div align="center" class="qheader">Go back and try again!!!</div>
+  </div>
+  </div>
+
+  <!-- STEP 4   -->
+
+  <div id="step4" class="qnotshow">
+  <div class="qquestion">
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td><span id="letter41"></span></td>
+          <td><span id="letter42"></span></td>
+          <td><span id="letter43"></span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    4 of 5.
+    <br><br>
+    <b>What kind of forms does CleanTalk protect?</b> 
+    <br><br>
+    <div align="center">
+      <table>
+        <tr>
+          <td width="50%" align="center">
+            <a class="qblack" onclick="show_next(4,0); return false;">Only registration, comment, contact forms</a>
+          </td>
+          <td align="center">  
+            <a class="qblack" onclick="show_next(4,1); return false;">Registration, comment, contact forms, any WordPress form and external forms</a>
+          </td>
+        </tr>
+      </table>      
+    </div>
+  </div>
+  <div class="qwrong" id="wrong4">
+    CleanTalk protects:<br><br>
+    Comments spam protection<br>
+    Spam bots registrations filter<br>
+    Protection against contact forms spam<br>
+    WooCommerce spam filter<br>
+    Spam filter for themes comments and contact forms<br>
+    WordPress Landing Pages. WP User Frontend.<br>
+    Any WordPress form and external forms<br> 
+    <br><br>
+    <div align="center" class="qheader">Go back and try again!!!</div>
+  </div>
+  </div>
+
+  <!-- STEP 5  --> 
+
+  <div id="step5" class="qnotshow">
+  <div class="qquestion">
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/off.gif" alt="star" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td><span id="letter51"></span></td>
+          <td><span id="letter52"></span></td>
+          <td><span id="letter53"></span></td>
+          <td><span id="letter54"></span></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    5 of 5.
+    <br><br>
+    <b>Does CleanTalk send you weekly spam report?</b>
+    <br><br>
+    <div align="center">
+      <a class="qgreen" onclick="show_next(5,1); return false;">Yes</a>
+      &nbsp;
+      <a class="qred" onclick="show_next(5,0); return false;">No</a>
+    </div>
+  </div>
+  <div class="qwrong" id="wrong5">
+    CleanTalk will send you weekly anti spam report to let you control.
+    There are all allowed and blocked requests. 
+    <br><br>
+    <div align="center" class="qheader">Go back and try again!!!</div>
+  </div>
+  </div>
+
+  <!-- STEP 6   -->
+
+  <div id="step6"{if $quiz_done}{else} class="qnotshow"{/if}>
+  <div class="qquestion">
+    <div align="center">Congratulations!!!</div>
+    <br><br>
+    <div align="center">This is your discount code:</div>
+    <br><br>
+    <div align="center">
+      <table class="qstars">
+        <tr>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+          <td><img src="/images/rating/on.gif" alt="star" width="16" height="16"></td>
+        </tr>
+        <tr>
+          <td colspan="5"><span id="letter61"></span><span id="letter62"></span><span id="letter63"></span><span id="letter64"></span><span id="letter65"></span>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <div align="center">
+      Use this code to get 30% <a href="/my/bill/recharge?promokey=H2MXE">discount</a>   
+    </div>
+  </div>
+  </div>
+</div>  
+  

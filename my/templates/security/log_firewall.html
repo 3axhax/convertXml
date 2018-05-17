@@ -1,0 +1,253 @@
+<div class="page-header">
+    <h2>{$l_log_firewall_title}</h2>
+    <p class="text-muted">{$l_log_subtitle_firewall}</p>
+</div>
+<div class="well">
+    <form method="get" class="form-inline">
+        <input type="hidden" name="date_range" id="date_range" value="{$date_range}">
+        <input type="text" placeholder="Custom dates" class="form-control" id="datepicker" style="width: 230px">
+        <select name="service" class="selectpicker" title="{$l_log_th_website}">
+            <option value=""></option>
+            {foreach from=$services item=service}
+            <option value="{$service.service_id}"{if $service.service_id eq $service_current} selected{/if}>{$service.hostname}</option>
+            {/foreach}
+        </select>
+        <input type="text" placeholder="IP" class="form-control" value="{$ip_current}" name="ip" style="width: 240px">
+        <select name="country" class="selectpicker" data-live-search="true" data-size="10" data-width="280px" title="{$l_log_th_country}">
+            <option value=""></option>
+            {foreach from=$countries item=country key=code}
+            <option value="{$code}"{if $code eq $country_current} selected{/if} class="flag {strtolower($code)}">{$country}</option>
+            {/foreach}
+        </select>
+        <select name="status" class="selectpicker" title="{$l_log_th_result}">
+            <option value=""></option>
+            {foreach from=$statuses item=status}
+            <option value="{$status}"{if $status eq $status_current} selected{/if}>{$status}</option>
+            {/foreach}
+        </select>
+        <button type="submit" class="btn btn-default">{$l_log_show}</button>
+    </form>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-right" style="min-height: 55px;">
+        {$l_page} <span id="current-page">{$current_page}</span> {$l_of} <span id="total-pages">{$total_pages}</span>.
+        {$l_items_per_page}
+        <div class="btn-group">            
+            <select id="items-per-page" class="selectpicker" data-width="auto">
+            {foreach $items_per_page_list as $i}
+                <option value="{$i}"{if $i==$items_per_page} selected{/if}>{$i}</option>
+            {/foreach}
+            </select>
+            
+        </div>
+
+        <div class="btn-group">
+            <nav aria-label="Page navigation">
+                <ul class="pagination" style="margin: 0; display: block;">
+                {if $total_pages>1}
+                    {if $current_page==1}
+                        <li class="disabled"><span aria-hidden="true">«</span></li>
+                    {elseif $current_page==2}
+                        <li><a href="{$url}"><span aria-hidden="true">«</span></a></li>
+                    {else}
+                        <li><a href="{$url}&page={$current_page}"><span aria-hidden="true">«</span></a></li>
+                    {/if}
+                    {foreach $pages as $p}
+                        {if $current_page==$p}
+                            <li class="active"><span>{$p}</span></li>
+                        {else}
+                            {if $p==1}
+                                <li><a href="{$url}">{$p}</a></li>
+                            {else}
+                                <li><a href="{$url}&page={$p}">{$p}</a></li>
+                            {/if}
+                        {/if}                
+                    {/foreach}
+                    {if $current_page==$total_pages}
+                        <li class="disabled"><span aria-hidden="true">»</span></li>
+                    {else}
+                        <li><a href="{$url}&page={$current_page+1}"><span aria-hidden="true">»</span></a></li>
+                    {/if}
+                {/if}
+                </ul>
+            </nav>
+        </div>
+        {if count($logs)}
+        <div class="bulk-row">
+            <input type="checkbox" class="bulk-check">
+            <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-top">
+                <option value="deny">Add to Personal BlackList</option>
+                <option value="allow">Add to Personal WhiteList</option>
+            </select>
+            <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+        </div>
+        {/if}
+    </div>
+    <div class="log-table-responsive">
+    <table class="table table-hover table-security-log" id="log-table">
+        <thead>
+        <tr>
+            <th style="padding-right: 0;">&nbsp;</th>
+            <th data-sort-method="date" class="sort-default" title="{$l_log_th_date_help}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_log_th_date}</th>
+            <th title="{$l_log_th_website_help}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_log_th_website}</th>
+            <th>URL</th>
+            <th data-sort-method="dotstep" title="{$l_log_th_ip_help}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_log_th_ip}</th>
+            <th title="{$l_log_th_country_help}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_log_th_country}</th>
+            <th>{$l_log_th_hits}</th>
+            <th>{$l_log_th_result|default:"Result"}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach from=$logs item=log}
+    	<tr class="{if $log.status eq 'ALLOW'}bg-success{else}bg-danger{/if} log-row">
+            <td><input type="checkbox" value="{$log.visitor_ip}" class="r-check" name="rid[]"></td>
+            <td class="nw" data-sort="{$log.datetime}"><span>{$log.datetime}</span></td>
+            <td class="nw">{$log.service}</td>
+            <td>
+                {if isset($log['url'])}
+                <a href="{$log.url}" target="_blank" data-toggle="tooltip" data-placement="top" title="{$log.url}">{$log.page_url}</a>
+                {/if}
+            </td>
+            <td data-order="{$log.visitor_ip}">
+                {if $log.visitor_ip}
+                    <a href="/my/logs_firewall?ip={$log.visitor_ip}">{$log.visitor_ip}</a>&nbsp;&nbsp;<a href="/blacklists/{$log.visitor_ip}" class="glyphicon glyphicon-eye-open not-hover" target="_blank"></a>
+                    {if isset($log['asn'])}
+                    <br>{$log.asn}
+                    {/if}
+                {else}
+                    &mdash;
+                {/if}
+            </td>
+            <td data-sort="{$log.country}">{if $log.country != '-'}<span class="flag {strtolower($log['visitor_country'])}">{$log.country}</span>{else}&mdash;{/if}</td>
+            <td>{$log.hits}</td>
+            <td>
+    			{$log.status_human|default:$log.status}
+                {if $log.visitor_ip}
+        			<br />
+        			<a href="/my/show_private?service_id={$log.service_id}&add_record={$log.visitor_ip}&service_type=securityfirewall">{$l_personal_blacklists}</a>	
+                {/if}
+    		</td>
+        </tr>
+        {/foreach}
+        {if !count($logs)}
+        <tr><td colspan="6" class="text-center text-danger">
+            <br>
+            {if $service_hostname}
+            <i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;{$l_log_no_data} <a href="http://{$service_hostname}" target="_blank">{$service_hostname}</a>.
+            {else}
+            <i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;{$l_log_no_data_2}
+            {/if}
+            <br><br>
+        </td></tr>
+        {/if}
+        </tbody>
+    </table>
+    </div>
+    <div class="panel-footer text-right">
+        {if count($logs)}
+        <div class="bulk-row">
+            <input type="checkbox" class="bulk-check">
+            <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-bottom">
+                <option value="deny">Add to Personal BlackList</option>
+                <option value="allow">Add to Personal WhiteList</option>
+            </select>
+            <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+        </div>
+        {/if}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+            {if $total_pages>1}
+                {if $current_page==1}
+                    <li class="disabled"><span aria-hidden="true">«</span></li>
+                {elseif $current_page==2}
+                    <li><a href="{$url}"><span aria-hidden="true">«</span></a></li>
+                {else}
+                    <li><a href="{$url}&page={$current_page}"><span aria-hidden="true">«</span></a></li>
+                {/if}
+                {foreach $pages as $p}
+                    {if $current_page==$p}
+                        <li class="active"><span>{$p}</span></li>
+                    {else}
+                        {if $p==1}
+                            <li><a href="{$url}">{$p}</a></li>
+                        {else}
+                            <li><a href="{$url}&page={$p}">{$p}</a></li>
+                        {/if}
+                    {/if}                
+                {/foreach}
+                {if $current_page==$total_pages}
+                    <li class="disabled"><span aria-hidden="true">»</span></li>
+                {else}
+                    <li><a href="{$url}&page={$current_page+1}"><span aria-hidden="true">»</span></a></li>
+                {/if}
+            {/if}
+            </ul>
+        </nav>
+    </div>
+</div>
+<div id="log-bulk-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            
+            <div class="modal-body text-center bg-success" id="log-bulk-modal-result"></div>
+            <div class="modal-body bg-danger text-danger text-center" id="log-bulk-modal-error">Internal Server Error</div>
+            <div class="modal-body text-center" id="log-bulk-modal-loading"><img src="/images/loading.gif"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="log-bulk-modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{if $modal_license}{include file="includes/modal_license.html"}{/if}
+<style type="text/css">
+.bulk-row{ float: left; margin-left: -8px; opacity: 0.5;transition: none;}
+.bulk-row:hover{ opacity: 1; }
+.bulk-row input{ margin-right: 10px;}
+#log-table_wrapper .row{ margin: 0;}
+#log-table_wrapper .col-sm-12{ padding: 0;}
+.panel-footer{ margin-top: -7px;}
+.selected{ background-color: #f5f5f5;}
+</style>
+<script>
+    var service_type = 'securityfirewall';
+    window.addEventListener('load', function () {
+        $('#datepicker').daterangepicker({
+            locale: {
+                format: 'MMM DD, YYYY',
+                monthNames: [{$l_log_months}]
+            },
+            startDate: '{$date_range_begin}',
+            endDate: '{$date_range_end}'
+        }, function (start, end) {
+            $('#date_range').val(start.format('YYYY-MM-DD') + '_' + end.format('YYYY-MM-DD'));
+        });
+
+        {if count($logs)}
+        $('#log-table').DataTable({
+            "responsive": true,
+            "paging":   false,
+            "ordering": true,
+            "info":     false,
+            "searching": false,
+            "columns": [{ orderable: false}, { "type": "date" }, { "type": "html" }, { "type": "html" }, { "type": "ip-address" }, { "type": "html" }, { "type": "num" }, { "type": "html" }],
+            "order": [[ 1, "desc" ]],
+            "stateSave": true,
+            "stateDuration": 60 * 60 * 24 * 365
+        });
+        {/if}
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#items-per-page').change(function(){
+            location.href = '{$url}&items_per_page='+$(this).val();
+        });
+    });
+</script>
+{literal}
+<style type="text/css">
+    th.sort-header:after {position: absolute; margin-left: 3px;}
+</style>
+{/literal}

@@ -1,0 +1,31 @@
+<br><br>
+<div class="row">
+    <div class="col-xs-8">
+        {if $setup_service}
+            {include file="setup_hint.html"}
+        {else}
+            {if $need_review && $revbon}
+                <div class="alert alert-default alert-dismissible center review_banner" role="alert" id="reviewalert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {include file="review_hint.html"}
+                </div>
+            {/if}
+            {if !$hide_package_info}
+        AAAAAAAAAAAAAAAAAAA
+                <div class="left_border">
+                    <h4>{$l_package}</h4>
+                    <span class="gray">{$package_info}{if $user_info.tariff.pmi > 0} {$l_tariff_info_pmi|default:"Ручное продление доступа каждые {$user_info.tariff.pmi} одобренных запросов"}.{/if}</span>
+                    {/if}
+                    {if $user_info.trial == 0}
+                    <br>
+                    <span>{$paid_till_info}</span>
+                    {if $valid_till_info}<br><span>{$valid_till_info}</span>{/if}
+                    {/if}
+                </div>
+            {/if}
+        {/if}
+    </div>
+    <div class="col-xs-4">
+
+    </div>
+</div>

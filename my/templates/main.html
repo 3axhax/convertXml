@@ -1,0 +1,384 @@
+{*
+    Загружаем данные о серверах из PHP в JS
+*}
+<script type="text/javascript">
+    var show_main_hint = {$show_main_hint};
+    var show_review_hint = {$show_review};
+    var show_captcha_off = {$show_captcha_off};
+
+    var hint_off_timeout = {$hint_off_timeout};
+window.addEvent('domready', function() {
+
+        if (show_review_hint)
+            $('review_hint').style.display = 'block';
+
+        if (show_captcha_off)
+            $('captcha_hint').style.display = 'block';
+        else
+            $('captcha_hint').style.display= 'none';
+});
+</script>
+
+<script type="text/javascript" src="/js/get_timezone.js"></script>
+
+{if $trial_notice}
+    {literal}
+    <script type="text/javascript">
+    window.addEvent('domready', function() {
+            var slide = new Fx.Slide('trial_notice_text', {duration: 50});
+            slide.hide();
+    });
+    </script>
+    {/literal}
+{/if}
+<table border="0" height="100%" width="100%">
+	<tr valign="top">
+		<td style="padding-bottom: 2em;">
+            <table width="100%">
+                <tr valign="top">
+                    <td colspan="2" class="services_main">
+                        <table width="100%" class="service_table_main" border="0">
+                            <tr>
+                                <td colspan="8" class="top_toolbar">
+                                <a href="service?action=new" class="giveone" style="background: #38ACEC; padding: 0.3em; padding-left: 0.7em; padding-right: 0.7em; font-weight: normal;">{$l_add_site}</a>
+                                </td>
+                            </tr>
+                            <tr class="st_header">
+                                <th class="website_name">{$l_site_service_name|default:"Сайт/Имя услуги"}</th>
+                                <th>{$l_antispam_status}</th>
+                                <th>{$l_legitimate}</th>
+                                <th>{$l_spam}</th>
+                                <th>{$l_week_stat}</th>
+                                <th>{$l_access_key|default:"Ключ доступа"}</th>
+                                <th class="actions">{$l_actions}</th>
+                            </tr>
+                            {foreach from=$services item=k}
+                            <tr class="category">
+                                <td colspan="8"><img src="{$k.favicon}" width="16" alt="" />&nbsp;{$k.category}</td>
+                            </tr>
+                                {foreach from=$k.services item=s name=services}
+                                    <tr class="item h_left_v_top">
+                                        <td class="item_name">
+                                            {$s.name}
+                                        </td>
+                                        <td class="service_status">
+                                            {if $user_info.moderate}
+                                                {if $s.online}
+                                                    <span title="{$s.status_info}">{$l_active}</span>
+                                                {else}
+                                                    <div>
+                                                    <span class="offline bold_text">{$l_not_connected}</span>
+                                                    <a href="/faq#not_connected" target="_blank"><img src="/images/icons/help.png" alt="" /></a>
+                                                    </div>
+                                                    {if $s.show_status && !$s.online}
+                                                        <div class="service_hint">{$s.check_setup}</div>
+                                                    {/if}
+                                                {/if}
+                                            {else}
+                                                <span class="offline bold_text">{$l_disabled}</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                        {if $s.r.allow}
+                                            <a href="/my/show_requests?service_id={$s.service_id}&amp;int=today&amp;allow=1" style="color: #49C73B;" title="{$l_positive_today}"><span>{$s.r.allow}</span></a>
+                                        {else}
+                                            <span style="color: #49C73B;" title="{$l_positive_today}">{$s.r.allow}</span>
+                                        {/if}
+                                        </td>
+                                        <td>
+                                        {if $s.r.spam}
+                                            <a href="/my/show_requests?service_id={$s.service_id}&amp;int=today&amp;allow=0" style="color: #CC3300;" title="{$l_spam_today}"><span>{$s.r.spam}</span></a>
+                                        {else}
+                                            <span style="color: #CC3300;" title="{$l_spam_today}">{$s.r.spam}</span>
+                                        {/if}
+                                        </td>
+                                        <td>
+                                            {if $s.week_stat_file}
+                                                <img src="{$s.week_stat_file}" usemap="#week_stat_nav_{$s.service_id}" title="{$l_week_stat_desc}" alt="" />
+                                                <map name="week_stat_nav_{$s.service_id}">
+                                                    {foreach from=$s.spam_coords item=c}
+                                                        <area shape="rect" coords="{$c.coords}" title="{$c.title}">
+                                                    {/foreach}
+                                                </map>
+                                            {else}
+                                                -
+                                            {/if}
+
+                                        </td>
+                                        <td>
+                                            <table border="0" align="center">
+                                                <tr>
+                                                    <td width="80">
+                                                        <span id="auth_key_{$s.service_id}">{$s.astersks}</span>
+                                                    </td>
+                                                    <td>
+                                                       <a href="" onclick="switch_key('{$s.service_id}'); return false;" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                                                        <input type="hidden" id="auth_key_h_{$s.service_id}" value="{$s.auth_key}">
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </td>
+                                        <td class="icon_service_list" align="center">
+                                            <table align="center">
+                                            <tr>
+                                                <td>
+                                                {*
+                                                <a href="/my/stat?service_id={$s.service_id}" class="icons"><img src="/images/icons/16x16/bar_chart.png" title="{$l_analytics}" alt="" />{$l_analytics}</a>
+                                                <a href="/my/show_requests?service_id={$s.service_id}&int={$s.details_period}" class="icons"><img src="/images/icons/16x16/Text.png" title="{$l_log}" alt="" />{$l_log}</a>
+                                                    <a href="/my/service?action=edit&amp;service_id={$s.service_id}" title="{$l_change}"><img src="/images/icons/16x16/Wrench.png" alt="Settings" />{$l_edit}</a>
+                                                    *}
+                                                <a href="/my/stat?service_id={$s.service_id}" class="icons"><img src="/images/icons/16x16/bar_chart.png" title="{$l_analytics}" alt="" /></a>
+                                                <a href="/my/show_requests?service_id={$s.service_id}&int={$s.details_period}" class="icons"><img src="/images/icons/16x16/Text.png" title="{$l_log}" alt="" /></a>
+                                                    <a href="/my/service?action=edit&amp;service_id={$s.service_id}" title="{$l_change}"><img src="/images/icons/16x16/Wrench.png" alt="Settings" /></a>
+                                                </td>
+                                            </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                            {/foreach}
+                            {if $show_apps_services || !$services}
+                            <tr class="st_header">
+                                <td colspan="8" align="center" style="padding-top: 1em; padding-bottom: 1em;">
+                                    <table>
+                                        <tr>
+                                        <td>
+                                        <div class="add_new_apps">
+                                        <span>{$l_add_antispam_apps|default:"Антиспам приложения"}:</span>
+                                        {foreach from=$apps item=a}
+                                            <a href="/my/service?action=new&amp;platform={$a.engine}"><img src="/images/{$a.engine}.ico" alt="{$a.info}" />{$a.info}</a>
+                                        {/foreach}
+                                        </div>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            {/if}
+                        </table>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td class="left_brief" width="50%">
+                        {if $need_review}
+                        <div id="review_hint" class="important_hint_bottom" style="display: none;">
+                            <a href="#" onclick="close_hint('review_hint', 0)"><img src="/images/icons/action_delete_grey.png" alt="" class="close_button" /></a>
+                            {include file="review_hint.html"}
+                        </div>
+                        {/if}
+                    <table>
+                        {if !$hide_package_info}
+                        <tr>
+                            <td>
+                            {$l_tariff_plan|default:"Тарифный план"}<br />
+                            <span class="grey_hint">
+                                {$package_info}{if $user_info.tariff.pmi > 0} {$l_tariff_info_pmi|default:"Ручное продление доступа каждые {$user_info.tariff.pmi} одобренных запросов"}.{/if}
+                            </span>
+                            </td>
+                        </tr>
+                        {/if}
+                        {if $paid_till_info}
+                        <tr>
+                            <td class="account_info">
+                             <span class="bold_text">{$paid_till_info}</span>
+                             {if $trial_notice}
+                                <div>{$l_trial_notice}
+                                <span id="trial_notice_text">{$l_trial_notice_text}</span>
+                                <a href="#" {literal}onclick="$('trial_notice_text').style.display = 'block'; var slide = new Fx.Slide('trial_notice_text', {duration: 200}); slide.toggle(); return true;"{/literal}>{$l_more}</a>
+                                </div>
+                             {/if}
+                             <div class="hint">
+                                {if $will_extend}
+                                {$l_will_extend|default:"Будет автоматически продлена {$user_info.paid_till} на {$user_info.tariff.period} день"}
+                                {/if}
+                            </div>
+                            </td>
+                        </tr>
+                        {/if}
+                        {if $show_account_status}
+                        <tr>
+                            <td>
+                                {$l_account_status|default:"Статус акаунта"}
+                                {if $user_info.freeze}
+                                    <span class="label_freeze">{$l_account_stalled|default:"приостановлен"}</span>
+                                        <br /><span class="hint">
+                                        {if $need_recharge_pm}
+                                            {$l_few_minutes|default:"Необходимо ручное продление доступа к сервису!"}<br />
+                                        {/if}
+                                        {if $user_info.freeze_mpd}
+                                            {$l_next_day|default:"Будет восстановлен в начале следующих суток"}
+                                        {/if}
+                                        </span>
+                                {elseif $user_info.moderate}
+                                    <span class="label_green">{$l_account_enabled|default:"включен"}</span>
+                                {elseif !$user_info.moderate && !$user_info.first_pay_id}
+                                    <span class="label_red bold_text">{$l_trial_expired}</span>
+                                {else}
+                                    <span class="label_red">{$l_account_disabled|default:"выключен"}</span>
+                                {/if}
+                            </td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td>
+                            {if $user_info.balance > 0 || $user_info.bonus > 0}
+                                {$l_balance|default:"Текущий счет"}: {$user_info.balance} {if $user_info.bonus > 0}({$l_bonus|default:"бонус"} +{$user_info.bonus}) {/if}{$l_currency}
+                            <br />
+                            {/if}
+                        </td>
+                        </tr>
+                        {if $user_info.tariff.pmi}
+                        <tr>
+                            <td>
+                                {$free_positive_requests}&nbsp;<a href="/faq#manual_extend" class="hint_link" target="_blank">[?]</a>
+                            </td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td style="padding-top: 0em;">
+                                {if $user_info.tariff.pmi}
+                                    <input type="button" value="{$l_extend_connection|default:"Продлить доступ к сервису"}"} {if $user_info.limit_pm <= 0} onclick="window.location.replace('/my/bill/recharge_pm');" style="color: #000000; font-weight: bold;"{else}disabled{/if} />
+                                {else}
+                                    {if $need_recharge}
+                                        <br />
+                                        {include file="charge_form.html"}
+                                    {/if}
+                                {/if}
+                         </td>
+                        </tr>
+                    </table>
+                    {if $show_follow_us}
+                    <br />
+                    <table>
+                        <tr>
+                            <td class="follow_us">
+                                    <ul>
+                                    <li><img src="/images/icons/forum.png" alt="Forum" /><a href="/forum">{$l_forum}</a></li>
+                                    {if $ct_lang == 'ru'}
+                                        <li><img src="/images/icons/blogger.png" alt="Blog" /><a href="/itkitchen">Блог</a></li>
+                                        <li><img src="/images/twitter_icon.png" alt="Twitter" /><a href="/go?url=twitter.com/cleantalk_ru" rel="nofollow">Твиттер</a></li>
+                                    {/if}
+                                    {if $ct_lang == 'en'}
+                                        <li><img src="/images/icons/blogger.png" alt="Blog" /><a href="/blog">Blog</a></li>
+                                        <li><img src="/images/twitter_icon.png" alt="Twitter" /><a href="go?url=twitter.com/cleantalk_en" rel="nofollow">Follow us</a></li>
+                                    {/if}
+                                    </ul>
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <table>
+                        <tr>
+                            <td class="mobile_app">
+                                {$l_use_mobile_app}<br />
+                                <a href="https://itunes.apple.com/us/app/cleantalk/id825479913?mt=8" target="_blank"><img src="/images/ios_app.png" alt="" /></a>
+                                <a href="https://play.google.com/store/apps/details?id=org.cleantalk.app" target="_blank">
+  <img alt="Android app on Google Play"
+       src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
+</a>
+                            </td>
+                        </tr>
+                    </table>
+                    {/if}
+                    </td>
+                    <td class="right_brief">
+                    <table class="my_finance">
+                        <tr>
+                        <td align="center">
+                            <div class="recharge_offer_main" style="margin-bottom: 1em;">
+                                {$l_have_questions}
+                            </div>
+                            {if $apps && $show_more_apps}
+                            <div class="recharge_offer_main">
+                                <div class="cms_apps_new">
+                                <h3>{$l_add_antispam_apps|default:"Дополнительные антиспам приложения"}</h3>
+                                {foreach from=$apps item=a}
+                                    <div class="app_id">
+                                        <a href="/my/service?action=new&amp;platform={$a.engine}"><img src="/images/{$a.engine}.ico" alt="{$a.info}" />{$a.info}</a>
+                                    </div>
+                                {/foreach}
+                                </div>
+                            </div>
+                            {/if}
+                            {if $show_offer && !$smarty.cookies.extended}
+                            <div class="recharge_offer_main">
+                                    <div>
+                                        {include file=$offer_template}
+                                    </div>
+                                    {if !$hide_charge}
+                                    <div>
+                                        {include file="charge_form.html"}
+                                        <br />
+                                        <br />
+                                    </div>
+                                    {/if}
+                                    <div class="offer_links">
+                                        <a href="/my/bill/recharge">{$l_packages_payment_methods}</a>
+                                        {if $offer_more}
+                                        <a href="/my/bill/recharge_pm?offer_more=1{if $offer_tariff.tariff_id}&amp;tariff_id={$offer_tariff.tariff_id}{/if}" >{$l_more|default:"подробнее"}</a>
+                                        {/if}
+                                    </div>
+                            </div>
+                            {/if}
+                            {if $smarty.cookies.extended}
+                            <div class="recharge_offer_main">
+                                <div class="align_center">
+                                    {$l_service_recharged}
+                                    <img src="/images/icons/button_ok.png" valign="middle" alt="" />
+                                    {if $ct_lang == 'en'}
+                                    <div class="payment_error">
+                                        {$l_payment_fail}
+                                    </div>
+                                    {/if}
+                               </div>
+                            </div>
+                            {/if}
+                            {if $auto_bill_date}
+                            <div class="recharge_offer_main">
+                                <div class="align_center">
+                                    {$auto_bill_date}
+                                    <img src="/images/icons/button_ok.png" valign="middle" alt="" />
+                                </div>
+                            </div>
+                            {/if}
+                            <div class="recharge_offer_main" id="captcha_hint" style="display: none;">
+                                <div class="align_left">
+                                        <a href="#" onclick="close_hint('captcha_hint', 0)"><img src="/images/icons/action_delete_grey.png" alt="" class="close_button" /></a>
+                                {$l_captcha_off}
+                                </div>
+                            </div>
+                        </td>
+                        </tr>
+                    </table>
+                </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+	<tr valign="bottom">
+		<td>
+             <table align="center">
+                <tr valign="top">
+                    <td>
+                        <ul class="bottom_menu">
+                            <li><a href="payments">{$l_payments}</a></li>
+                            <li><a href="profile">{$l_profile_link|default:"Профиль"}</a></li>
+                            {if $smarty.cookies.setup_new_password}
+                                <li><a href="new_password" style="color: #CC3300; font-weight: bold;">{$l_new_password|default:"Новый пароль"}</a></li>
+                            {else}
+                                <li><a href="new_password">{$l_new_password|default:"Новый пароль"}</a></li>
+                            {/if}
+                            <li><a href="change-email">{$l_change_email}</a></li>
+                            {if $show_affiliate_program}
+                            <li><a href="partners">{$l_affiliate_program}</a></li>
+                            {/if}
+                            <li><a href="logout">{$l_logout|default:"Завершить работу"}</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+       </td>
+    </tr>
+</table>
+

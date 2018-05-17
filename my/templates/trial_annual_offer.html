@@ -1,0 +1,44 @@
+<table class="trial_offer_table" border="0">
+    <tr class="valign_top">
+        <td>
+<h3>{$offer_title}</h3>
+{$trial_offer_notice}
+<div>
+</div>
+        </td>
+        <td>
+    <br />
+    {include file="charge_form.html"}
+    <br />
+    <br />
+            <table class="offer_details_table">
+                <tr>
+                    <th class="details_title">{$l_order_id}</th>
+                </tr>
+                <tr>
+                    <td class="details_value">{$bill.bill_id}</td>
+                </tr>
+                <tr>
+                    <th class="details_title">{$l_cost}</th>
+                </tr>
+                <tr>
+                    <td class="details_value">{$offer_cost}</td>
+                </tr>
+                {if $user_info.spam_total}
+                <tr>
+                    <th class="details_title">{$l_spam_count}</th>
+                </tr>
+                <tr>
+                    <td class="details_value red_text">{$spam_total}</td>
+                </tr>
+                {/if}
+            </table>
+        </td>
+    </tr>
+</table>
+
+{literal}
+<style type="text/css">
+.recharge_offer_main {background: none;}
+</style>
+{/literal}

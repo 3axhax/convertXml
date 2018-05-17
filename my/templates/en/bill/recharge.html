@@ -1,0 +1,70 @@
+{literal}
+<script type="text/javascript">
+function on_submit() {
+	if ($('promokey').value == Cookie.read('promokey') || $('promokey').value == ''){
+		$('charge').submit();
+		return true;
+	}else{
+		write_promokey();
+	}
+	
+	return true;
+}
+
+function write_promokey() {
+	Cookie.write('promokey', $('promokey').value);
+	window.location.reload();	
+	return true;
+}
+</script>
+{/literal}
+
+<div class="action_message">
+	{if $need_recharge}
+        {if $show_offer_cheap_year}
+		    <p>Subscribe to unlimited antispam service with up to <b>{$tariffs[$tariff_id].mpd} positive requests</b> per day, cost is <b>{$cost_human_full} USD</b> for 1 year.<br>Without manual extends!</p>
+            
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="BGEHPTXNFHSKG">
+			<input type="hidden" name="invoice" value="{$bill.bill_id}"> 
+            <input type="image" src="https://www.paypalobjects.com/en_US/RU/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+            
+        {else}
+		<p>{if $new_tariff}Subscribe up to {else}Extend subscribe{/if} {$tariffs[$tariff_id].mpd} positive requests per day, cost is <b>${$cost_human_full} USD</b> every 3 months</p>
+<br />
+			{if $tariff_id == 4}
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_s-xclick">
+				<input type="hidden" name="hosted_button_id" value="9H64RNYSVVAFL">
+				<input type="hidden" name="invoice" value="{$bill.bill_id}"> 
+				<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+				<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+				</form>
+			{elseif $tariff_id == 5}
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_s-xclick">
+				<input type="hidden" name="hosted_button_id" value="93X42EDVUW86Y">
+				<input type="hidden" name="invoice" value="{$bill.bill_id}"> 
+				<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+				<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+				</form>
+			{elseif $tariff_id == 6}
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_s-xclick">
+				<input type="hidden" name="hosted_button_id" value="MHGQ65BSGWUH4">
+				<input type="hidden" name="invoice" value="{$bill.bill_id}"> 
+				<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+				<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+				</form>
+			{else}
+				Tariff plan not found!
+			{/if}
+        {/if}
+	{else}
+		<p>You don't need to pay!</p>
+	{/if}
+</div>
+

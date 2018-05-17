@@ -1,0 +1,117 @@
+<div {if !$pays}class="container"{/if} style="margin-top: 20px;">
+    <div class="panel panel-default">
+        <table class="table">
+        <tr>
+            <th>{$l_account_creation_date}</th>
+            <th>{$l_payment_date}</th>
+            <th>{$l_license_valid_till}</th>
+            <th>{$l_extra_package}</th>
+            <th>{$l_bonuses_title}</th>
+        </tr>
+        <tr>
+            <td>{$user_info.created|date_format:"%b %d, %Y"}</td>
+            <td>
+                {foreach $pays as $pay}
+                    {if $pay.pay_id==$user_info.license.pay_id}
+                        {$pay.date|date_format:"%b %d, %Y"}
+                    {/if}
+                {/foreach}
+            </td>
+            <td>
+                {$user_info.license.valid_till|date_format:"%b %d, %Y"}
+            </td>
+            <td>
+                {if count($user_info.addons)>0}{$l_yes}{else}{$l_no}{/if}
+            </td>
+            <td>
+                {if $bonuses_activated}
+                {foreach $bonuses_activated as $bonus}
+                    {$bonus.activated|date_format:"%b %d, %Y"} {$bonus.bonus_name_display} +{$bonus.free_months} {if $ct_lang == 'ru'}{$bonus.free_months|plural:'месяц':'месяцев':'месяца'}{else}{$l_months}{/if}<br>
+                    {$total=$total+$bonus.free_months}
+                {/foreach}
+                {if $ct_lang == 'ru'}
+                    Всего: {$total} {$total|plural:'месяц':'месяцев':'месяца'}
+                {else}
+                    {$total|string_format:$l_summary_months}
+                {/if}
+                {else}
+                    &mdash;
+                {/if}
+            </td>
+        </tr>
+        </table>    
+    </div>
+    {if $user_info.free_months_avaible}
+    <p class="text-center"><a href="/my/bonuses">
+        {if $user_info.trial}
+            {$user_info.free_months_avaible|string_format:$l_get_months_trial}
+        {else}
+            {$user_info.free_months_avaible|string_format:$l_get_months_premium}
+        {/if}
+    </a></p>
+    {/if}
+</div>
+{if $pays}
+<div class="page-header">
+    <h2>{$l_payments}</h2>
+</div>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>{$l_date}</th>
+        <th>{$l_service}</th>
+        <th>{$l_cost}</th>
+        <th>{$l_renew}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$pays item=pay}
+    <tr>
+        <td>{$pay.pay_id}</td>
+        <td>{$pay.date}</td>
+        <td>
+            {$pay.comment}
+            <div>
+                {if $ct_lang == 'ru'}
+                <a href="?get_act=1&bill_id={$pay.bill_id}" class="text-muted">Скачать акт</a>
+                (заполните <a href="/my/profile" target="_blank" class="text-muted">реквизиты</a> юрлица).
+                {else}
+                <a href="?get_invoice=1&bill_id={$pay.bill_id}" class="text-muted">Invoice</a>
+                (fill <a href="/my/profile" target="_blank" class="text-muted">billing</a> info).
+                {/if}
+                {if $pays[pay].promocode_info}
+                <div class="alert alert-info">
+                    {$pays[pay].promocode_info}
+                </div>
+                {/if}
+            </div>
+        </td>
+        <td>{$pay.cost_human}</td>
+        <td>
+            {if $pay.renew}
+            <a href="{$pay.renew}" class="btn btn-primary btn-block">{$l_renew}</a>
+            {else}
+            <button class="btn btn-primary btn-block disabled">{$l_renew}</button>
+            {/if}
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+{else}
+<div class="container">
+    <div class="page-header">
+        <h2>{$l_payments}</h2>
+    </div>
+    <div class="alert alert-info text-center">
+        {$l_payments_not_found}
+    </div>
+</div>
+{/if}
+
+<div class="container text-muted">
+    {$l_payments_not_found_hint} {mailto address="welcome@cleantalk.org" encode="javascript"}.
+    <br><br><br>
+    <div class="text-center"><a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a></div>
+</div>

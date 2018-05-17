@@ -1,0 +1,651 @@
+<link href="/my/css/bill/recharge.css?v=15082016" rel="stylesheet">
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+
+		</div>
+		<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+			<table id="recharge-table">
+				{if $extra_package_only}
+				<tr>
+        			<td style="padding-bottom: 0.5em;">
+        				<table border="0" width="100%">
+            				<tr class="h_left_v_top">
+                				<td colspan="2">
+                    				<h2>{$l_extra_package}
+                				</td>
+            				</tr>
+            				<tr valign="bottom">
+                				<td>
+                    				<span>{$l_license_period}:</span><br />
+                    				<span class="s10pt_text">{$license_dates}</span>
+                				</td>
+                				<td class="h_right_v_bottom" align="right">
+                        			{if $currencies && $show_currencies}
+                        				{include file="../templates/currencies_selector.html"}
+                        			{/if}
+                				</td>
+            				</tr>
+        				</table>
+        			</td>
+    			</tr>
+    			<tr>
+        			<td>
+        				<table class="table">
+            				<tr class="active main_page_theader">
+                				<th>
+                    				{$l_service}
+                				</th>
+                				<th width="13%" class="paymobile">
+                    				{$l_billing_period}
+                				</th>
+                				<th width="13%" class="paymobile">
+                    				{$l_cost|default:"Стоимость"}
+                				</th>
+                				<th width="13%" class="paymobile">
+                    				{$l_sum|default:"Всего"}
+                				</th>
+            				</tr>
+            				{if $enable_extra_package && $ep_info}
+            				<tr class="bill_extra_package">
+                				<td>
+                    				<label for="extra_package">{$bill.comment}</label><br />
+                    				<ul class="gray">
+                    					{foreach from=$ep_info.addons item=a}
+                        				<li>{$a}</li>
+                    					{/foreach}
+                    				</ul>
+                				</td>
+                				<td class="paymobile">
+                   					{$upgrade_info.not_used_period} {$billing_period}
+                				</td>
+                 				<td class="paymobile">
+                    				{$ep_info.l_currency}{$ep_info.tariff_cost}
+                				</td>
+                				<td class="td_numbers paymobile">
+                    				{if $extra_package}
+                        				{$ep_info.l_currency}{$upgrade_info.discount}
+                    				{else}
+                        				{$ep_info.l_currency}0
+                    				{/if}
+                				</td>
+            				</tr>
+            				{/if}
+        				</table>
+        			</td>
+    			</tr>
+    			{else}
+    			<tr>
+        			<td>
+        				<table border="0" width="100%">
+            				<tr>
+                				<td colspan="2" class="center">
+                    				<h2>
+                    					{$renew_antispam_for_website}
+                    					{if $user_info.trial == -1}
+                    						&nbsp;<img src="/images/icons/button_ok.png" alt="Complete" class="green_ok" />
+                    			    	{/if}
+                    				</h2>
+                    				{if $user_info.trial == -1}
+                    					<div class="align_center width_80_percent s10pt_text grey_text">
+                        					{$registration_complete_hint}
+                    					</div>
+                    					<br />
+                    				{/if}
+									{if $valid_till_info}
+                    					<div class="align_center width_80_percent s10pt_text grey_text">
+                        					{$valid_till_info}
+                    					</div>
+                    					<br />
+ 									{/if}
+                				</td>
+            				</tr>
+            				<tr valign="bottom">
+                				<td width="20%">
+                    				{*
+                    					<span>{$l_account}:</span><br />
+                    					<span class="s10pt_text">{$user_info.email}</span>
+                    					<br />
+                    					<span>{$l_license_period}:</span><br />
+                    					<span class="s10pt_text">{$license_dates}</span>
+                    				*}
+                    				{if $show_websites}
+                    					<br />
+                    					<span>{$l_websites}:</span><br />
+                    					<span class="s10pt_text">{$websites}</span>
+                    				{/if}
+                				</td>
+                				<td class="right">
+                    				<div>
+										<br />
+										<table class="table_billing_options" align="right">
+												<tr>
+                        							{if $show_period_list}
+													<th>
+                            						{$l_period|default:"Период"}
+													</th>
+													{/if}
+                        							{if !$strict_tariff}
+													<th>
+                        							{$l_package}
+													</th>
+													{/if}
+                        							{if $currencies && $show_currencies}
+													<th>
+														{$l_currency_title}
+													</th>
+													{/if}
+												</tr>
+												<tr>
+                        							{if $show_period_list}
+													<td>
+                            				<select name="renew_options" id="renew_options">
+                            				{foreach from=$renew_options key=k item=v}
+                                				{if $k == $selected_period}
+                                    				<option value="{$k}" selected="1">{$v}</option>
+                                				{else}
+                                    				<option value="{$k}">{$v}</option>
+                                				{/if}
+                            				{/foreach}
+                            				</select>
+													</td>
+													{/if}
+                        							{if !$strict_tariff}
+													<td>
+                        					<select name="tariff_id" id="tariff_id">
+                                                <optgroup label="{$l_anti_spam_packages}">
+                            					{foreach from=$subscribe_tariffs item=tariff}
+                                					<option value="{$tariff.tariff_id}" {if $tariff_id == $tariff.tariff_id}selected{/if}>{$tariff.info_charge}</option>
+                            					{/foreach}
+                                                </optgroup>
+                                                {if $subscribe_tariffs_old}
+                                                    <optgroup label="{$l_anti_spam_packages_non_productive}">
+                                                    {foreach from=$subscribe_tariffs_old item=tariff}
+                                                        <option title="{$l_anti_spam_packages_non_productive_hint}" value="{$tariff.tariff_id}" {if $tariff_id == $tariff.tariff_id}selected{/if}>{$tariff.info_charge}</option>
+                                                    {/foreach}
+                                                    </optgroup>
+                                                {/if}
+                        					</select>
+													</td>
+													{/if}
+                        							{if $currencies && $show_currencies}
+													<td>
+                        					<select name="currency" id="currency">
+                                            {foreach from=$currencies item=currency name=c}
+                                            <option value="{$currency.currency}" {if $currency.selected}selected{/if}>
+                                                &nbsp;{$currency.name}
+                                            </option>
+                                            {/foreach}
+                                            </select>
+                                            {literal}
+                                            <script type="text/javascript" src="/js/currency.js"></script>
+                                            {/literal}
+
+													</td>
+													{/if}
+												</tr>
+										</table>
+										{*
+                        				{if $show_period_list}
+                            				{$l_period|default:"Период"}:
+                            				<select name="renew_options" id="renew_options">
+                            				{foreach from=$renew_options key=k item=v}
+                                				{if $k == $selected_period}
+                                    				<option value="{$k}" selected="1">{$v}</option>
+                                				{else}
+                                    				<option value="{$k}">{$v}</option>
+                                				{/if}
+                            				{/foreach}
+                            				</select>
+                        				{/if}
+                        				{if !$strict_tariff}
+                        					{$l_package}:
+                        					<select name="tariff_id" id="tariff_id">
+                                                <optgroup label="{$l_anti_spam_packages}">
+                            					{foreach from=$subscribe_tariffs item=tariff}
+                                					<option value="{$tariff.tariff_id}" {if $tariff_id == $tariff.tariff_id}selected{/if}>{$tariff.info_charge}</option>
+                            					{/foreach}
+                                                </optgroup>
+                                                {if $subscribe_tariffs_old}
+                                                    <optgroup label="{$l_anti_spam_packages_non_productive}">
+                                                    {foreach from=$subscribe_tariffs_old item=tariff}
+                                                        <option value="{$tariff.tariff_id}" {if $tariff_id == $tariff.tariff_id}selected{/if}>{$tariff.info_charge}</option>
+                                                    {/foreach}
+                                                    </optgroup>
+                                                {/if}
+                        					</select>
+                        				{/if}
+                        				{if $currencies && $show_currencies}
+                        					<select name="currency" id="currency">
+                                            {foreach from=$currencies item=currency name=c}
+                                            <option value="{$currency.currency}" {if $currency.selected}selected{/if}>
+                                                &nbsp;{$currency.name}
+                                            </option>
+                                            {/foreach}
+                                            </select>
+                                            {literal}
+                                            <script type="text/javascript" src="/js/currency.js"></script>
+                                            {/literal}
+                        				{/if}
+										*}
+                    				</div>
+                				</td>
+            				</tr>
+        				</table>
+        			</td>
+    			</tr>
+    			<tr>
+        			<td>
+        				<br>
+        				<table class="table">
+            				<tr class="active main_page_theader">
+                				<th width="60%">
+                    				{$l_service}
+                				</th>
+                				{if $show_recalc || ( $enable_extra_package && $ep_info)}
+                				<th class="paymobile" style="text-align:left">
+                    				{$l_billing_period}
+                				</th>
+                				{/if}
+                				<th class="paymobile" style="text-align:left">
+                    				{$l_sites}
+                				</th>
+                				<th class="paymobile" style="text-align:left">
+                    				{$l_cost_per_site_td|default:"Cost"}
+                				</th>
+                				<th class="paymobile" style="text-align:left">
+                    				{$l_sum|default:"Sum"}
+                				</th>
+            				</tr>
+            				<tr>
+                				<td>
+                    				{$bill.comment}&nbsp;(<a href="#" class="text-muted" onclick="$('#service_info').toggle(); return false;">{$l_details}</a>)
+                                    <div id="service_info">
+                                        <ul>
+                                            <li>{$l_unlim_antisapm_title}</li>
+                                            <li>{$l_unlim_spamfirewall_title}</li>
+                                            <li>{$l_keep_history_7_days_title}</li>
+                                            <li>{$l_service_analytic}</li>
+                                            <li>{$l_private_service_title}</li>
+                                            <li>{$l_tech_support_title}</li>
+                                        </ul>
+										{if $show_security_free_billing_offer}
+											{$l_security_free_billing_offer}
+										{/if}	
+                                    </div>
+                				</td>
+                				{if $show_recalc || ( $enable_extra_package && $ep_info)}
+                				<td class="paymobile">
+                   					{$bill.period}&nbsp;{$billing_period} {$discount_for_years}
+                				</td>
+                				{/if}
+                				<td class="paymobile">
+                    				{if $tariffs[$tariff_id].services}
+                        				{$tariffs[$tariff_id].services}
+                    				{else}
+                        				-
+                    				{/if}
+                				</td>
+                				<td class="paymobile">
+                    				{if $unit_cost}
+                        				{$tariffs[$tariff_id].l_currency}{$unit_cost}
+                    				{else}
+                        				-
+                    				{/if}
+                				</td>
+                				<td class="td_numbers paymobile">
+                    				{$tariffs[$tariff_id].l_currency}{$gross_cost}
+                				</td>
+            				</tr>
+            				{if $show_recalc}
+            				<tr>
+                				<td>
+                    				<div class="align_left">
+                    					{$l_upgrade_discount_title}
+                    					<a href="#" id="show_recalc_hint" class="font_size_10pt">[?]</a>
+                    					<div id="current_tariff_info">
+                        					{$upgrade_info.comment}
+                    					</div>
+                    				</div>
+                				</td>
+                				<td class="paymobile">
+                   					{$upgrade_info.not_used_period} {$upgrade_info.billing_period}
+                				</td>
+                				<td class="paymobile">
+                    				-
+                				</td>
+                 				<td class="paymobile">
+                                    -
+                				</td>
+                				<td class="paymobile">
+                    				{$tariffs[$tariff_id].l_currency}{$upgrade_info.discount}
+                				</td>
+            				</tr>
+            				{/if}
+            				{if $enable_extra_package && $ep_info}
+            				<tr class="bill_extra_package">
+                				<td>
+                    				<div class="align_left">
+                    					<input type="checkbox" name="extra_package" {if $extra_package}checked{/if} onchange="reload_bill(); return false;" id="extra_package" />&nbsp;<label for="extra_package" class="ep_title">{$ep_info.title}</label>&nbsp;<a href="#" class="text-muted" onclick="$('#ep_info').toggle(); return false;">({$l_details})</a>
+                                        <div id="ep_info">
+                    					<ul class="grey_text">
+                    						{foreach from=$ep_info.addons item=a}
+                        						<li>{$a}</li>
+                    						{/foreach}
+                    					</ul>
+                                        </div>
+                    				</div>
+                				</td>
+                				<td class="paymobile">
+                   					{$bill.period}&nbsp;{$billing_period} {$discount_for_years}
+                				</td>
+                				<td class="paymobile">
+                    				-
+                				</td>
+                 				<td class="paymobile">
+                    			    -	
+                				</td>
+                				<td class="paymobile">
+                   	 				{if $extra_package}
+                        				{$ep_info.l_currency}{$ep_info.gross_cost}
+                    				{else}
+                        				{$ep_info.l_currency}0
+                    				{/if}
+                				</td>
+            				</tr>
+            				{/if}
+        				</table>
+        			</td>
+    			</tr>
+    			{/if}
+    			<tr>
+        			<td>
+        				<br />
+        				<table class="w100">
+        					<tr class="h_right_v_top valign_bottom">
+            					{if $show_promo && 0}
+            					<td>
+                					<div id="promocode_layer" class="h_left_v_top promocode_layer">
+                    					{$l_promocode}: <input type="text" name="promokey" id="promokey" value="{$promo.promokey|default:$smarty.cookies.promokey}" />
+                    					<input type="button" value="{$l_use_code}" id="promobutton"/>
+                    					<div style="margin-top: 0.5em; font-size: 10pt;">
+                    						{if $promokey_error}
+                    							<span class="red">
+                    								{$promokey_error}
+                    							</span>
+                    						{/if}
+                    						{if $promo}
+                        						<span class="gray">
+                        							{$promo_conditions}
+                        						</span>
+                    						{/if}
+                    					</div>
+                					</div>
+            					</td>
+            					{/if}
+            					<td>
+                                    {if $subscribe_tariffs_old && (empty($smarty.get.tariff_id) || $tariff['tariff_id']==$smarty.get.tariff_id)}
+                                        <div class="alert alert-warning text-center">{$l_anti_spam_packages_non_productive_hint}</div>
+                                    {/if}
+                					{if $ct_lang == 'ru' && $bill.auto_bill == 0 && 0}
+                					<div style="font-size: 10pt;">
+                    					{if $user_info.balance > 0}
+                    						<input type="checkbox" name="use_balance" id="use_balance" onclick="use_item('use_balance');" {if $use_balance}checked{/if} /> <label for="use_balance">использовать остаток на счете {$user_info.balance} {$l_currency}</label>
+                    						<br />
+                    					{/if}
+                    					{if $user_info.bonus > 0}
+                    						<input type="checkbox" name="use_bonus" id="use_bonus" onclick="use_item('use_bonus');" {if $use_bonus}checked{/if} /> <label for="use_bonus">использовать бонус {$user_info.bonus} {$l_currency}</label>
+                    					{/if}
+                					</div>
+                					<br />
+                					{/if}
+                					{if $bill.cost_discounted_human}
+                					<div class="help_hint">
+                						{$l_discount}: {$tariffs[$tariff_id].l_currency}{$bill.cost_discounted_human} ({$promo.discount}%) <br />
+                						<br />
+                					</div>
+                					{/if}
+                					<div class="w100 right">
+											{$l_total_to_pay|default:"Итого к оплате"}:
+											{if $currency == 'USD' || $ct_lang == 'ru' || !$currency}
+												<b>{$cost_human}</b> {$l_currency_total}
+											{else}
+												<b>{$tariffs[$tariff_id].l_currency}{$cost_local}</b> ({$cost_human} {$l_currency_total})
+											{/if}
+                						<br /><br />
+                					</div>
+            					</td>
+        					</tr>
+        				</table>
+        			</td>
+    			</tr>
+    			{if $show_refund_hint && 0}
+    			<tr>
+        			<td class="align_center upgrade_discount">
+            			<h5>{$l_1year_for_spam_trial_off}</h5>
+        			</td>
+    			</tr>
+    			{/if}
+    			<tr>
+        			<td align="center">
+            			{if $upgrade_discount_notice}
+                		<br />
+                		<div class="alert alert-success">
+                    		{$upgrade_discount_notice}
+                    		<a href="?tariff_id={$offer_tariff_id}&upgrade_months_key={$upgrade_months_key}&promokey={$upgrade_promokey}">
+                    		{$l_upgrade_package}</a>
+                		</div>
+                		<br />
+            			{/if}
+        				<br />
+        				{if $user_info.trial == -1 && 0}
+        				<div class="align_center width_80_percent s10pt_text grey_text">
+            				{$money_back_title}
+        				</div>
+        				{/if}
+        				{if ($bill.cost > 0 && $ct_lang == 'ru') || ($bill.cost_usd > 0 && $ct_lang != 'ru')}
+        				<table class="w80">
+            				<tr>
+                				<td align="center">
+                    				<table class="w100 pay_choices">
+                        				<tr>
+                            				<th>
+                                				<div class="paymobile">{$l_onetime_payment_paypal}</div>
+                                				<img src="/images/paypal_02.png" alt="" class="logos" />
+                                				<br />
+                                				<span class="hint_black paymobile" style="font-weight: normal">{$l_payment_process}</span>
+                            				</th>
+                            				<td class="money_back" style="width: 150px">
+                                				<form method="post" class="charge_form" id="charge">
+                                    			<input type="hidden" name="bill_id" value="{$bill.bill_id}" />
+                                    			<a href="#" id="pp_btn"/>
+                                    			<img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}" /></a>
+                                				</form>
+                                                &nbsp;
+                            				</td>
+                        				</tr>
+                    				</table>
+                					<br />
+                				</td>
+            				</tr>
+            				{if $ct_lang == 'ru'}
+            				<tr>
+                				<td align="center">
+                    					<table class="w100 pay_choices">
+                        					<tr>
+                            					<th class="h_left_v_top">
+                                					<div class="paymobile">Разовый платеж</div>
+                                					<img src="/images/paw_logo.jpg" alt="" class="logos" />
+                                					<br />
+                                					<span class="hint_black pay_mobile" style="font-weight: normal">{$payment_methods.payanyway.info}</span>
+                            					</th>
+                            					<td class="align_center" style="width: 150px">
+                                					<form method="post" action="{$MNT_HOST}" class="charge_form" id="charge_payanyway">
+                                    				<input type="hidden" name="MNT_ID" value="{$MNT_ID}">
+                                    				<input type="hidden" name="MNT_TRANSACTION_ID" value="{$bill.bill_id}">
+                                    				<input type="hidden" name="MNT_CURRENCY_CODE" value="{$MNT_CURRENCY_CODE}">
+                                    				<input type="hidden" name="MNT_AMOUNT" value="{$bill.cost}">
+                                    				<input type="hidden" name="MNT_DESCRIPTION" value="{$bill.comment}">
+                                    				<input type="hidden" name="MNT_TEST_MODE" value="{$MNT_TEST_MODE}">
+                                    				<input type="hidden" name="MNT_SIGNATURE" value="{$MNT_SIGNATURE}">
+                                    				<input type="hidden" name="paymentSystem.unitId" value="{$MNT_paymentSystem_id}">
+                                    				<input type="hidden" name="moneta.locale " value="{$smarty.cookies.ct_lang}">
+                                    				<a href="#" id="paw_btn"/>
+                                    				<img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}" /></a>
+                                					</form>
+                            					</td>
+                        					</tr>
+                    					</table>
+                					<br />
+                					<br />
+                				</td>
+            				</tr>
+                            <tr>
+                                <td align="center">
+                                    <table class="w100 pay_choices">
+                                        <tr>
+                                            <th class="h_left_v_top">
+                                                <p>Оплата по счёту</p>
+                                                <p style="font-weight: normal">Реквизиты вашей организации укажите в <a href="/my/profile">Профиле</a> аккаунта.</p>
+                                                <p style="font-weight: normal">По факту оплаты просьба написать в <a href="/my/support">Техническую поддержку</a> для зачисления платежа на ваш аккаунт.</p>
+                                            </th>
+                                            <td class="align_center" style="width: 150px">
+                                                <a href="/my/bill/recharge?invoice={$bill.bill_id}" class="btn" style="background: linear-gradient(to bottom, rgba(255,239,210,1) 0%,rgba(255,255,255,1) 32%,rgba(255,170,40,1) 100%);;color:#003366;text-decoration:none;border-radius:15px;border:1px solid #FFAA28;font-weight: bold;font-style:italic;font-size:12px">Получить счёт</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+            				{/if}
+            				{if $ct_lang != 'ru' && $stripe_enable}
+            				<tr>
+                				<td align="center">
+                    					<table class="w100 pay_choices">
+                        					<tr>
+                            					<th class="h_left_v_top">
+                                					<div class="paymobile">Make a one time credit/debit card payment</div>
+                                					<img src="/images/icons/payment-stripe.png" alt="" class="logos" />
+                                					<br />
+                                					<span class="hint_black paymobile" style="font-weight: normal">{$l_payment_process}</span>
+                            					</th>
+                            					<td class="money_back">
+                                					<form action="" method="POST">
+                                  					<script
+                                    				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                    				data-key="{$stripe_public_key}"
+                                    				data-amount="{$bill.cost_usd_cents}"
+                                    				data-name="{$smarty.server.SERVER_NAME}"
+                                    				data-description="{$bill.comment_short}"
+                                    				data-image="/images/cleantalk-logo-128.png">
+                                  					</script>
+                                					</form>
+                            					</td>
+                        					</tr>
+                    					</table>
+                    				<br />
+                				</td>
+            				</tr>
+            				{/if}
+            				{if $ct_lang == 'en' && $twoco_enable}
+            				<tr class="h_left_v_top">
+                				<td class="payment_method">
+                    				<div class="payment_method_area">
+                    					<table class="align_center" border="0">
+                        					<tr>
+                            					<th class="h_left_v_top">
+                                					<div>Make a one time credit card payment</div>
+                                					<img src="/images/2co_pay_logos.jpg" alt="" class="logos" />
+                                					<br />
+                                					<span class="hint_black">{$l_payment_process}</span>
+                            					</th>
+                            					<td rowspan="2" class="align_center">
+                                					<form method="post" action="https://www.2checkout.com/checkout/purchase" class="charge_form" id="charge_2co">
+                                    				{include file="2CO_params.html"}
+                                    				<a href="#" onclick="javascript:$('charge_2co').submit(); return false;" />
+                                    				<img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}" /></a>
+                                					</form>
+                            					</td>
+                        					</tr>
+                    					</table>
+                    				</div>
+                				</td>
+            				</tr>
+            				{/if}
+        				</table>
+        				{else}
+            				<form method="post">
+                				<input type="hidden" name="payment_type" value="bonus_payment" />
+                				<input type="submit" value="{$l_renew}" />
+            				</form>
+            				<br />
+        				{/if}
+        			</td>
+    			</tr>
+    			<tr>
+        			<td>
+        				<br />
+        				{if $free_months_hint}
+        				<div class="alert alert-success center">
+            				<h3>{$free_months_hint}</h3>
+        				</div>
+        				<br />
+        				<br />
+        				<br />
+        				{/if}
+        			</td>
+    			</tr>
+    			<tr>
+        			<td align="center">
+        				<table width="80%">
+            				<tr>
+                				<td valign="top" align="right">
+                                    <br>
+                					<img src="/images/icons/lock.png" alt="" />
+                                    <div class="money_back_stamp">
+                                        {include file="money_back_image.html"}
+                                    </div>
+                				</td>
+                    			<td>
+                                	<div>{$l_secure_payment}</div>
+                                	<div class="gray">
+                                		{$l_secure_page}
+                                    	<br /><br />
+                                    	{$money_back_title}
+                                	</div>
+                				</td>
+                				<td class="paymobile">
+                    				&nbsp;
+                				</td>
+                				<td class="paymobile">
+                    				{include file="money_back_image.html"}
+                				</td>
+            				</tr>
+        				</table>
+        			</td>
+    			</tr>
+			</table>
+            {if $ct_lang != 'ru'}
+        				<br />
+                        <div class="alert text-center" id="currency-hint">{$l_currency_hint}</div>
+            {/if}
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+
+		</div>
+	</div>
+</div>
+<script src="/my/js/recharge.js?v=21032018"></script>
+<style type="text/css">
+table.loading:before {
+    content: url(/images/loader.gif);
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    margin-left: -32px;
+    top: 180px;
+}
+table.loading > tbody {
+    opacity: 0.25;
+}
+</style>

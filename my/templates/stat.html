@@ -1,0 +1,368 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	{if $show_top20_message}
+	<div class="row">
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<div class="alertpriv">
+                {$l_top20_message}
+            </div>
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		</div>
+	</div>
+	{/if}
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<h2>{$stat_title}
+			{if $service_id && $is_auth}
+            <span class="stat_tools">
+                <a href="/my/show_requests?service_id={$service_id}&int=week"><img src="/images/icons/16x16/Text.png" title="{$l_detailed_stat}" alt="" /></a>
+                <a href="/my/service?action=edit&service_id={$service_id}"><img src="/images/icons/16x16/Wrench.png" title="{$l_settings}" alt="" /></a>
+            </span>
+            {/if}
+            </h2>
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+			<br>
+			<select id="stat_type" class="form-control stat_select">
+                <optgroup label="{$l_antispam_analytics}">
+                	<option value="1"{if $stat_type eq 1} selected{/if}>{$l_antispam_option}</option>
+                </optgroup>
+                <optgroup label="{$l_top20_option}">
+                	<option value="20ips"{if $stat_type eq 20ips} selected{/if}>{$l_top20_ips}</option>
+                	<option value="20emails"{if $stat_type eq 20emails} selected{/if}>{$l_top20_emails}</option>
+                	<option value="20countries"{if $stat_type eq 20countries} selected{/if}>{$l_top20_countries}</option>
+                </optgroup>
+                <option value="2"{if $stat_type eq 2} selected{/if}>{$l_sfw_analytics}</option>
+            </select>
+            <br>
+            <div class="btn-group{if $top20} displaynone{/if}" role="group">
+                <button type="button" class="btn btn-{if $smarty.get.int eq 7}primary{else}default{/if} btn-sm filter" id="7">7 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $smarty.get.int eq 30}primary{else}default{/if} btn-sm filter" id="30">30 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $smarty.get.int eq 365}primary{else}default{/if} btn-sm filter" id="365">365 {$l_date_days}</button>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            {if !$show_aaid}
+            <select id="service_id" class="form-control stat_select">
+            	<option value="0">{$l_all_websites}</option>
+            	{if $services}
+            	<optgroup label="---">
+                {foreach from=$services item=s key=k}
+                <option value="{$k}" {if $k == $smarty.get.service_id}selected{/if}>{$s.service_name}</option>
+                {/foreach}
+                </optgroup>
+                {/if}
+                {if $granted_services}
+                <optgroup label="{$l_granted_services}">
+                {foreach from=$granted_services item=oneservice}
+                    <option value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{$oneservice.hostname}</option>
+                {/foreach}
+                </optgroup>
+                {/if}
+            </select>
+            <br>
+            {/if}
+            <span{if $top20} class="displaynone"{/if}>
+          	<input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 210px; display: inline;" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$start_from} - {$end_to}">
+			<button class="btn btn-default filter" id="datessearch">Show</button>
+			</span>
+		</div>
+	</div>
+	{if $chart || $top20}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			{if $chart}
+				<canvas id="myChart" width="980" height="250"></canvas>
+			{/if}
+			{if $top20}
+				<canvas id="top20" width="980" height="350"></canvas>
+			{/if}
+		</div>
+	</div>
+	{if $top20}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			<table class="table center">
+				<tr class="active main_page_theader">
+					<th>{$l_top20_record}</th>
+					<th>{$l_top20_hits}</th>
+					<th>{$l_top20_blacklist}</th>
+				</tr>
+				{foreach from=$top20asc item=oneasc}
+				<tr>
+					<td>{$oneasc.20label}
+						{if $stat_type neq 20countries}
+							<a href="/blacklists?record={$oneasc.20label}" target="	_blank">
+								<img src="/images/icons/external_link.gif">
+							</a>
+							{if $stat_type eq 20ips}
+							<img width="16" title="{$oneasc.20country}" alt="{$oneasc.ip_country}" src="/images/flags/{$oneasc.ip_country|lower}.png">
+							{/if}
+						{else}
+							<img width="16" title="{$oneasc.20label}" alt="{$oneasc.ip_country}" src="/images/flags/{$oneasc.ip_country|lower}.png">
+						{/if}
+					</td>
+					<td>{$oneasc.numresult}</td>
+					<td>
+						{if $oneasc.status eq deny}
+							{$l_top20_yes}
+						{else}
+							{$l_top20_no}
+						{/if}
+					</td>
+				</tr>
+				{/foreach}
+			</table>
+			{if $all_sites_top20}
+				<span class="red">{$l_top20_caution}</span><br><br>
+			{/if}
+			<form method="post" action="/my/show_private">
+				<textarea class="form-control" name="add_record">{$ta_content}</textarea>
+				<br>
+				<button type="submit" class="btn btn-primary">{$l_top20_button}</button>
+				<input id="add_status" type="hidden" value="deny" name="add_status">
+				<input type="hidden" value="add_record" name="action">
+				{if $smarty.get.service_id}
+					<input type="hidden" value="{$smarty.get.service_id}" name="service_id">
+				{else}
+					<input type="hidden" name="all_sites" value="on">
+					<input type="hidden" value="{$first_site_id}" name="service_id">
+				{/if}
+				{if $stat_type eq 20countries}
+					{foreach from=$top20asc item=oneasc}
+					<input type="hidden" name="{$oneasc.ip_country}" value="{$oneasc.ip_country}">
+					{/foreach}
+					<input type="hidden" value="1" name="add_countries">
+					<input id="countries_status" type="hidden" value="deny" name="countries_status">
+				{/if}
+			</form>
+		</div>
+	</div>
+	{/if}
+	{/if}
+	{if $points}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		{if $points.spam|@count eq 3}
+		{foreach from=$points.spam item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-heading">{$k}</div>
+  				<div class="panel-body">
+    				{$p}
+    				<br>
+    				<span class="red">{$l_spam_blocked}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		{else}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{foreach from=$points.spam item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-heading">{$k}</div>
+  				<div class="panel-body">
+    				{$p}
+    				<br>
+    				<span class="red">{$l_spam_blocked}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{/if}
+	</div>
+	<div class="row">
+		{if $points.allow|@count eq 3}
+		{foreach from=$points.allow item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-body">
+  					{$p}
+  					<br>
+    				<span class="green">{$l_legitimate_stat}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		{else}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{foreach from=$points.allow item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-body">
+  					{$p}
+  					<br>
+    				<span class="green">{$l_legitimate_stat}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{/if}
+	</div>
+	{/if}
+	{if $share_aa_results && !$top20}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="well stat_height">
+				{$l_share_aa_link}
+				<br>
+				<input type="text" value="https://{$smarty.server.SERVER_NAME}/my/stat?aaid={$aaid}" class="form-control">
+				<br>
+			</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="well stat_height">
+				{$l_share_aa_buttons}
+				<br>
+				<a  href="http://www.facebook.com/share.php?u={$share_url}" target="_blank"><img src="/images/icons/social/facebook.png" alt="" /></a>
+                <a href="http://twitter.com/share?url={$share_url}&text={$share_desc}&related=cleantalk_en" target="_blank"><img src="/images/icons/social/twitter.png" alt="" /></a>
+                <a href="https://plus.google.com/share?url={$share_url}&hl={$ct_lang}" target="_blank"><img src="/images/icons/social/googleplus.png" alt="" /></a>
+                <a href="http://www.linkedin.com/shareArticle?mini=true&url={$share_url}&title={$share_title}" target="_blank"><img src="/images/icons/social/linkedin.png" alt="" /></a>
+			</div>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+	</div>
+	{/if}
+</div>
+{if $top20}
+	<script src="./js/Chart.js"></script>
+	<script>
+      	top20x = [{foreach from=$top20recs item=onerec}
+      							'{$onerec.20label}',
+            	             {/foreach}
+      						];
+      	top20y = [{foreach from=$top20recs item=onerec}
+      							'{$onerec.numresult}',
+            	             {/foreach}
+      						];
+	</script>
+	{literal}
+	<script>
+		var top20data = {
+    		labels: top20x,
+    		datasets: [
+        		{
+            		fillColor: "rgba(255, 0, 0, 0.1)",
+            		strokeColor: "rgba(220,220,220,0.8)",
+            		highlightFill: "rgb(255, 0, 0)",
+            		highlightStroke: "rgba(220,220,220,1)",
+            		borderWidth: 1,
+            		data: top20y,
+        		}
+    		]
+    	};
+
+		var ctx = document.getElementById("top20").getContext("2d");
+		window.t20 = new Chart(ctx).Bar(top20data, {
+			scaleLabel: "<%= '        ' + value %>"
+        });
+
+	</script>
+	{/literal}
+{/if}
+{if $chart}
+<script src="./js/Chart.js"></script>
+<script>
+    var chart_data = {$chart};
+</script>
+{literal}
+<script>
+
+    var chart_month = [];
+    var chart_points_spam = [];
+    var chart_points_allow = [];
+    for (month in chart_data) {
+        var month_data = chart_data[month];
+        for (var point in month_data) {
+            if(month_data.hasOwnProperty(point)){
+                if (point == 'spam') {
+                    chart_points_spam.push(month_data[point]);
+                }
+                if (point == 'allow') {
+                    chart_points_allow.push(month_data[point]);
+                }
+            }
+        }
+        chart_month.push(month);
+    }
+
+	var barChartData = {
+		labels : chart_month,
+		datasets : [
+			{
+                label: "SPAM",
+				strokeColor : "#CC3300",
+				highlightFill: "#eee",
+				highlightStroke: "#fff",
+                pointColor: "#CC3300",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc",
+				data : chart_points_spam
+			},
+			{
+                label: "Legitimate",
+				strokeColor : "#49C73B",
+				highlightFill: "#eee",
+				highlightStroke: "#fff",
+                pointColor: "#49C73B",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc",
+				data : chart_points_allow
+			}
+		]
+
+	}
+	window.onload = function(){
+		var ctx = document.getElementById("myChart").getContext("2d");
+		window.myBar = new Chart(ctx).Line(barChartData, {
+            bezierCurve: true,
+            maintainAspectRatio: false,
+            scaleLabel: "  <%=value%>",
+            datasetFill: false
+		});
+	}
+
+</script>
+{/literal}
+{/if}
+<script src="/my/js/datepicker.js?v=21032016"></script>
+<script src="/my/js/stat.js?v=21032016"></script>
+<link href="/my/css/datepicker.min.css?v=21032016" rel="stylesheet">

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="{$lang}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {if $header.refresh}<meta http-equiv="refresh" content="{$header.refresh}">{/if}
+
+    <title>{$head.title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {if $head.meta_description}<meta name="description" content="{$head.meta_description}">{/if}
+    {if $no_index_page}<meta name="robots" content="noindex">{/if}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        html, body {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        body > div {
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="well text-center">
+    Redirecting to <a href="/my/session">login page</a> within 2 seconds...
+</div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <span style="font-size: 2em;">Antispam log</span>
+            {if $has_sfw}&nbsp;&nbsp;<a href="/my/show_sfw">SpamFireWall</a>{/if}
+            &nbsp;&nbsp;
+            {$records_found}
+            &nbsp;
+            {$l_log_updated}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="well">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-{if $smarty.get.int eq today}primary{else}default{/if} btn-sm filter" id="today">{$ints.today}</button>
+                    <button type="button" class="btn btn-{if $smarty.get.int eq yesterday}primary{else}default{/if} btn-sm filter" id="yesterday">{$ints.yesterday}</button>
+                    <button type="button" class="btn btn-{if $smarty.get.int eq week}primary{else}default{/if} btn-sm filter" id="week">{$ints.week}</button>
+                </div>
+                &nbsp;
+                <input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 210px; display: inline;" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$date_range_begin} - {$date_range_end}">
+                &nbsp;
+                <select id="statuses" class="form-control filter_select">
+                  <option value="">{$l_logs_status}</option>
+                  <option value="deny"{if $smarty.get.allow eq deny} selected{/if}>{$l_denied}</option>
+                  <option value="allow"{if $smarty.get.allow eq allow} selected{/if}>{$l_approved}</option>
+                </select>
+                &nbsp;
+                <select id="services" class="form-control filter_select">
+                  <option value="">{$l_logs_websites}</option>
+                  {foreach from=$services item=oneservice key=k}
+                  <option value="{$k}"{if $k eq $smarty.get.service_id} selected{/if}>{$oneservice.service_name}</option>
+                  {/foreach}
+                </select>
+                &nbsp;
+                <select id="countries" class="form-control filter_select">
+                  <option value="">{$l_logs_countries}</option>
+                  {foreach from=$logs_countries item=onecountry}
+                  <option value="{$onecountry.countrycode}"{if $onecountry.countrycode eq $smarty.get.country} selected{/if}>{$onecountry.langname}</option>
+                  {/foreach}
+                </select>
+                &nbsp;
+                <input type="text" class="form-control" placeholder="{$l_ipemailnick}" style="width: 160px; display: inline;" value="{$ipemailnick}" id="ipemailnick">
+                <button type="submit" class="btn btn-default filter">{$l_show}</button>
+            <div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="requests_table">
+            <table class="table">
+                <tbody id="requests_results">
+                <tr>
+                    <th>{$l_table_date}</th>
+                    <th>{$l_table_status}</th>
+                    <th>{$l_table_author}</th>
+                </tr>
+                {include file="show_requests_ajax.html"}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    {if $approved_requests}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <button class="btn btn-primary" id="delete_bulk">{$l_delete_all_approved}</button>
+            <br><br>
+            <span class="gray">{$l_delete_all_approved_hint}</span>
+        </div>
+    </div>
+    {/if}
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="notice_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{$notice_1}</h4>
+      </div>
+      <div class="modal-body">
+        <textarea class="w100" rows="7" id="notice_text"></textarea>
+        <div class="gray center">{$notice_2}</div>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" class="btn btn-primary" id="save_notice">{$l_save}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="thanks">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        {$thanks_notice}
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<input type="hidden" id="count" value="1">
+<input type="hidden" id="resultsy" value="">
+<input type="hidden" id="requests_limit" value="{$requests_limit}">
+<input type="hidden" id="recs_found" value="{$recs_found}">
+<input type="hidden" id="ajax_url" value="{$ajaxurl}">
+<input type="hidden" id="notice_rq_id" value="">
+<input type="hidden" id="delete_message" value="{$l_confirm_deletion}">
+<input type="hidden" id="delete_bulk_message" value="{$l_confirm_deletion_bulk}">
+<input type="hidden" id="allowhid" value="{$smarty.get.allow}">
+<input type="hidden" id="service_id" value="{$smarty.get.service_id}">
+<input type="hidden" id="country" value="{$smarty.get.country}">
+<script src="/my/js/datepicker.js?v=14032016"></script>
+<script src="/my/js/requests.js?v=14032016"></script>
+<link href="/my/css/datepicker.min.css?v=14032016" rel="stylesheet">

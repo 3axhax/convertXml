@@ -1,0 +1,32 @@
+{literal}
+<script type="text/javascript">
+function write_promokey(promo, href) {
+	Cookie.write('promokey', promo);
+	window.location.href = href;	
+	return true;
+}
+</script>
+{/literal}
+<div style="margin-bottom: 2em;">
+    {if !$smarty.get.offer_more}
+    <p style="text-align: center;">
+    {$positive_requests}
+    <img src="/images/icons/button_ok.png" valign="middle" />
+    </p>
+    {/if}
+    {if $show_offer}
+        <br />
+        <table border="0" align="center">
+            <tr>
+                <td align="center">
+                    <div class="recharge_offer">
+                        {include file="upgrade_offer.html"}
+                        <br />
+                        {include file="switch_diff.html"}
+                    </div>
+                    {include file="pr_hint.html"}
+                </td>
+            </tr>
+        </table>
+    {/if}
+</div>

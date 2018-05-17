@@ -1,0 +1,205 @@
+<h2 id="bill-header">{$l_bill_title}</h2>
+<table id="bill-table" class="loading">
+    <tbody>
+    <tr>
+        <td></td>
+        <td>
+            <table id="bill-filters">
+                <tbody>
+                <tr>
+                    <td class="hidden"><label for="product_field">{$l_bill_package}:</label></td>
+                    <td><label for="period_field">{$l_bill_period_s}:</label></td>
+                    {if $currencies}<td><label for="currency_field">{$l_bill_currency}:</label></td>{/if}
+                </tr>
+                <tr>
+                    <td class="hidden">
+                        <select name="product" id="product_field">
+                            {foreach $products item=p}
+                            <option value="{$p.id}"{if $p.selected} selected{/if}>{$p.title}</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="period" id="period_field">
+                            <option value="1" data-title="1 year"{if $period == 1} selected{/if}>1 SSL certificate $8.50 for 1 year</option>
+                            <option value="2" data-title="2 years"{if $period == 2} selected{/if}>1 SSL certificate $17.00 for 2 years</option>
+                            {*<option value="3" data-title="3 years"{if $period == 3} selected{/if}>1 SSL certificate $25.50 for 3 years</option>*}
+                        </select>
+                    </td>
+                    {if $currencies}
+                    <td>
+                        <select name="currency" id="currency_field">
+                            {foreach $currencies item=c}
+                            <option value="{$c.id}"{if $c.selected} selected{/if}>{$c.title}</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                    {/if}
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table class="table">
+                <thead>
+                <tr class="active">
+                    <th width="60%">
+                        {$l_bill_license_name}
+                    </th>
+                    <th width="13%" class="paymobile nw">
+                        {$l_bill_period}
+                    </th>
+                    <th class="paymobile">
+                        {$l_bill_websites}
+                    </th>
+                    <th class="paymobile">
+                        {$l_bill_cost_per_month}
+                    </th>
+                    <th class="paymobile">
+                        {$l_bill_total}
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="license">
+                    <td id="license_col"></td>
+                    <td id="months_col"></td>
+                    <td id="services_col"></td>
+                    <td id="cost_col"></td>
+                    <td id="total_col"></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-right">
+                        {$l_bill_total_to_pay}: <span id="total_f"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table class="payments">
+                <tbody>
+                <tr>
+                    <td>
+                        <table>
+                            <tbody>
+                            <tr><td colspan="2" class="info">{$l_onetime_payment_paypal}</td></tr>
+                            <tr>
+                                <td>
+                                    <img src="/images/paypal_02.png" class="logo">
+                                </td>
+                                <td>
+                                    <form method="post" class="charge_form" id="charge">
+                                        <input type="hidden" name="pp_tariff_id" id="pp_tariff_id" value="">
+                                        <input type="hidden" name="pp_period" id="pp_period" value="">
+                                        <a href="#" id="pp_btn"><img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}"></a>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" class="info">{$l_payment_process}</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {if $ct_lang != 'ru'}
+                <tr>
+                    <td>
+                        <hr>
+                        <table>
+                            <tbody>
+                            <tr><td colspan="2" class="info">Make a one time credit/debit card payment</td></tr>
+                            <tr>
+                                <td>
+                                    <img src="/images/icons/payment-stripe.png" class="logo">
+                                </td>
+                                <td>
+                                    <form action="/my/bill/security" method="POST" id="stripe-form" name="stripe_form">
+                                        <script
+                                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                            data-key="{$stripe_public_key}"
+                                            data-amount="{$bill.cost_usd_cents}"
+                                            data-name="{$smarty.server.SERVER_NAME}"
+                                            data-description="{$bill.comment_short}"
+                                            data-image="/images/cleantalk-logo-128.png">
+                                        </script>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" class="info">{$l_payment_process}</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {/if}
+                </tbody>
+            </table>
+
+            <table class="money-back">
+                <tbody>
+                <tr>
+                    <td><img src="/images/icons/lock.png"></td>
+                    <td>
+                        <strong>{$l_secure_payment}</strong>
+                        <p>{$l_secure_page}</p>
+                        <p>{$money_back_title}</p>
+                    </td>
+                    <td><img src="/images/trial_money_back.png" alt="{$money_back_title}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="currency-hint hidden" id="currency_hint">
+                <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{if $modal_license}{include file="ssl/bill/modal.html"}{/if}
+<script>
+    window.addEventListener('load', function () {
+        new Bill({
+            products: {$products_json},
+            paid_till: {$paid_till_ts},
+            bonus_months: {$bonus_months},
+            bonus_period: 12,
+
+            period_months: 12,
+            period_unit: 'year',
+            period_title: '{$l_bill_period_12}',
+            period_value: {$period},
+
+            currency_sign: '{$currency.sign}',
+            currency_id: '{$currency.id}',
+            currency_default: '{$currency_default}',
+        {if $currencies}
+        currencies: {$currencies_json},
+        {/if}
+
+        stripe_key: '{$stripe_public_key}',
+            stripe_name: '{$smarty.server.SERVER_NAME}',
+            stripe_action: '/my/bill/ssl?product=:PRODUCT:&period=:PERIOD:',
+
+            l_num: {$l_num},
+        l_bill_date: '{$l_bill_date}',
+            l_bill_months: [{$l_bill_months}],
+            l_bill_text: '{$l_bill_text}',
+            l_bill_comment: '{$l_bill_comment}',
+            l_bill_cost_format: '{$l_bill_cost_format}',
+            l_bill_cost_format_full: '{$l_bill_cost_format_full}',
+            l_bill_bonus: '{$bonus_months_title}',
+            l_currency_hint: '{$l_currency_hint}'
+    });
+    document.getElementById('pp_btn').addEventListener('click', function (e) {
+        $('#bill-table').addClass('loading');
+    });
+    });
+</script>

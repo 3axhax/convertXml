@@ -1,0 +1,209 @@
+<table border="0" align="center" class="upgrade">
+    {foreach item=o from=$to}
+        <tr{$o.tr_tags}>
+            <td class="upgrade_title"{$o.title_tags}>
+                {$o.name}
+                <br /><span class="hint1">{$o.hint}</span> 
+            </td>
+            {section name=v loop=$o.values}
+                <td>
+                    {$o.values[v]}
+                </td>
+            {/section}
+        </tr>
+    {/foreach}
+    <tr>
+        <td class="upgrade_title">
+            &nbsp; 
+        </td>
+        <td>
+            &nbsp; 
+        </td>
+        <td>
+            &nbsp; 
+        </td>
+        <td>
+            &nbsp; 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            &nbsp; 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+    </tr>
+</table>
+{*
+<br />
+<br />
+
+<table border="0" align="center" class="upgrade">
+    <tr style="background: #FFFFCC; font-size: 12pt; height: 50px;" valign="middle">
+        <td class="upgrade_title" width="40%">
+            Стоимость подключения в месяц
+        </td>
+        <td class="selected_data_plan" style="border-top: 2px dashed #49C73B;">
+            Бесплатно 
+        </td>
+        <td>
+            99 рублей 
+        </td>
+        <td>
+            249 рублей
+        </td>
+        <td>
+            499 рублей
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td class="selected_data_plan">
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            Одобренных запросов в сутки<br /> 
+            <span class="hint1">Одобренные запросы - это регистрации живых людей на сайте и релевантные сайту комментарии посетителей</span> 
+        </td>
+        <td class="selected_data_plan">
+            5 
+        </td>
+        <td>
+            30 
+        </td>
+        <td>
+            100 
+        </td>
+        <td>
+            300 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            Неограниченная защита от спама<br />
+            <span class="hint1">Неограниченная, бесплатная фильтрация спам-ботов в форме регистрации на сайте и спама в комментариях сайта</span> 
+        </td>
+        <td class="selected_data_plan">
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            SMS верификация новых регистраций на форуме 
+            <br /><span class="hint1">Только телефонных номеров Российской Федерации (код страны +7)</span> 
+        </td>
+        <td class="selected_data_plan">
+            - 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            Ручное редактирование словаря ключевых сайта 
+            <br /><span class="hint1">Словарь является вспомогательным механизмом определения релевантности комментариев поступающих от посетителей сайта, заполняется сервисом автоматически, либо редактируется пользователем</span> 
+        </td>
+        <td class="selected_data_plan">
+            - 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            Персональный список стоп-слов сайта 
+            <br /><span class="hint1">Опция позволяет фильтровать сообщения содержащие запрещенные к публикации на сайте слова, к примеру - оскорбления, мат, упоминания конкурентов и т.д.</span> 
+        </td>
+        <td class="selected_data_plan">
+            - 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+        <td>
+            + 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            Ручное продление доступа 
+            <br /><span class="hint1">ОЗ - одобренные запросы к сервису</span> 
+        </td>
+        <td class="selected_data_plan">
+            5 / ОЗ
+        </td>
+        <td>
+            - 
+        </td>
+        <td>
+            - 
+        </td>
+        <td>
+            - 
+        </td>
+    </tr>
+    <tr>
+        <td class="upgrade_title">
+            &nbsp; 
+        </td>
+        <td class="selected_data_plan" style="border-bottom: 2px dashed #49C73B; color: #49C73B;">
+            Подключен! 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+        <td>
+            <a href="" class="giveone">Подключить</a> 
+        </td>
+    </tr>
+</table>
+*}

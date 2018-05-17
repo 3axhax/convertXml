@@ -1,0 +1,187 @@
+<div class="back-link back-link-md-hide">
+    <a href="/my">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+        {$l_cp}
+    </a>
+</div>
+
+{if $info}<div class="alert alert-success text-center">{$info}</div>{/if}
+{if $already_exists}<div class="alert alert-danger text-center">{$already_exists}</div>{/if}
+<div class="alert alert-danger text-center hidden" id="error-box"></div>
+<div class="hidden" id="success-box">
+<div class="alert alert-success text-center" id="success-message">{$info}</div>
+</div>
+
+{if !$hide_form}
+<div class="panel panel-default" id="add-box" style="position: relative;">
+    <div class="text-center hidden" id="preloader-api"><div class="preloader"></div></div>
+    <div class="panel-heading">{$panel_title}{if !$allow_update} <span class="text-danger">{$l_read_only}</span>{/if}</div>
+    {if $offer}
+    <div class="panel-body alert alert-danger">
+        <h4>{$offer.title}</h4>
+        <p>{$offer.text}</p>
+    </div>
+    {if $offer.new}
+    <div class="alert alert-warning text-center">
+        <h3>{$offer.new.title}</h3>
+        <br><br>
+        <div class="row">
+            <div class="col-xs-6">
+                <h4>{$l_your_package}</h4>
+                <hr>
+                <ul class="text-left">
+                    <li>
+                        {$l_websites}: <strong>{count($offer.services)}</strong>
+                        {foreach from=$offer['services'] item=s}
+                        <div>&nbsp;&nbsp;&nbsp;&nbsp;{$s.hostname}</div>
+                        {/foreach}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <h4>{$l_new_package}</h4>
+                <hr>
+                <ul class="text-left">
+                    <li>{$l_websites}: <strong>{$offer.new.services}</strong></li>
+                </ul>
+                <br><br>
+                <a href="{$offer.new.link}" class="btn btn-primary btn-block">{$l_upgrade_license}</a>
+            </div>
+        </div>
+    </div>
+    {/if}
+    {else}
+    <div class="panel-body">
+        <form method="post" data-toggle="validator" role="form" {if !$service}class="sform"{/if}>
+            <div class="form-group {if $error_field && $error_field=='service_url'}has-error{/if}">
+                {if !$service}
+                <a href="/my/service?action=multiple" style="color: #777;" class="pull-right">{$l_multiple_sites}</a>
+                {/if}
+                <label for="service_url">{$l_service_url}</label>
+                <input type="text" id="hostname" class="form-control" name="service_url" value="{$service.url}" id="service_url" placeholder="example.com" pattern="{literal}^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)${/literal}" {if !$allow_update}disabled{else}required{/if}  autocomplete="off">
+            </div>
+            {if $service}
+            <div class="form-group">
+                <label for="service_name">{$l_service_name}</label>
+                <input type="text" class="form-control" name="service_name" value="{$service.name}" id="service_name"{if !$allow_update} disabled{/if}>
+            </div>
+            {*<div class="form-group">
+                <label for="service_engine">{$l_service_engine}</label>
+                <select class="selectpicker form-control" name="service_engine" data-live-search="true" data-size="10" id="service_engine"{if !$allow_update} disabled{/if}>
+                    {foreach from=$platforms item=p}
+                    <option value="{$p.engine}" class="platform {$p.engine}" {if $p.selected}selected{/if}>{$p.info}</option>
+                    {/foreach}
+                </select>
+            </div>*}
+            <div class="checkbox" style="margin-top:25px">
+                <label>
+                    <input type="checkbox" name="notify_admin_login"{if $service.notify_admin_login} checked{/if}> {$l_service_receive_notifications}
+                </label>
+                <p class="help-block">{$l_service_receive_notifications_hint}</p>
+            </div>
+            <div class="checkbox" style="margin-top:25px">
+                <label>
+                    <input type="checkbox" name="ct_in_list_db"{if $service.ct_in_list_db} checked{/if}> {$l_service_ct_in_list_db}
+                </label>
+                <p class="help-block">{$service_ct_in_list_db_hint}</p>
+            </div>
+            <div class="checkbox" style="margin-top:25px">
+                <label>
+                    <input type="checkbox" name="auto_whitelist_owner_ip"{if $service.auto_whitelist_owner_ip} checked{/if}> {$l_service_admin_whitelist}
+                </label>
+            </div>
+            <div class="checkbox property-all" style="margin-top:25px" data-id="auto_update_app">
+                <label>
+                    <input type="checkbox" name="auto_update_app" id="auto_update_app_enable"{if $service.auto_update_app eq 1} checked{/if}>
+                    {$l_auto_update_title}
+                </label>
+                <p class="help-block">{$l_auto_update_description}</p>
+                <div style="margin-left: 2em;" class="alert alert-danger hidden" id="auto_update_app_notice" role="alert"></div>
+                <div class="text-right" style="margin-top: -10px;">
+                    <label for="auto_update_app_enable_all" style="padding-right: 25px;padding-bottom: 10px;">{$l_apply_for_all}</label>
+                    <input type="checkbox" name="auto_update_app_all" id="auto_update_app_enable_all">
+                </div>
+            </div>
+            {/if}
+            <br>
+            {if $service}
+            <button type="submit" class="btn btn-block btn-primary"{if !$allow_update} disabled{/if}>{$button_title}</button>
+            {else}
+            <button type="submit" class="btn btn-primary btn-block disabled" id="add_new">{$button_title}</button>
+            {/if}
+        </form>
+    </div>
+    {/if}
+</div>
+{/if}
+
+<div class="back-link">
+    <a href="/my">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+        {$l_cp}
+    </a>
+</div>
+
+<script>
+var l_service_created_title = '{$l_service_created_title}';
+var l_service_created_js = '{$l_service_created_js}';
+var l_already_exists = '{$l_already_exists}';
+var email = '{$user_info.email}';
+var user_token = '{$user_info.user_token}';
+var lang = '{$ct_lang}';
+var product_name = 'security';
+window.addEventListener('load', function () {
+{if $other_services}
+    $('#hostname').typeahead({
+        source: {$other_services},
+        afterSelect: function(item) {
+            var parts = item.split('#');
+            $('#hostname').val(parts[0]);
+        },
+        updater: function(item) {
+            var parts = item.split('#');
+            return parts[0];
+        },
+        highlighter: function(item) {
+            var parts = item.split('#');
+                html = '<img src="'+parts[2]+'" class="favdd" />'+parts[0]+' <span class="text-muted">('+parts[1]+')</span>';
+                return html;
+        },
+        autoSelect: false,
+        items: '10',
+        showHintOnFocus: 'all',
+        minLength: 0,
+        fitToElement: true,
+    });
+{/if}
+    function property_block(block) {
+        var id = block.data('id');
+        var checkbox = $('#' + id + '_enable');
+        var checkbox_all = $('#' + id + '_enable_all');
+        var checked = checkbox.prop('checked');
+
+        checkbox.change(function () {
+            if ($(this).prop('checked') != checked) {
+                block.addClass('changed');
+            } else {
+                block.removeClass('changed');
+                checkbox_all.prop('checked', false);
+            }
+        });
+    }
+    $('.property-all').each(function () {
+        property_block($(this));
+    });
+});
+</script>   
+<style type="text/css">
+.favdd{ margin-bottom: 2px;margin-right: 5px;min-width: 16px;width: 16px;}
+.dropdown-menu>.active>a .text-muted{ color:#f2dede;}
+.panel-body .changed{ background-color: #efe;}
+.panel-body .checkbox .text-right{ display: none;}
+.panel-body .checkbox.changed .text-right{ display: block;}
+#preloader-api{ position: absolute; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.5); z-index: 1;}
+.preloader { border: 5px solid #f3f3f3; -webkit-animation: spin 1s linear infinite; animation: spin 1s linear infinite; border-top: 5px solid #3090c7; border-radius: 50%; width: 50px; height: 50px; margin: 75px 0 0 0; display: inline-block; background: white; z-index: 2;}
+@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); }  100% { -webkit-transform: rotate(360deg); }}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+</style>

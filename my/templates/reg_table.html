@@ -1,0 +1,76 @@
+            <form method="post" id="login_form" action="/my/session{if $smarty.server.QUERY_STRING}?{$smarty.server.QUERY_STRING|replace:'q=my/session&':''}{/if}">
+			<div class="panel panel-default">
+                <div class="panel-heading center">
+					{$l_dashboard_login}
+				</div>
+				<div class="panel-body">
+                    <div class="form-group">
+					    <span class="gray">{$l_email_hint}</span><br />
+                        <input type="text" name="login" id="login" value="{$info.login|default:$smarty.cookies.ct_email}" tabindex="1" placeholder="{$l_email_or_website}" class="form-control center fs13em" {if $show_onetime_code}disabled{/if} />
+					   <span {if $login_failed}class="red"{/if}>{$login_failed}</span>
+                    </div>
+                    {if $show_onetime_code}
+                        <input type="hidden" name="login" value="{$info.login}" />
+                    {/if}
+                    <input type="hidden" name="onetime_pass_code_switch" id="onetime_pass_code_switch" value="0" />
+                    {if $show_onetime_code}
+                        <div class="form-group">
+                            {$l_enter_onetime_code}:
+                            <br />
+                            <input type="text" name="onetime_code" id="onetime_code" value="{$info.onetime_code}" tabindex="2" class="form-control center fs13em" placeholder="{$l_onetime_code}" maxlength="{$onetime_code_length}" />
+					        <span{if $onetime_code_fail_notice} class="red"{else} class="gray"{/if}>{$onetime_code_fail_notice|default:$l_onetime_code_example}</span>
+                        </div>
+                        {if $show_onetime_code}
+                            <input type="hidden" name="password" value="{$info.password}" />
+                        {/if}
+                    {else}
+                        <div class="form-group">
+				            <input type="password" name="password" id="password" value="{$info.password}" tabindex="2" class="form-control center fs13em" placeholder="{$l_password}" />
+					        <span class="gray">{$password_notice}</span>
+                        </div>
+                    {/if}
+                    <div class="center">
+                        <button type="submit" class="btn btn-primary">{$l_login|default:"Войти"}</button>
+                        <br /><br />
+                        {if $show_onetime_code}
+                            <a href="#/" class="s10pt_text" id="auth_by_login">{$l_auth_by_login_password}</a>
+                        {else}
+                            <a href="#/" id="switch_tot">{$l_get_onetime_code}</a>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+            <input id="month" class="reset" type="hidden" name="month" value="">
+            <input id="year" class="reset" type="hidden" name="year" value="">
+			</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    var a;
+    a=document.getElementById("year");
+    a.value=(new Date).getFullYear();
+
+    a=document.getElementById("month");
+    a.value=(new Date).getMonth();
+
+    $(document).on('click', "#auth_by_login", function() {
+        $('#onetime_pass_code_switch').val(-1);
+        $('#login_form').submit();
+    });
+
+    $(document).on('click', "#switch_tot", function() {
+        $('#onetime_pass_code_switch').val(1);
+        $('#login_form').submit();
+    });
+    if($('#login').val()){
+        $('#password').focus();
+    }
+/*
+    {if $show_onetime_code}
+    setTimeout(function () {
+        window.location = '/my/session';
+    }, 300000);
+    {/if}
+*/
+});
+</script>

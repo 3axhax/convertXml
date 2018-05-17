@@ -1,0 +1,66 @@
+{if $show_message}<div class="alert alert-success">{$show_message}</div>{/if}
+
+<h1>{$ticket.subject}</h1>
+<div class="text-muted">
+#{$ticket.ticket_id} {$l_opened} {$ticket.created}{if $ticket.updated ne NULL}, {$l_updated} {$ticket.updated}{/if}{if $ticket.hostname}, {$ticket.hostname}{/if}.
+</div>
+<p class="ticket bg-info">{$ticket.message}</p>
+{if $ticket.file_block}
+<div class="ticket-files">
+    {$ticket.file_block}
+</div>
+{/if}
+
+<ul class="ticket-replies">
+{foreach from=$replies item=reply}
+    <li>
+        <a id="{$reply.reply_id}"></a>
+        <div class="ticket-reply-link"><a href="/my/support?action=view_ticket&ticket_id={$ticket.ticket_id}#{$reply.reply_id}">Re: {$ticket.subject}</a> {$reply.user}, {$reply.datetime}</div>
+        <div class="ticket-reply-message">
+            <div class="ticket-avatar">
+                <img src="{$user_info.avatar_big}" />
+            </div>
+            {$reply.message}
+        </div>
+        {if $reply.file_block}
+        <div class="ticket-files ticket-reply-files">{$reply.file_block}</div>
+        {/if}
+    </li>
+{/foreach}
+</ul>
+
+<div id="support-comment-form">
+    <h4>{$l_comment}</h4>
+    <form action="/my/support?action=view_ticket" method="post">
+        <input type="hidden" name="ticket_id" value="{$ticket.ticket_id}">
+        <input type="hidden" name="reply_code" value="{$reply_code}">
+        <div class="form-group">
+            <textarea name="replymessage" rows="8" class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">{$l_save}</button>
+    </form>
+    <form action="/my/support?action=upload" method="post" class="dz-form" enctype="multipart/form-data" id="ticket-dropzone">
+        <input type="hidden" name="reply_code" value="{$reply_code}">
+        <input type="hidden" name="ticket_id" value="{$ticket.ticket_id}">
+        <div class="dz-message" data-dz-message>
+            <span>Drop files here or click to upload</span>
+            <p>Please, attach screenshots and files which can help in solving this problem. Thank you in advance.</p>
+        </div>
+    </form>
+</div>
+{literal}
+<style type="text/css">
+.ticket-avatar {
+    float: right;
+}
+.ticket-reply-message::after {
+    content: ' ';
+    display: block;
+    clear: both;
+}
+.ticket-avatar img{
+    border-radius: 50%;
+    max-width: 100px;
+}
+</style>
+{/literal}

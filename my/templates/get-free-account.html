@@ -1,0 +1,20 @@
+    <center>
+    {if $smarty.get.switched}
+    <div class="free_account_offer">
+        <p>{$switched_to_free} <img src="/images/icons/button_ok.png" valign="middle" /></p>
+    </div>
+    {else}
+    <div class="free_account_offer">
+        <p>{$switch_to_free}</p>
+        <div class="hint_black align_center">{$tariff_offer.info}</div>
+        <div style="margin-top: 2em; margin-bottom: 1em;" class="align_center">
+        <a href="?switch=1" class="giveone_small align_center">{$l_yes_switch}</a>
+        </div>
+    </div>
+    {/if}
+    </center>
+
+    <div class="action_message">
+    <a href="/my">{$l_go_panel|default:"Перейти в панель управления"} >>></a>
+    </div>
+

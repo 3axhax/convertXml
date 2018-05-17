@@ -1,0 +1,142 @@
+{if $error}
+<div class="alert alert-danger">{$error}</div>
+{else}
+<table id="bill-table">
+    <tbody>
+    <tr>
+        <td><h2>{$l_bill_title}</h2></td>
+        <td>
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table class="table">
+                <thead>
+                <tr class="active">
+                    <th width="60%">
+                        {$l_bill_name}
+                    </th>
+                    <th class="paymobile">
+                        {$l_bill_cost_per_month}
+                    </th>
+                    <th class="paymobile">
+                        {$l_bill_total}
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="license">
+                    <td id="license_col">{$bill_info.title}</td>
+                    <td id="cost_col">${$bill_info.cost}</td>
+                    <td id="total_col">${round($bill_info.cost)}</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-right">
+                        {$l_bill_total_to_pay}: <span id="total_f"><strong>${$bill_info.cost}</strong> ({$bill_info.cost} USD)</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table class="payments">
+                <tbody>
+                <tr>
+                    <td>
+                        <table>
+                            <tbody>
+                            <tr><td colspan="2" class="info">{$l_onetime_payment_paypal}</td></tr>
+                            <tr>
+                                <td>
+                                    <img src="/images/paypal_02.png" class="logo">
+                                </td>
+                                <td>
+                                    <form method="post" class="charge_form" id="charge">
+                                        <input type="hidden" name="pp_tariff_id" id="pp_tariff_id" value="{$tariff_id}">
+                                        <input type="hidden" name="pp_period" id="pp_period" value="0">
+                                        <a href="#" id="pp_btn"><img src="/images/icons/btn_paynow_LG.gif" alt="{$pay_button}"></a>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" class="info">{$l_payment_process}</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {if $ct_lang != 'ru'}
+                <tr>
+                    <td>
+                        <hr>
+                        <table>
+                            <tbody>
+                            <tr><td colspan="2" class="info">Make a one time credit/debit card payment</td></tr>
+                            <tr>
+                                <td>
+                                    <img src="/images/icons/payment-stripe.png" class="logo">
+                                </td>
+                                <td>
+                                    <form action="/my/bill/custom?id={$bill_info.id}" method="POST" id="stripe-form" name="stripe_form">
+                                        <script
+                                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                            data-key="{$stripe_public_key}"
+                                            data-amount="{round($bill_info.cost * 100)}"
+                                            data-name="{$smarty.server.SERVER_NAME}"
+                                            data-description="{$bill_info.comment_short}"
+                                            data-image="/images/cleantalk-logo-128.png">
+                                        </script>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" class="info">{$l_payment_process}</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {/if}
+                </tbody>
+            </table>
+
+            <table class="money-back">
+                <tbody>
+                <tr>
+                    <td><img src="/images/icons/lock.png"></td>
+                    <td>
+                        <strong>{$l_secure_payment}</strong>
+                        <p>{$l_secure_page}</p>
+                        <p>{$money_back_title}</p>
+                    </td>
+                    <td><img src="/images/trial_money_back.png" alt="{$money_back_title}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    document.getElementById("pp_btn").addEventListener("click", function(e) {
+        if (!e.target.style.opacity) {
+            e.target.style.opacity = 0.5;
+            $('#bill-table').addClass('loading');
+            document.getElementById('charge').submit();
+        }
+        e.preventDefault();
+    });
+</script>
+<style>
+    table.loading > tbody {
+        opacity: 0.25;
+    }
+    table.loading:before {
+        content: url(/images/loader.gif);
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        margin-left: -32px;
+        top: 180px;
+    }
+</style>
+{/if}

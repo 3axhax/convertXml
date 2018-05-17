@@ -1,0 +1,200 @@
+<link href="/my/css/cleantalk.min.css?v831072017" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2>{$l_trends_title}</h2>
+        </div>  
+    </div>
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            <select id="events" class="form-control selectpicker" >
+                <option value="all">Security Events and FireWall hits</option>
+                <optgroup label="Security Events">
+                    <option value="se"{if $smarty.get.event == 'se'} selected{/if}>All</option>
+                    <option value="auth_failed"{if $smarty.get.event == 'auth_failed'} selected{/if}>Auth failed</option>
+                    <option value="invalid_email"{if $smarty.get.event == 'invalid_email'} selected{/if}>Invalid email</option>
+                    <option value="invalid_username"{if $smarty.get.event == 'invalid_username'} selected{/if}>Invalid username</option>
+                    <option value="login"{if $smarty.get.event == 'login'} selected{/if}>Login</option>
+                    <option value="logout"{if $smarty.get.event == 'logout'} selected{/if}>Logout</option>
+                    <option value="view"{if $smarty.get.event == 'view'} selected{/if}>View</option>
+                </optgroup>
+                <optgroup label="FireWall hits">
+                    <option value="fw"{if $smarty.get.event == 'fw'} selected{/if}>All</option>
+                    <option value="ALLOW"{if $smarty.get.event == 'ALLOW'} selected{/if}>Allow</option>
+                    <option value="DENY"{if $smarty.get.event == 'DENY'} selected{/if}>Deny</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            <select id="services" class="form-control selectpicker" multiple data-actions-box="true" title="{$l_all_services}" data-selected-text-format="count">
+                {foreach $services as $service}
+                <option value="{$service.service_id}"{if in_array($service.service_id,$smarty.get.services)} selected{/if}>#{$service.service_id} {$service.hostname}</option>
+                {/foreach}
+            </select>
+        </div>
+
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"> 
+            <br>           
+            <input type="text" placeholder="Custom dates" class="form-control datepicker-here form-control" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$period.start_t} - {$period.end_t}">
+            <br>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-{if $period.interval eq 7}primary{else}default{/if} btn-sm filter" id="7">7 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $period.interval eq 30}primary{else}default{/if} btn-sm filter" id="30">30 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $period.interval eq 365}primary{else}default{/if} btn-sm filter" id="365">365 {$l_date_days}</button>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            <button class="btn btn-primary form-control" id="datessearch">{$l_show}</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <canvas id="methods-chart" width="1200" height="250"></canvas>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center ">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center col-sm-offset-4">
+            <table class="table table-hover nobtmmargin">
+                <thead>
+                <tr>
+                    <th>{$l_date}</th>
+                    <th title="{$l_api_calls_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_count}</th>                    
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $stats as $stat}
+                {if $stat.display_date}
+                <tr>
+                    <td align="left">{$stat.display_date}</td>
+                    <td align="left" data-order="{$stat.count}">{number_format($stat.count, 0, '', ' ')}</td>
+                </tr>
+                {/if}
+                {/foreach}
+                </tbody>
+                {if $stat}
+                <tfoot>
+                <tr>
+                    <th align="left">{$l_total}</th>
+                    <th align="left">{number_format($stat.count, 0, '', ' ')}</th>
+                </tr>
+                </tfoot>
+                {/if}
+            </table>
+        </div>
+    </div>
+</div>
+{if $show_modal}
+{include file="tools/license_modal.html"}
+{/if}
+<script src="./js/Chart.js"></script>
+<script>
+    var chart_data = {$chart};
+    var currentFilterMethod = '';
+    var isInt = {if isset($smarty.get.int)}{$smarty.get.int}{else}false{/if};
+</script>
+{literal}
+<script>
+    var chartLabels = [];
+    var chartPoints = [];
+    for (var month in chart_data) {
+        chartLabels.push(month);
+        chartPoints.push(chart_data[month] || 0);
+    }
+    if(chart_data.length<2){
+        $("#methods-chart").hide();
+    }
+
+    $(document).ready(function () {
+        new Chart(document.getElementById("methods-chart").getContext("2d")).Line({
+            labels: chartLabels,
+            datasets: [{
+                data: chartPoints,
+                strokeColor : "#49C73B",
+                highlightFill: "#eee",
+                highlightStroke: "#fff",
+                pointColor: "#49C73B",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc"
+            }]
+        }, {
+            bezierCurve: true,
+            maintainAspectRatio: false,
+            scaleLabel: "  <%=value%>",
+            datasetFill: false
+        });
+
+        function reloadPage(filterPeriod) {
+            if (!filterPeriod) {
+                if (isInt) return reloadPage('int=' + isInt);
+
+                return reloadPage('int=7');
+            }
+            var url = '/my/stat?' + filterPeriod;
+            if($('#events').val() != 'all') {
+                url = url + '&event=' + $('#events').val();
+            }
+            if ($('#services').val() != null) {
+                $('#services').val().forEach(function(item){
+                    url = url + '&services[]=' + item;    
+                });
+            }
+            if($('#group').val()) {
+                url = url + '&group=' + $('#group').val();
+            }
+            window.location.replace(url);
+        }
+
+        $('.btn.filter').click(function (e) {
+            reloadPage('int=' + e.currentTarget.id);
+        });
+
+        $('#datessearch').click(function () {
+            var datesarr = $('#customdates').val().split('-');
+            var start_from = new Date(Date.parse(datesarr[0])).getTime() / 1000;
+            var end_to = new Date(Date.parse(datesarr[1])).getTime() / 1000;
+            reloadPage('start_from=' + start_from + '&end_to=' + end_to);
+        });
+
+        $('#services_search').click(function () {
+            reloadPage();
+        });
+
+        $('.stat_select').change(function () {
+            reloadPage();
+        });
+
+        $('.table').DataTable({
+            "paging":   false,
+            "ordering": true,
+            "info":     false,
+            "searching": false,
+            "columns": [{ "type": "date" }, { "type": "num" }],
+            "order": [[ 0, "desc" ]],
+            "stateSave": true,
+            "stateDuration": 60 * 60 * 24 * 365
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script src="/my/js/datepicker.js?v=21032016"></script>
+<link href="/my/css/datepicker.min.css?v=21032016" rel="stylesheet">
+<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.16/sorting/date-de.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.16/type-detection/formatted-num.js"></script>
+<script src="/my/js/cleantalk.min.js?v26062017c"></script>
+{/literal}

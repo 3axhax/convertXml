@@ -1,0 +1,556 @@
+<link href="/my/css/font-awesome.min.css?v=16062016" rel="stylesheet">
+<style type="text/css">
+.nw{ white-space: nowrap; }
+.font-weight-normal{ font-weight: normal;}
+.no-sort{ padding-right: 0!important; }
+</style>
+{if $services}
+<table width="100%" style="margin-top: 2em; margin-bottom: 2em">
+    <tbody>
+    <tr class="page-header">
+        <td style="vertical-align: middle;">
+            <h2>{$l_security_title}</h2>
+        </td>
+        <td>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="row">
+
+    <div class="col-md-offset-8 col-md-4 box-inline__container">
+        <a class="toggle__collapse box-inline__link" style="cursor: pointer;">{$l_a_details_show}</a>
+        <form class="box-inline__box">
+            <div class="form-inline box-inline">
+                <label for="sort_by_select">{$l_select_sort_by}:</label>
+                <select id="sort_by_select" class="form-control input-sm">
+                    <option value="0" disabled selected>{$l_select_sort_by}</option>
+                    <option value="Hostname">{$l_th_hostname}</option>
+                    <option value="Created">{$l_th_created}</option>
+                </select>
+            </div>
+            <div class="form-inline box-inline">
+                <label for="order_select">{$l_select_order}:</label>
+                <select id="order_select" class="form-control input-sm">
+                    <option value="0" disabled selected>{$l_select_order}</option>
+                    <option value="ASC">{$l_select_order_ASC}</option>
+                    <option value="DESC">{$l_select_order_DESC}</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+<table class="table table-hover table-security simple-sort" id="services-table">
+    <thead>
+    <tr>
+        <th>{$l_th_hostname}</th>
+        <th class="sort-default" data-sort-method="date" title="{$l_th_created_hint}" data-toggle="tooltip" data-placement="top" data-container="body" hidden>{$l_th_created}</th>
+        <th class="no-sort" title="{$l_th_status_hint}" data-toggle="tooltip" data-placement="top" data-container="body" style="width: 130px">{$l_th_status}</th>
+        <th class="no-sort" title="{$l_th_bf_protection_hint}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_th_bf_protection}</th>
+        <th class="period no-sort">&nbsp;</th>
+        <th class="no-sort" style="width: 180px">
+            <span title="{$l_th_site_audit_hint}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_th_site_audit}</span>
+            <br>
+            <span title="{$l_th_attacks_help}" data-toggle="tooltip" data-placement="top" data-container="body" class="font-weight-normal detail__th" hidden>{$l_th_attacks} /</span>
+            <span title="{$l_th_logins_help}" data-toggle="tooltip" data-placement="top" data-container="body" class="font-weight-normal detail__th" hidden>{$l_th_logins} /</span>
+            <span title="{$l_th_audit_help}" data-toggle="tooltip" data-placement="top" data-container="body" class="font-weight-normal detail__th" hidden>{$l_th_audit}</span>
+        </th>
+        <th class="no-sort" style="width: 180px">
+            {$l_th_sfw}
+            <br>
+            <span title="{$l_th_hits_allow_help}" data-toggle="tooltip" data-placement="top" data-container="body" class="font-weight-normal detail__th" hidden>{$l_th_hits_allow} /</span>
+            <span title="{$l_th_hits_deny_help}" data-toggle="tooltip" data-placement="top" data-container="body" class="font-weight-normal detail__th" hidden>{$l_th_hits_deny}</span>
+        </th>
+        {*<th class="data" title="{$l_th_data_help}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_th_data}</th>*}
+        <th class="no-sort">
+            <span title="{$l_th_malware_protection_hint}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_th_malware_protection}</span>
+        </th>
+        <th class="no-sort"></th>
+        <th class="no-sort" title="{$l_th_ssl_hint}" data-toggle="tooltip" data-placement="top" data-container="body">{$l_th_ssl}</th>
+        <th class="no-sort">{$l_th_api_key}</th>
+    </tr>
+    </thead>
+    <tbody id="security_table">
+    {if $services}
+    {assign var="wordpress" value=0}
+    {foreach from=$services item=service name=fs}
+    <tr id="target-00{$smarty.foreach.fs.index}" class="main__tr">
+        <td class="host__td">
+                {if $service.favicon}
+                <img src="{$service.favicon}" width="16" height="16">
+                {else}
+                <span class="platform wordpress"></span>
+                {/if}
+                <a href="/my/logs?service={$service.id}">{$service.hostname}</a> {if $service.name}<span class="text-muted">{$service.name}</span>{/if}
+                <a href="http://{$service.hostname}" target="_blank" title="{$l_new_tab}"><i class="fa fa-external-link" aria-hidden="true"></i></a>
+                <br>
+                <span class="text-muted">
+                    {$l_service} #{$service.id}{if $service.app_version}, {$l_app_version} {$service.app_version}{/if}{if $service.created}, {$l_site_add} {$service.created}.{else}.{/if}
+                </span>
+                <div>
+                    <a href="https://wordpress.org/support/plugin/security-malware-firewall" target="_blank">{$l_service_support}</a>
+                    <a href="/my/logs?service={$service.id}">{$l_service_logs}</a>
+                    <a href="/my/service?service_id={$service.id}&action=edit">{$l_service_settings}</a>
+                    <a href="/my/show_private?service_id={$service.id}&service_type=securityfirewall">{$l_service_private}</a>
+                    <a href="http://{$service.hostname}/wp-admin/options-general.php?page=spbc&spbc_tab=spbc_scanner&spbc_highlight=spbc_perform_scan" target="_blank">{$l_start_malware_scan}</a>
+                    <a href="/my/service?service_id={$service.id}&action=delete" onclick="return confirm('{sprintf($l_service_delete_confirm, $service['hostname'])}')">{$l_service_delete}</a>
+                </div>
+        </td>
+        <td class="create__td" hidden>
+            {$service.created}
+        </td>
+        <td>
+                {if $service.update_available}
+                {$wordpress=$wordpress+1}
+                <a href="#"
+                   data-toggle="modal"
+                   {if $read_only}
+                   data-target="#readonly-modal"
+                   {else}
+                   data-target="#updateModal"
+                   data-version="{$release_version}"
+                   data-host="{$service.hostname}"
+                   data-file="{$release_app_file}"
+                   data-link="{$release_link_name}"
+                   data-service_id="{$service.id}"
+                   {/if}
+                style="color: #ffa500;">
+                {$l_update_app}
+                </a> <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top"
+                           title="{$l_tooltip_update}"></span><br>
+                {else}
+                {if $l_processing_autoupdate == $service.status}
+                <span style="color: #ffa500;">{$service.status}</span>
+                {else}
+                {$service.status}
+                {/if}
+                {/if}
+                {if $service.was_updated}
+                <div class="text-muted" style="font-size: 12px;">{$service.was_updated}</div>
+                {/if}
+        </td>
+        <td>
+            {$service.ss_brute_force_protection}
+        </td>
+        <td></td>
+        <td>
+            {$service.site_audit}
+        </td>
+        <td>
+            {$service.security_firewall}
+        </td>
+        <td>
+            {$service.ss_malware_scanner}
+        </td>
+        <td>
+        </td>
+        <td>
+            {$service.ss_ssl}
+            {if $service.ss_ssl|strpos:"text-muted" !== false}<br><a href="/my/service?cp_mode=ssl">{$l_a_get_certificate}</a>{/if}
+        </td>
+        <td>
+            <button type="button" class="btn btn-block btn-xs {if $service.moderate}btn-success{else}btn-danger{/if}" data-key="{$service.key}">
+                {$l_show_api_key}
+            </button>
+        </td>
+
+
+    </tr>
+    <tr class="hidden_table_row 00{$smarty.foreach.fs.index}" hidden>
+        <td></td>
+        <td hidden></td>
+        <td></td>
+        <td></td>
+        <td align="right">
+            {$l_today}<br>
+            {$l_yesterday}<br>
+            {$l_week}
+        </td>
+        <td>
+            {foreach from=$service.stats item=stat}
+            <a href="/my/logs?service={$service.id}&event=attack" class="text-danger">{$stat.attacks}</a> / 
+            <a href="/my/logs?service={$service.id}&event=login" class="text-success">{$stat.logins}</a> / 
+            <a href="/my/logs?service={$service.id}&event=audit" class="text-muted">{$stat.audit}</a><br>
+            {/foreach}
+        </td>
+        <td>
+            {foreach from=$service.stats item=stat}
+            <a href="/my/logs_firewall?service={$service.id}&event=audit&status=ALLOW" class="text-success">{$stat.allow}</a> / 
+            <a href="/my/logs_firewall?service={$service.id}&event=audit&status=DENY_ALL" class="text-danger">{$stat.deny}</a><br>
+            {/foreach}
+        </td>
+        {if $service.scan.date}
+        <td class="text-right nw">
+            {$l_last_scan}<br>
+            {$l_result}<br>
+            {$l_total_files}<br>
+            {$l_failed_files}<br>
+            {$l_unknown_files}<br>
+        </td>
+        <td class="nw">
+            {$service.scan.date}<br>
+            <span class="{if $service.scan.result=='PASSED'}text-success{else}text-warning{/if}"{if $service.scan.result!='PASSED'} data-toggle="tooltip" data-placement="top" title="{$l_mscan_warning_hint}"{/if}>{$service.scan.result}</span><br>
+            {$service.scan.total}<br>
+            {$service.scan.failed}<br>
+            {$service.scan.unknown}<br>
+            {if $service.scan.result!='PASSED'}<a href="#" data-id="{$service.scan.id}" class="more" style="color: #777">{$l_details}</a>{/if}
+        </td>
+        {else}
+        <td>
+            <a href="http://{$service.hostname}/wp-admin/options-general.php?page=spbc&spbc_tab=spbc_scanner&spbc_highlight=spbc_perform_scan" target="_blank" style="color: #777">{$l_start_malware_scan}</a>
+        </td>
+        <td></td>
+        {/if}
+        <td></td>
+        <td>
+        </td>
+    </tr>
+    {/foreach}
+    {else}
+    <tr><td colspan="10"><a href="service?action=new" class="btn btn-default btn-block">{$l_add_website}</a></td></tr>
+    {/if}
+    </tbody>
+</table>
+
+<div class="row" style="margin-bottom: 2px; margin-top: 10px;">
+    <div class="col-xs-6">
+        {if $show_security_review_bonus && $ct_lang != 'ru'}
+        <div class="alert-border">
+            <div class="alert alert-bordered text-center" role="alert" id="review_bonus">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3>{$l_help_other_know}</h3>
+                <p>{$review_bonus_description}</p>
+                <br><a href="{$review_bonus_link}" class="btn btn-primary" target="_blank">{$review_bonus_button}</a><br>
+                <div>
+                    <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                    <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                    <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                    <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                    <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                </div>
+            </div>
+        </div>
+        {/if}
+        {if $license_info}
+        <div class="alert alert-border{if $license_info_alert} alert-danger{/if}">
+            <h4>{$l_license}</h4>
+            <p>{$license_info}</p>
+        </div>
+        {/if}
+        {if $show_reviews}
+            {include file="security/reviews.html"}
+        {/if}
+    </div>
+    {if $pay_banner || $annotation}
+    <div class="col-xs-6">
+        {if $pay_banner}
+        <div class="alert-border alert-pay">
+            <div class="alert alert-warning text-center" role="alert">
+                <h3 class="center">{$pay_banner.text}</h3>
+                <div class="center">
+                    <a href="{$pay_banner.link}"><button type="button" class="btn btn-primary">{$pay_banner.button}</button></a>
+                </div>
+                {if $pay_banner.bonus}
+                <br><p>{$pay_banner.bonus}</p>
+                {/if}
+            </div>
+        </div>
+        {if $license_trial}
+        <div class="alert alert-border">
+            <div>{$license_trial}</div>
+        </div>
+        {/if}
+        {/if}
+        {if $annotation}
+        <div class="alert alert-border">
+            <h4>{$annotation.title}</h4>
+            <div>{$annotation.text}</div>
+        </div>
+        {/if}
+    </div>
+    {/if}
+</div>
+<div id="log-details-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{$l_scan_details}</h4>
+            </div>
+            <div class="modal-body" id="log-details-modal-loading">
+                <div class="text-center"><img src="/images/loading.gif"></div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover hidden" id="log-details-modal-info">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">{$l_failed_files}</th>
+                        </tr>
+                        <tr>
+                            <th>{$l_file_path}</th>
+                            <th>{$l_modify_date}</th>
+                            <th>{$l_file_size}</th>
+                            <th>{$l_MD5_hash}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table class="table table-hover hidden" id="log-details-modal-info-un" style="font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">{$l_unknown_files}</th>
+                        </tr>
+                        <tr>
+                            <th>{$l_file_path}</th>
+                            <th>{$l_modify_date}</th>
+                            <th>{$l_file_size}</th>
+                            <th>{$l_MD5_hash}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="Confirm Modal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{$l_update_app}</h4>
+      </div>
+      <div class="modal-body">
+        <h4 id="js-update" class="text-center">{$l_update_title|replace:'Anti-Spam':'Security'}</h4>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="allSites">
+          <label class="form-check-label" for="allSites" style="font-weight: normal;" id="j-label1">{$l_update_all_sites}</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="autoUpdate">
+          <label class="form-check-label" for="autoUpdate" style="font-weight: normal;display: inline;">{$l_auto_update} <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top" title="{$l_auto_update_description}"></span></label>
+        </div>
+        <br>     
+        <div class="text-center">
+            <button type="button" class="btn btn-lg btn-success" id="js-update-btn" style="width: 80px; margin-right: 20px;">{$l_yes}</button>
+            <button type="button" class="btn btn-lg btn-default" data-dismiss="modal" style="width: 80px;">{$l_no}</button>            
+        </div>
+        <br>
+        <div class="text-center">
+            {$l_manual_update|replace:'%s':'wordpress'|strip_tags}
+            <br>
+            <span class="update_file hidden"><a href=":FILE:" class="gray"><img src="/images/icons/16x16/Down.png" alt="Download" class="update_icon" /> :LINK:</a></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="alert alert-warning text-center">
+          <p>{$l_wp_recomend}</p>  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var l_details = '{$l_details}';
+var l_log_no_data = '{$l_no_data}';
+    window.addEventListener('load', function () {
+        sortTable('{$sort_by}','{$sort_order}');
+        $('#sort_by_select').val('{$sort_by}');
+        $('#order_select').val('{$sort_order}');
+
+        hidden_tr = $('.hidden_table_row');
+        main_tr = $('.main__tr');
+        table = document.getElementById('security_table');
+        th = [0,1,2,3,9,10];
+        main_tr.each(function (i, elem) {
+           for (j = 0; j < elem.children.length; j++)
+           {
+               if (th.indexOf(j) != -1)
+               document.getElementsByClassName(elem.id.substr(7))[0].children[j].innerHTML = elem.children[j].innerHTML;
+           }
+        });
+
+        $('[data-key]').click(function () {
+            var api_key = $(this).attr('data-key');
+            $(this).parent().html('<code style="display:block;text-align:center">' + api_key + '</code>');
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        {if $show_security_review_bonus}
+        $('#review_bonus').on('closed.bs.alert', function () {
+            Cookies.set('security_review_bonus_hide', 1, {
+                expires: 86400 * 30,
+                path: '/my'
+            });
+        });
+        {/if}
+        $('#services-table').on( 'order.dt',  function () {
+            $('.hidden_table_row').hide();
+        })
+            .DataTable({
+            "responsive": true,
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching": false,
+        });
+        {literal}
+        $('#updateModal').on('show.bs.modal', function (event) {
+            var wordpress = {/literal}{$wordpress}{literal};
+            var button = $(event.relatedTarget);
+            var version = button.data('version');
+            var host = button.data('host');
+            var link = button.data('link');
+            var file = button.data('file');
+            var service_id = button.data('service_id');
+            $(this).find('#js-update-btn').data('service_id',service_id);
+            var update = $(this).find('#js-update');
+            var label = $(this).find('#j-label1');
+            var update_file = $(this).find('.update_file');
+            update.text(update.text().replace(':VERSION:',version).replace(':HOST:',host));
+            label.text(label.text().replace(':VERSION:',version).replace(':WORDPRESS:',wordpress));
+            if(wordpress<2){
+                $('#allSites').parent().addClass('hidden');
+            }
+            update_file.html(update_file.html().replace(':LINK:',link).replace(':FILE:',file));
+            if(file){
+                update_file.removeClass('hidden');
+            }else{
+                update_file.addClass('hidden');
+            }
+        });
+        $('#js-update-btn').click(function(){
+            if(!$(this).hasClass('disabled')){
+                $(this).addClass('disabled');
+                var service_id = $(this).data('service_id');
+                var all_sites = +$('#allSites').prop('checked');
+                var auto_update = +$('#autoUpdate').prop('checked');
+                
+                $.ajax({
+                    method: "GET",
+                    url: "/my/ajax?action=auto_update&service=security",
+                    data: {service_id: service_id, all_sites: all_sites, auto_update: auto_update},
+                    dataType: "json"
+                }).done(function(data) {
+                    $('#js-update-btn').removeClass('disabled');
+                    $('#updateModal').modal('toggle');
+                    location.reload();
+                }).error(function() {
+                    console.log('Error');
+                    $('#js-update-btn').removeClass('disabled');
+                });
+                
+            }
+        });
+
+
+        $('.toggle__collapse').on('click', function () {
+
+           hidden_tr = $('.hidden_table_row');
+           main_tr = $('.main__tr');
+           detail_th = $('.detail__th');
+            if (hidden_tr.is(':visible')) {
+                main_tr.show();
+                hidden_tr.hide();
+                detail_th.hide();
+                $('.toggle__collapse.box-inline__link').html('{/literal}{$l_a_details_show}{literal}');
+            }
+            else {
+                main_tr.each(function (i, elem) {
+                    data = $('.'+elem.id.substr(7)).detach();
+                    $("#target-"+elem.id.substr(7)).after(data);
+                });
+                main_tr.hide();
+                hidden_tr.show();
+                detail_th.show();
+                $('.toggle__collapse.box-inline__link').html('{/literal}{$l_a_details_hide}{literal}');
+            }
+        });
+
+
+        $('#sort_by_select').on('change', function () {
+            sortTable(this.value, $('#order_select').val());
+        });
+        $('#order_select').on('change', function () {
+            sortTable($('#sort_by_select').val(), this.value);
+        })
+    });
+function scanFavicon(start, length){
+    $.ajax({
+        method: "GET",
+        url: "/my/ajax?action=scan_favicon",
+        data: {start: start,
+        length: length},
+    }).success(function(data) {
+        console.log(data);
+    }).error(function() {
+        console.log('Error');
+    });
+    return 'Run scanFavicon';
+}
+function sortTable(by_sort, order_sort) {
+    var visible_row = $('.main__tr');
+    var service_table = $('#services-table');
+    sort = by_sort + ';' + order_sort;
+    switch (sort) {
+        case 'Hostname;ASC':
+            visible_row.sort(function (a, b) {
+                var compA = $(a).children('.host__td').text().toUpperCase();
+                var compB = $(b).children('.host__td').text().toUpperCase();
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+            break;
+        case 'Hostname;DESC':
+            visible_row.sort(function (a, b) {
+                var compA = $(a).children('.host__td').text().toUpperCase();
+                var compB = $(b).children('.host__td').text().toUpperCase();
+                return (compA > compB) ? -1 : (compA < compB) ? 1 : 0;
+            });
+            break;
+        case 'Created;ASC':
+            visible_row.sort(function (a, b) {
+                var compA = $(a).children('.create__td').text().toUpperCase();
+                var compB = $(b).children('.create__td').text().toUpperCase();
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+            break;
+        case 'Created;DESC':
+            visible_row.sort(function (a, b) {
+                var compA = $(a).children('.create__td').text().toUpperCase();
+                var compB = $(b).children('.create__td').text().toUpperCase();
+                return (compA > compB) ? -1 : (compA < compB) ? 1 : 0;
+            });
+            break;
+        default:
+            visible_row.sort(function (a, b) {
+                var compA = $(a).children('.host__td').text().toUpperCase();
+                var compB = $(b).children('.host__td').text().toUpperCase();
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+    }
+    $.each(visible_row, function(idx, itm) {
+        service_table.append(itm);
+    });
+    $.ajax({
+        method: "GET",
+        url: "/my/ajax?action=sort_cookie",
+        data: {sort_security: sort},
+    });
+}
+{/literal}
+</script>
+{else}
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="alert alert-border-white">
+            <h4 class="text-center">{$annotation.title}</h4>
+            <div>{$annotation.text}</div>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+{/if}

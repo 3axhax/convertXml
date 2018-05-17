@@ -1,0 +1,17 @@
+                    <input type="hidden" name="sid" value="{$2CO_sid}" />
+                    <input type="hidden" name="demo" value="{$2CO_demo}" />
+                    <input type="hidden" name="fixed" value="Y" />
+		            <input type="hidden" name="cart_order_id" value="{$user_info.email}"/>
+		            <input type="hidden" name="total" value="{$bill.cost_usd}"/>
+		            <input type="hidden" name="c_prod_1" value="1,1"/>
+                    <input type="hidden" name="c_name_1" value="Anti-spam protection for web-site"/>
+                    <input type="hidden" name="c_description_1" value="{$bill.comment}"/>
+                    <input type="hidden" name="c_price_1" value="{$bill.cost_usd}"/>
+		            <input type="hidden" name="c_tangible_1" value="N"/>
+		            <input type="hidden" name="c_type_1" value="tax" />
+                    <input type="hidden" name="card_holder_name" value="{$user_info.first_name} {$user_info.last_name}"/>
+                    <input type="hidden" name="email" value="{$user_info.email}"/>
+                    <input type="hidden" name="phone" value="{$user_info.phone}"/>
+                    <input type="hidden" name="id_type" value="1"/>
+                    <input type="hidden" name="merchant_order_id" value="{$bill.bill_id}" />
+

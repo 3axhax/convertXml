@@ -1,0 +1,145 @@
+{literal}
+<script type="text/javascript">
+	function get_code(banner, partner_id, engine, textarea){
+
+		var host = 'http://cleantalk.ru';
+//		var host = 'http://localhost:8888';
+		var banners_path = '/banners/';
+		var banner_url = host + banners_path + banner;
+		var jump_url = host + '/' + engine + '?partner_id=' + partner_id;
+		
+		$(textarea).innerHTML = '<a href="' + jump_url + '" target="_blank"><img src="' + banner_url + '"></a>';
+		$(textarea).focus();
+//		$('test').innerHTML = '<a href="' + jump_url + '" target="_blank"><img src="' + banner_url + '"></a>';
+
+		return true;	
+	} 
+</script>
+{/literal}
+
+<div class="action_message">
+	<table border="0" align="center" style="padding: 0.5em; margin-bottom: 2em;">
+		<tr>
+			<td align="center" colspan="3">
+				<p>Перейти к баннерам:
+				<ul class="banners_links">
+					<li><a href="#phpbb3">phpBB3</a></li>
+					<li><a href="#joomla15">Joomla</a></li>
+					<li><a href="#wordpress">WordPress</a></li>
+				</ul>
+				</p>
+			</td>
+	</table>
+	<table border="0" width="100%" style="padding: 0.5em;">
+	<!-- phpBB3 -->
+		<tr>
+			<td align="center">
+				<a name="phpbb3" style="text-decoration: none;"><h1>Баннеры php<span style="color: #FF9900;">BB</span>3</h1></a>
+			</td>
+			<td align="center">
+				<div style="padding-bottom: 0.5em; text-align: center;">HTML-код для вставки на сайт:</div>
+				<textarea id="code_phpbb3" rows="5" cols="50" class="reg_table"></textarea><br /><br />
+				<span id="test"></span>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td align="left" colspan="2">
+			<ul class="banners">
+					{foreach from=$banners item=banner}
+					{if $banner.engine == 'phpbb3'}
+					<li>
+					<div class="back">
+						<a href="#" onclick="get_code('{$banner.filename}', {$user_info.user_id}, '{$banner.engine}', 'code_{$banner.engine}'); return false;">
+							<img src="/banners/{$banner.filename}" class="4x4">
+							<div class="label">
+								{$banner.size}	
+							</div>
+						</a>
+					</div>
+					</li>
+					{/if}
+					{/foreach}
+					
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 2em;">
+				&nbsp;
+			</td>
+		</tr>
+	<!-- Joomla -->
+		<tr>
+			<td align="center">
+				<a name="joomla15" style="text-decoration: none;"><h1>Баннеры Joomla</h1></a>
+			</td>
+			<td align="center">
+				<div style="padding-bottom: 0.5em; text-align: center;">HTML-код для вставки на сайт:</div>
+				<textarea id="code_joomla15" rows="5" cols="50" class="reg_table"></textarea><br /><br />
+				<span id="test"></span>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td align="left" colspan="2">
+				<ul class="banners">
+					{foreach from=$banners item=banner}
+					{if $banner.engine == 'joomla15'}
+					<li>
+					<div class="back">
+						<a href="#" onclick="get_code('{$banner.filename}', {$user_info.user_id}, '{$banner.engine}', 'code_{$banner.engine}'); return false;">
+							<img src="/banners/{$banner.filename}" class="4x4">
+							<div class="label">
+								{$banner.size}	
+							</div>
+						</a>
+					</div>
+					</li>
+					{/if}
+					{/foreach}
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td style="padding-bottom: 2em;">
+				&nbsp;
+			</td>
+		</tr>
+	<!-- Wordpress -->
+		<tr>
+			<td align="center">
+				<a name="wordpress" style="text-decoration: none;"><h1>Баннеры <span style="color: #3399CC;">Word</span><span style="color: #bbb;">Press</span></h1></a>
+			</td>
+			<td align="center">
+				<div style="padding-bottom: 0.5em; text-align: center;">HTML-код для вставки на сайт:</div>
+				<textarea id="code_wordpress" rows="5" cols="50" class="reg_table"></textarea><br /><br />
+				<span id="test"></span>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td align="left" colspan="2">
+				<ul class="banners">
+					{foreach from=$banners item=banner}
+					{if $banner.engine == 'wordpress'}
+					<li>
+					<div class="back">
+						<a href="#" onclick="get_code('{$banner.filename}', {$user_info.user_id}, '{$banner.engine}', 'code_{$banner.engine}'); return false;">
+							<img src="/banners/{$banner.filename}" class="4x4">
+							<div class="label">
+								{$banner.size}	
+							</div>
+						</a>
+					</div>
+					</li>
+					{/if}
+					{/foreach}
+				</ul>
+			</td>
+		</tr>
+	</table>
+
+</div>
+<div class="action_message">
+<a href="/my">Вернуться в панель управления >>></a>
+</div>
+
+

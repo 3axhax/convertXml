@@ -1,0 +1,14 @@
+<div class="alert alert-warning center" role="alert">
+    {if $offer_title}
+        <h3>{$offer_title}</h3>
+    {/if}
+    <br />
+    {if !$hide_charge_form}
+        {include file="charge_form.html"}
+    {/if}
+    <br />
+    <br />
+    {if $free_months_notice}
+        <span>{$free_months_notice}</span>
+    {/if}
+</div>

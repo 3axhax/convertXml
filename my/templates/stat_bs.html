@@ -1,0 +1,233 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<h2>{$stat_title}
+			{if $service_id && $is_auth}
+            <span class="stat_tools">
+                <a href="/my/show_requests?service_id={$service_id}&int=week"><img src="/images/icons/16x16/Text.png" title="{$l_detailed_stat}" alt="" /></a>
+                <a href="/my/service?action=edit&service_id={$service_id}"><img src="/images/icons/16x16/Wrench.png" title="{$l_settings}" alt="" /></a>
+            </span>
+            {/if}
+            </h2>
+		</div> 
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+			<br>
+			<select id="stat_type" class="form-control stat_select">
+                <option value="0">{$l_choose_type}</option>
+                <option value="1"{if $stat_type eq 1} selected{/if}>{$l_antispam_analytics}</option>
+                <option value="2"{if $stat_type eq 2} selected{/if}>{$l_sfw_analytics}</option>
+            </select>
+            <br>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-{if $smarty.get.int eq 7}primary{else}default{/if} btn-sm filter" id="7">7 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $smarty.get.int eq 30}primary{else}default{/if} btn-sm filter" id="30">30 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $smarty.get.int eq 365}primary{else}default{/if} btn-sm filter" id="365">365 {$l_date_days}</button>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">   
+            <br>
+            <select id="service_id" class="form-control stat_select">
+                <option value="{$default_service_id}" {if $smarty.get.service_id == {$default_service_id}}selected{/if}>{$l_all_websites}</option>
+                {foreach from=$services item=s key=k}
+                <option value="{$k}" {if $k == $smarty.get.service_id}selected{/if}>{$s.service_name}</option>
+                {/foreach}
+            </select>
+            <br>
+          	 <input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 210px; display: inline;" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$start_from} - {$end_to}">
+			<button class="btn btn-default filter" id="datessearch">Show</button>
+		</div>		
+	</div>
+	{if $chart}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			<canvas id="myChart" width="1200" height="250"></canvas>
+		</div>
+	</div>
+	{/if}
+	{if $points}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			&nbsp;
+		</div>
+	</div>	
+	<div class="row">
+		{if $points.spam|@count eq 3}
+		{foreach from=$points.spam item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-heading">{$k}</div>
+  				<div class="panel-body">
+    				{$p}
+    				<br>
+    				<span class="red">{$l_spam_blocked}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		{else}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{foreach from=$points.spam item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-heading">{$k}</div>
+  				<div class="panel-body">
+    				{$p}
+    				<br>
+    				<span class="red">{$l_spam_blocked}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{/if}
+	</div>
+	<div class="row">
+		{if $points.allow|@count eq 3}
+		{foreach from=$points.allow item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-body">
+  					{$p}
+  					<br>
+    				<span class="green">{$l_legitimate_stat}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		{else}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{foreach from=$points.allow item=p key=k}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			<div class="panel panel-default">
+  				<div class="panel-body">
+  					{$p}
+  					<br>
+    				<span class="green">{$l_legitimate_stat}</span>
+  				</div>
+			</div>
+		</div>
+		{/foreach}
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 center">
+			&nbsp;
+		</div>
+		{/if}
+	</div>
+	{/if}	
+	{if $share_aa_results}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			&nbsp;
+		</div>
+	</div>	
+	<div class="row">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="well stat_height">
+				{$l_share_aa_link}
+				<br>
+				<input type="text" value="https://{$smarty.server.SERVER_NAME}/my/stat?aaid={$aaid}" class="form-control">
+				<br>
+			</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<div class="well stat_height">
+				{$l_share_aa_buttons}
+				<br>
+				<a  href="http://www.facebook.com/share.php?u={$share_url}" target="_blank"><img src="/images/icons/social/facebook.png" alt="" /></a>
+                <a href="http://twitter.com/share?url={$share_url}&text={$share_desc}&related=cleantalk_en" target="_blank"><img src="/images/icons/social/twitter.png" alt="" /></a>
+                <a href="https://plus.google.com/share?url={$share_url}" target="_blank"><img src="/images/icons/social/googleplus.png" alt="" /></a>
+                <a href="http://www.linkedin.com/shareArticle?mini=true&url={$share_url}&title={$share_title}" target="_blank"><img src="/images/icons/social/linkedin.png" alt="" /></a> 
+			</div>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+	</div>
+	{/if}
+</div>
+{if $chart}
+<script src="./js/Chart.js"></script>
+<script>
+    var chart_data = {$chart};
+</script>
+{literal}
+<script>
+    
+    var chart_month = [];
+    var chart_points_spam = [];
+    var chart_points_allow = [];
+    for (month in chart_data) {
+        var month_data = chart_data[month];
+        for (var point in month_data) {
+            if(month_data.hasOwnProperty(point)){
+                if (point == 'spam') {
+                    chart_points_spam.push(month_data[point]);
+                }
+                if (point == 'allow') {
+                    chart_points_allow.push(month_data[point]);
+                }
+            }
+        }
+        chart_month.push(month);
+    }
+
+	var barChartData = {
+		labels : chart_month, 
+		datasets : [
+			{
+                label: "SPAM",
+				strokeColor : "#CC3300",
+				highlightFill: "#eee",
+				highlightStroke: "#fff",
+                pointColor: "#CC3300",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc",
+				data : chart_points_spam
+			},
+			{
+                label: "Legitimate",
+				strokeColor : "#49C73B",
+				highlightFill: "#eee",
+				highlightStroke: "#fff",
+                pointColor: "#49C73B",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc",
+				data : chart_points_allow
+			}
+		]
+
+	}
+	window.onload = function(){
+		var ctx = document.getElementById("myChart").getContext("2d");
+		window.myBar = new Chart(ctx).Line(barChartData, {
+            bezierCurve: true,
+            maintainAspectRatio: false,
+            scaleLabel: "  <%=value%>",
+            datasetFill: false
+		});
+	}
+
+</script>
+{/literal}
+{/if}
+<script src="/my/js/datepicker.js?v=21032016"></script>
+<script src="/my/js/stat.js?v=21032016"></script> 
+<link href="/my/css/datepicker.min.css?v=21032016" rel="stylesheet">

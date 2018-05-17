@@ -1,0 +1,345 @@
+<div class="log-header row">
+    <div class="col-sm-12 col-md-4 col-lg-6">
+        <h2>
+            Anti-spam log
+            <i id="records-found">{$records_found}</i>
+            <span class="hidden" id="export-csv"><img src="/images/icons/csv.png" width="16" height="16"><a href="{$smarty.server.REQUEST_URI}&mode=csv">Export to CSV</a></span>
+        </h2>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-6">
+        {if $keep_history_45 != 'none'}
+            {if $keep_history_45 eq 'info'}
+            <p class="text-muted text-right" style="margin-top:15px">{$l_keep_history_45}</p>
+            {else}
+            <a href="{$paid_addons_s.keep_history_45_days.url}" class="btn btn-primary btn-sm btn-block" style="margin-top:15px;margin-bottom:15px">{$keep_history}</a>
+            {/if}
+        {/if}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-6">
+        <p class="text-muted">{$l_log_updated}<br>{$l_ufbtext}</p>
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-6">
+        {if $keep_history_45 != 'none' && $keep_history_45 != 'info'}
+        <p class="text-muted">{$keep_history_hint}</p>
+        {/if}
+    </div>
+</div>
+
+<div class="well">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-{if $smarty.get.int eq today}primary{else}default{/if} btn-sm filter" id="today">{$ints.today}</button>
+        <button type="button" class="btn btn-{if $smarty.get.int eq yesterday}primary{else}default{/if} btn-sm filter" id="yesterday">{$ints.yesterday}</button>
+        <button type="button" class="btn btn-{if $smarty.get.int eq week}primary{else}default{/if} btn-sm filter" id="week">{$ints.week}</button>
+    </div>
+
+    <input type="text" placeholder="Custom dates" class="form-control" style="width:220px; display: inline;" id="customdates" value="{$date_range_begin} - {$date_range_end}">
+
+    <select id="statuses" class="selectpicker" data-width="130px">
+        <option value="">{$l_logs_status}</option>
+        <option value="0"{if $smarty.get.allow == 0 && $smarty.get.allow ne ''} selected{/if}>{$l_denied}</option>
+        <option value="1"{if $smarty.get.allow == 1} selected{/if}>{$l_approved}</option>
+    </select>
+
+    <select id="services" class="selectpicker" data-width="200px">
+        <option value="">{$l_logs_websites}</option>
+        {if $services}
+        <optgroup>
+            {foreach from=$services item=oneservice key=k}
+            <option value="{$k}"{if $k eq $smarty.get.service_id} selected{/if}>{$oneservice.service_name}</option>
+            {/foreach}
+        </optgroup>
+        {/if}
+        {if $granted_services}
+        <optgroup label="---{$l_granted_services}---">
+            {foreach from=$granted_services item=onegservice key=gk}
+            <option value="{$onegservice.service_id}"{if $onegservice.service_id eq $smarty.get.service_id} selected{/if}>{if $onegservice.hostname}{$onegservice.hostname}{else}#{$onegservice.service_id}{/if}</option>
+            {/foreach}
+        </optgroup>
+        {/if}
+    </select>
+
+    <select id="countries" class="selectpicker" data-live-search="true" data-size="10">
+        <option value="">{$l_logs_countries}</option>
+        {foreach from=$logs_countries item=onecountry}
+        <option value="{$onecountry.countrycode}" class="flag {strtolower($onecountry.countrycode)}"{if $onecountry.countrycode eq $smarty.get.country} selected{/if}>{$onecountry.langname}</option>
+        {/foreach}
+    </select>
+
+    <input type="text" class="form-control" placeholder="{$l_ipemailnick}" style="width: 160px; display: inline;" value="{$ipemailnick}" id="ipemailnick">
+
+    <button type="button" class="btn btn-default" id="filter-btn">{$l_show}</button>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-right">
+        {$l_page} <span id="current-page">{$current_page}</span> {$l_of} <span id="total-pages">{$total_pages}</span>.
+        {$l_items_per_page}
+        <div class="btn-group">            
+            <select id="items-per-page" class="selectpicker" data-width="auto">
+            {foreach $items_per_page_list as $i}
+                <option value="{$i}"{if $i==$items_per_page} selected{/if}>{$i}</option>
+            {/foreach}
+            </select>
+            
+        </div>
+
+        <div class="btn-group">
+            <nav aria-label="Page navigation">
+                <ul class="pagination" style="margin: 0; display: block;">
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <form method="post" target="_blank" id="log-form">
+    <table class="table table-hover simple-sort" id="log-table">
+        <thead>
+        <tr data-sort-method="thead">
+            <th></th>
+            <th title="{$l_table_date_hint}" data-toggle="tooltip" data-placement="right" data-container="body">{$l_table_date}</th>
+            <th title="{$l_table_status_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_table_status}</th>
+            <th style="max-width:50%;" title="{$l_table_author_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_table_author}</th>
+            <th title="{$l_table_frequency_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_table_frequency}</th>
+            
+        </tr>
+        <tr class="bulk-row hidden" style="transition: none;">
+            <th style="vertical-align: middle">
+                <input type="checkbox" class="bulk-check">
+            </th>
+            <th colspan="4">
+                <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-top">
+                    <option value="spam">Mark as Spam</option>
+                    <option value="not_spam">Mark as Not Spam</option>
+                    <option value="export">Export to CSV</option>
+                    <option value="deny">Add to Personal BlackList</option>
+                    <option value="allow">Add to Personal WhiteList</option>
+                    <option value="delete">Delete</option>
+                </select>
+                <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+                <button type="button" class="btn btn-default pull-right bulk-approved-btn">Select all approved records</button>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="4" class="text-center"><img src="/images/loading.gif"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr class="bulk-row hidden" style="transition: none;">
+            <th style="vertical-align: middle">
+                <input type="checkbox" class="bulk-check">
+            </th>
+            <th colspan="4">
+                <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-bottom">
+                    <option value="spam">Mark as Spam</option>
+                    <option value="not_spam">Mark as Not Spam</option>
+                    <option value="export">Export to CSV</option>
+                    <option value="deny">Add to Personal BlackList</option>
+                    <option value="allow">Add to Personal WhiteList</option>
+                    <option value="delete">Delete</option>
+                </select>
+                <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+                <button type="button" class="btn btn-default pull-right bulk-approved-btn">Select all approved records</button>
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+    <div class="panel-footer text-right">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+            </ul>
+        </nav>
+    </div>
+    </form>
+</div>
+<div id="log-delete-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete Request</h4>
+            </div>
+            <div class="bg-danger text-danger text-center modal-body" id="log-delete-modal-error">Internal Server Error</div>
+            <div class="modal-body" id="log-delete-modal-loading">
+                <div class="text-center"><img src="/images/loading.gif"></div>
+            </div>
+            <div class="modal-body" id="log-delete-modal-message">
+                {$l_confirm_deletion}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="log-delete-modal-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="log-bulk-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body text-center" id="log-bulk-modal-text"></div>
+            <div class="modal-body text-center bg-success" id="log-bulk-modal-result"></div>
+            <div class="modal-body bg-danger text-danger text-center" id="log-bulk-modal-error">Internal Server Error</div>
+            <div class="modal-body text-center" id="log-bulk-modal-loading"><img src="/images/loading.gif"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="log-bulk-modal-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger" id="log-bulk-modal-apply">Confirm</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="log-bulk-modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="log-feedback-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Request Feedback</h4>
+            </div>
+            <div class="modal-body" id="log-feedback-modal-loading">
+                <div class="text-center"><img src="/images/loading.gif"></div>
+            </div>
+            <div class="bg-danger text-danger text-center modal-body" id="log-feedback-modal-error">Internal Server Error</div>
+            <div class="bg-success text-center modal-body" id="log-feedback-modal-thanks">{$l_thanks_notice}</div>
+            <div class="bg-info text-center modal-body" id="log-feedback-modal-feedback-message"></div>
+            <div class="modal-body" id="log-feedback-modal-feedback-notice">
+                <div class="form-group">
+                    <textarea name="notice" id="feedback-notice2" class="form-control"></textarea>
+                    <p class="help-block text-center">Leave a notice about this issue to help us resolve it faster</p>
+                </div>
+                <button type="button" class="btn btn-primary btn-block btn-sm" id="log-feedback-modal-feedback-save">Save</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="log-details-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Request Details</h4>
+            </div>
+            <div class="modal-body" id="log-details-modal-loading">
+                <div class="text-center"><img src="/images/loading.gif"></div>
+            </div>
+            <table class="table table-hover hidden" id="log-details-modal-info">
+                <tbody>
+                <tr id="log-details-modal-info-status">
+                    <th>Status:</th>
+                    <td></td>
+                </tr>
+                <tr id="log-details-modal-info-info">
+                    <th>Info:</th>
+                    <td>
+                        <div class="datetime"></div>
+                        <div class="nickname"></div>
+                        <div class="email"></div>
+                        <div class="ip"><img src="/images/flags/us.png"> <span></span></div>
+                    </td>
+                </tr>
+                <tr id="log-details-modal-info-id">
+                    <th class="nw">CleanTalk ID:</th>
+                    <td><a href="#" target="_blank"></a></td>
+                </tr>
+                <tr id="log-details-modal-info-url">
+                    <th class="nw">Page URL:</th>
+                    <td class="br"><a href="#" target="_blank"></a></td>
+                </tr>
+                <tr id="log-details-modal-info-referrer">
+                    <th>Referrer:</th>
+                    <td class="br"><a href="#" target="_blank">http://demo1.cleantalk.org/joomla25/index.php/component/users/?view=registration</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="bg-warning text-center modal-body" id="log-details-modal-notification"></div>
+            <div class="bg-success text-center modal-body" id="log-details-modal-thanks">{$l_thanks_notice}</div>
+            <div class="bg-info text-center modal-body" id="log-details-modal-feedback-message"></div>
+            <div class="modal-body" id="log-details-modal-feedback-notice">
+                <div class="form-group">
+                    <textarea name="notice" id="feedback-notice" class="form-control"></textarea>
+                    <p class="help-block text-center">Leave a notice about this issue to help us resolve it faster</p>
+                </div>
+                <button type="button" class="btn btn-primary btn-block btn-sm" id="log-details-modal-feedback-save">Save</button>
+            </div>
+
+            <div class="bg-danger text-danger text-center modal-body" id="log-details-modal-error">Internal Server Error</div>
+            <div class="bg-warning text-muted modal-body hidden" id="log-details-modal-text">
+                <strong>{$l_request_text}:</strong> <span></span>
+            </div>
+            <table class="bg-warning text-muted table table-hover" id="log-details-modal-texts">
+                <tbody></tbody>
+            </table>
+            <div class="bg-danger text-danger text-center modal-body hidden" id="log-details-modal-api"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-left" id="log-details-modal-not-spam" data-id="">Not Spam</button>
+                <button type="button" class="btn btn-danger pull-left" id="log-details-modal-spam" data-id="">Spam</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{if $show_modal}
+{include file="tools/license_modal.html"}
+{else}
+<div id="page-loader" class="hidden"><div class="ripple-loader"><div></div><div></div></div></div>
+
+<script>
+    window.addEventListener('load', function () {
+        antiSpamLog({
+            'url': '{$smarty.server.REQUEST_URI}',
+            'grantwrite': {if $grantwrite}true{else}false{/if},
+            'langs': {
+                'details': '{$l_details}',
+                'not_spam': '{$l_not_spam}',
+                'spam': '{$l_spam}',
+                'delete': '{$l_delete}',
+                'personal_blacklists': '{$l_personal_blacklists}',
+                'reported_as_spam': '{$l_feedback_result_message_0}',
+                'reported_as_not_spam': '{$l_feedback_result_message_1}',
+                'confirm': {
+                    'spam': 'Please confirm "Mark as Spam" with selected records.',
+                    'not_spam': 'Please confirm "Mark as Not Spam" with selected records.',
+                    'delete': 'Please confirm delete selected records.'
+                },
+                'frequency_hint': '{$l_table_frequency_hint}'
+            }
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#log-form').on('change','.bulk-check, .r-check',function() {
+            if($('.bulk-check, .r-check').is(":checked")) {
+                $('#log-table .bulk-row').css('opacity',1);
+            }else{
+                $('#log-table .bulk-row').css('opacity',0.5);
+            }
+        });
+        $('#log-form').on('change','.r-check',function() {
+            if($(this).prop('checked')){
+                $(this).parents('.log-row').addClass('selected');
+            }else{
+                $(this).parents('.log-row').removeClass('selected');
+            }
+        });
+        $('#log-form').on('change','.bulk-check',function() {
+            if($(this).prop('checked')){
+                $('.log-row').addClass('selected');
+            }else{
+                $('.log-row').removeClass('selected');
+            }
+        });
+    });
+</script>
+{/if}
+<style type="text/css">
+.selected{ background-color: #f5f5f5;}
+</style>

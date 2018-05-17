@@ -1,0 +1,137 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			<h3>{$l_bonuses_page_title}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 center">
+			<br>
+			<h2>{$free_months_percent}%</h2>
+			<div class="progress">
+  				<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {$free_months_percent}%;">
+    			<span class="sr-only">{$free_months_percent}% Complete</span>
+  				</div>
+			</div>
+			{$free_months_activate_notice}
+		</div>
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+			<br>
+			{if $show_early_pay}
+            <div class="panel panel-default">
+  				<div class="panel-body center">        
+                    <h3>{$bonuses.early_pay.title}</h3>    
+                    {$bonuses.early_pay.desc}
+                    <br>    
+                    {if $bonuses.early_pay.activated}
+                        <div class="green">
+                            {$bonuses.early_pay.activated}
+                        </div>
+                    {else}
+                        <a href="/my/bill/recharge" class="giveone">{$l_take_free_months}</a>
+                    {/if}
+                </div>
+            </div>        
+            {/if}	
+            {if $user_info.first_pay_id && !$no_bonus && $optionslinks}
+                {if $bonuses.review.activated || $need_review}
+                {if $bonuses.review.activated}
+                	<div class="panel panel-default">
+  						<div class="panel-body center">    
+                			<h3>{$bonuses.review.title}</h3>        
+                			{$bonuses.review.desc}
+                			<br>
+                			<span class="green">{$bonuses.review.activated}</span>
+                		</div>
+                	</div>		
+                {else}
+                	<div class="panel panel-default">
+  						<div class="panel-body center"> 
+                			<h3>
+                				{if $bonuses.review.title}
+                    				{$bonuses.review.title}
+                				{else}
+                   					{$l_help_other_know}
+                				{/if}
+                			</h3>
+                			<div class="review_message">{$need_review}</div>
+                			<div>
+                    			<img src="/images/icons/Actions-rating-icon.png" alt="" class="star_review" />
+                    			<img src="/images/icons/Actions-rating-icon.png" alt="" class="star_review" />
+                     			<img src="/images/icons/Actions-rating-icon.png" alt="" class="star_review" />
+                     			<img src="/images/icons/Actions-rating-icon.png" alt="" class="star_review" />
+                     			<img src="/images/icons/Actions-rating-icon.png" alt="" class="star_review" />
+                			</div> 
+                			{if !$no_bonus}
+                				<br>
+                       			<span class="red_text">{$need_review_notice}</span>
+                    		{/if}
+                    	</div>
+                    </div>		
+                {/if}
+                {/if}
+            {/if}
+            <table class="table table-bordered">
+            	<tr>
+            		{if $user_info.first_pay_id}
+            			{if $fblink}
+                    	<td class="center">
+                        	<h3>{$bonuses.facebook.title}</h3>
+                            {$bonuses.facebook.desc}
+                            <br>    
+                        	{if $bonuses.facebook.activated}
+                            	<br><br>
+                            	<span class="green">{$bonuses.facebook.activated}</span>
+                        	{else}        
+                            	{if $fblink}
+                            		<br>
+                                	<a href="/{$fblink}">
+                                    	https://cleantalk.org/{$fblink}
+                                	</a>
+                            	{/if}
+                        	{/if}   
+                    	</td>
+                    	{/if}
+                    	<td class="center">
+                        	<h3>{$bonuses.twitter.title}</h3>
+                            {$bonuses.twitter.desc}
+                            <br>
+                            {if $bonuses.twitter.activated}
+                                <span class="green">{$bonuses.twitter.activated}</span>
+                            {else}
+                            	<br>
+								<a href="https://twitter.com/share" class="twitter-share-button" data-url="{if $pagetotwitter}https://cleantalk.org/{$pagetotwitter}{else}{$share_url_twitter}{/if}" data-text="{$share_title_twitter}" data-size="large" data-related="cleantalk_en" data-hashtags="{$share_engine_twitter}">Tweet</a> 
+								{literal}
+									<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+								{/literal}
+                                <br>
+                                <div>
+                                    {$social_review_hint}
+                                </div>
+                            {/if}
+                        </td>    
+                    {/if}
+                    {if $bonuses.review_external.show}
+                    <td class="center">   
+                        <h3>{$bonuses.review_external.title}</h3>
+                        {$bonuses.review_external.desc}
+                        <br>
+                        {if $bonuses.review_external.activated} 
+                        	<br>   
+                            <span class="green">{$bonuses.review_external.activated}</span>
+                        {else}
+                            <br>
+                            <a href="/my/support?openf=1&subjf=Review"><button class="btn btn-primary">{$l_send_the_link}</button></a>    
+                        {/if}
+                    </td>
+                    {/if}
+            	</tr>
+            </table>	
+		</div>
+	</div>	
+</div>

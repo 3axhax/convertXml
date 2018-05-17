@@ -1,0 +1,1195 @@
+<link href="/my/css/font-awesome.min.css?v=16062016" rel="stylesheet">
+<style type="text/css">
+.loading{ display: none;opacity: 0.25;position: fixed;height: 100%;width: 100%;top: 0;background: white;z-index: 9999;}
+.loading:before { content: url(/images/loader.gif);position: absolute;z-index: 9999;left: 50%;margin-left: -32px;top: 180px;}
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 2px; margin-top: 10px;">
+        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+            {if $is_page_search}
+            <table>
+                <tr>
+                    {if $number_sites >= 10 && !$search_not_found}
+                    <td>
+                        <button type="button" class="btn btn-default btn-sm disabled delbulk" style="margin-right: 2em;"><i class="fa fa-trash-o" aria-hidden="true"></i> {$l_delete_selected}</button>
+                    </td>
+                    {/if}
+                    <td>
+                        <form class="form-inline" method="get">
+                            <div class="btn-group">
+                                <input type="text" class="form-control input-sm" id="search_service" name="search_service" placeholder="{$l_search_service}" required style="width: 260px;" value="{if $search_service}{$search_service}{/if}">
+                                <span id="erase_search_btn" class="glyphicon glyphicon-remove-circle"></span>
+                            </div>
+                            <button type="submit" class="btn btn-default btn-sm"><img src="/images/icons/16x16/Zoom.png"></button>
+                        </form>
+                    </td>
+                    <td>
+                        {if !$search_service}
+                        <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;{$l_show_rows}:&nbsp;</td>
+                                <td>
+                                    <select class="form-control input-sm" id="change_num_pages">
+                                        <option value="10"{if $smarty.cookies.num_per_page eq 10} selected{/if}>10</option>
+                                        <option value="20"{if $smarty.cookies.num_per_page eq 20} selected{/if}>20</option>
+                                        <option value="100"{if $smarty.cookies.num_per_page eq 100} selected{/if}>100</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    {if $prevpage}
+                                        <a href="{if $allow_sort}{$prev_page_link}{else}/my?service_page={$prevpage}{/if}" class="nounder">
+                                    {/if}
+                                    <button class="btn btn-default btn-sm"{if !$prevpage} disabled="disabled"{/if}>
+                                    &laquo;</button>
+                                    {if $prevpage}</a>{/if}
+                                    {if $nextpage}
+                                        <a href="{if $allow_sort}{$next_page_link}{else}/my?service_page={$nextpage}{/if}" class="nounder">
+                                    {/if}
+                                    <button class="btn btn-default btn-sm"{if !$nextpage} disabled="disabled"{/if}>&raquo;</button>
+                                    {if $nextpage}</a>{/if}
+                                </td>
+                            </tr>
+                        </table>
+                        {/if}
+                    </td>
+                </tr>
+            </table>
+            {/if}
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 right" style="padding-top: 15px;">
+            {$header_notice|default:"&nbsp;"}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {if $services}
+            <table class="table nobtmmargin">
+                <tr class="active main_page_theader">
+                    {if $allow_sort}
+                    {if $is_page_search}
+                    <th><input type="checkbox" id="chAll"></th>
+                    {/if}
+                    <th class="w40">
+                        <a href="{$sort_hostname_link}" class="sort-link">{$l_website}</a>{$sort_hostname_direction}
+                    </th>
+                    <th>{strip}
+                        <nobr>
+                        {$l_antispam_status}
+                        {if $show_dashboard_tour}
+                            &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}527{else}517{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                        {/if}
+                        </nobr>
+                    {/strip}</th>
+                    <th>
+                        <a href="{$sort_created_link}" class="sort-link">{$l_antispam_created}</a>{$sort_created_direction}
+                    </th>
+                    <th class="sort-links">{strip}
+                        <nobr>
+                            <a href="{$sort_approved_link}" class="sort-link">{$l_approved}</a>{$sort_approved_direction} / <a href="{$sort_spam_link}" class="sort-link">{$l_spam}</a>{$sort_spam_direction} 
+                            {if $has_sfw}
+                                &nbsp;/ <a href="{$sort_sfw_link}" class="sort-link">SpamFireWall</a>{$sort_sfw_direction}&nbsp;<span class="tooltip" ttext="{$l_tooltip_text}"><i class="fa fa-question-circle"></i></span>
+                            {/if}
+                            {if $show_dashboard_tour}
+                                &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}529{else}519{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                            {/if}
+                        </nobr>
+                    {/strip}</th>
+                    {else}
+                    {if $is_page_search}
+                    <th><input type="checkbox" id="chAll"></th>
+                    {/if}
+                    <th class="w40">{$l_website}</th>
+                    <th>{strip}
+                        <nobr>
+                        {$l_antispam_status}
+                        {if $show_dashboard_tour}
+                            &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}527{else}517{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                        {/if}
+                        </nobr>
+                    {/strip}</th>
+                    <th>{$l_antispam_created}</th>
+                    <th>{strip}
+                        <nobr>
+                        {$l_approved} / {$l_spam} 
+                        {if $has_sfw}
+                            &nbsp;/ SpamFireWall <span class="tooltip" ttext="{$l_tooltip_text}"><i class="fa fa-question-circle"></i></span>
+                        {/if}
+                        {if $show_dashboard_tour}
+                            &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}529{else}519{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                        {/if}
+                        </nobr>
+                    {/strip}</th>
+                    {/if}
+                    <th class="width_10_percent">{strip}
+                        <nobr>
+                        {$l_week_stat}
+                        {if $show_dashboard_tour}
+                            &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}531{else}521{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                        {/if}
+                        </nobr>
+                    {/strip}</th>
+                    <th class="width_10_percent">{strip}
+                        <nobr>
+                        {$l_access_key|default:"Ключ доступа"}
+                        {if $show_dashboard_tour}
+                            &nbsp;<a href="#" data-id="{if $ct_lang == 'ru'}533{else}523{/if}" class="mpopover"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                        {/if}
+                        </nobr>
+                    {/strip}</th>
+                </tr>
+                {assign var="wordpress" value=0}
+                {foreach from=$services item=s name=services}
+                <tr id="s{$s.service_id}">
+                    {if $is_page_search}
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="ch" value="{$s.service_id}">
+                    </td>
+                    {/if}
+                    <td class="w40 site_height site_line" id="site_{$s.service_id}">
+                        {if $s.favicon}
+                        <img src="{$s.favicon}" width="16" alt="" class="favicon" />&nbsp;<span class="site_name">{$s.visible_name}</span>
+                        {else}
+                        <img src="/images/{$s.engine}.ico" width="16" height="16"> <span class="site_name platform wordpress">{$s.visible_name}</span>
+                        {/if}
+                        <a href="http://{$s.hostname}" target="_blank" title="{$l_new_tab}"><i class="fa fa-external-link" aria-hidden="true"></i></a>
+                        <br>
+                        {$l_service} #{$s.service_id}{if $s.release_version}, {$l_app_version} {$s.release_version}{/if}.
+                        <div id="site_menu_{$s.service_id}" class="gray">
+                            <a href="/my/show_requests?service_id={$s.service_id}&int={$s.details_period}">{$l_log}</a>&nbsp;|&nbsp;
+                            <a href="/my/service?action=edit&amp;service_id={$s.service_id}" title="{$l_settings}">{$l_settings}</a>&nbsp;|&nbsp;
+                            <a href="/my/service?action=delete&amp;service_id={$s.service_id}" title="{$l_delete}" class="singl-delete" data-id="{$s.service_id}">{$l_delete}</a>&nbsp;|&nbsp;
+                            <a href="/my/show_private?service_id={$s.service_id}&service_type=antispam">{$l_black_white_lists}</a>&nbsp;|&nbsp;
+                            {if $s.engine == 'php'}
+                            <a href="/register?show_manual=1&platform={$s.engine}&hide_email_notice=1&service_id={$s.service_id}" title="{$l_setup_manual}" target="_blank">{$l_setup_manual}</a>&nbsp;|&nbsp;
+                            {else}
+                            <a href="/install?platform={$s.engine}" title="{$l_setup_manual}" target="_blank">{$l_setup_manual}</a>
+                            {/if}
+							{if $show_rate_notice && $s.rate_url}
+							&nbsp;|&nbsp;
+							<div class="give_feedback">
+								<img src="/images/icons/star.png" alt="" />
+								<a href="/go?url={$s.rate_url}" target="_blank">{$l_rate_us}</a>
+							</div>
+							{/if}
+                        </div>
+                    </td>
+                    <td class="center">
+                        {if $s.status_message_class eq update_app}
+                            {if $s.engine == 'wordpress' && floatval($s.release_version)>=5.88}
+                                {$wordpress=$wordpress+1}
+                                <a href="#" 
+                                    data-toggle="modal" 
+                                    {if $read_only}
+                                    data-target="#readonly-modal"
+                                    {else}
+                                    data-target="#updateModal" 
+                                    data-version="{$s.productive_release_version}" 
+                                    data-host="{$s.hostname}" 
+                                    data-file="{$s.update_app.files[0].app_file}"
+                                    data-link="{$s.update_app.files[0].link_name}"
+                                    data-service_id="{$s.service_id}"
+                                    {/if}
+                                    style="color: #ffa500;">
+                            {/if}
+                        <span class="orange">
+                    	{/if}
+                        {if $s.status_message_class eq 'processing'}
+                            <span class="orange">
+                        {/if}
+                    	{if $s.status_message_class eq ''}
+                    		<span class="green">
+                    	{/if}
+                        {if $s.status_message_class eq offline}
+                            <span class="red">
+                        {/if}
+                    	{$s.status_message}
+                    	</span>
+                        {if  $s.status_message_class eq update_app && $s.status_message_class eq update_app && floatval($s.release_version) >= 5.88}
+                            </a>
+                        {/if}
+                    	{if $s.status_message_hint}
+                            <br>
+                            <div class="text-muted" style="font-size: 12px;">{$s.status_message_hint}</div>
+                        {else if $s.status_message_class eq update_app}
+                            <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top" title="{$l_tooltip_update}"></span>
+                        {/if}
+                        {if !$s.online && !$user_info.moderate}
+                        	<br>
+                        	<span class="being_updated">{$l_status_updated}</span>
+                        	<div class="gray"><a href="/my/bill/recharge">{$l_renew_antispam}</a></div>
+                        {else}
+                            {if !$s.connected && $s.check_setup && !$s.status_message_hint}
+                            	<a href="/faq#waiting_first" target="_blank"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                            {/if}
+                            {if $s.check_setup && ($s.engine != 'wordpress' || ($s.engine == 'wordpress' && floatval($s.release_version) < 5.88))}
+                            	<div class="gray">{$s.check_setup}</div>
+                            {/if}
+                            {if $s.update_app.files[0].app_file && ($s.engine != 'wordpress' || ($s.engine == 'wordpress' && floatval($s.release_version) < 5.88))}
+                            <span class="update_file"><a href="{$s.update_app.files[0].app_file}" class="gray"><img src="/images/icons/16x16/Down.png" alt="Download" class="update_icon" />{$s.update_app.files[0].link_name}</a></span>
+                            {/if}
+                        {/if}
+                        {if $s.was_updated}
+                            <br>
+                            <div class="text-muted" style="font-size: 12px;">{$s.was_updated}</div>
+                        {/if}
+                    </td>
+                    <td class="center">{$s.created_at}</td>
+                    <td>
+                        {strip}
+                        <table class="center w100">
+                            {foreach from=$s.r_stat item=d}
+                            {foreach from=$d item=ds key=period}
+                            <tr>
+                                <td width="40%" align="left" class="gray">{$ds.period_name}</td>
+                                <td width="{if $has_sfw}20{else}30{/if}%" class="green">
+                                    {if $ds.allow}
+                                    <a href="/my/show_requests?service_id={$s.service_id}&amp;int={$period}&amp;allow=1" class="green">{$ds.allow}</a>
+                                    {else}
+                                    {$ds.allow}
+                                    {/if}
+                                </td>
+                                <td width="{if $has_sfw}20{else}30{/if}%" class="red">
+                                    {if $ds.spam}
+                                    <a href="/my/show_requests?service_id={$s.service_id}&amp;int={$period}&amp;allow=0" class="red">{$ds.spam}</a>
+                                    {else}
+                                    {$ds.spam}
+                                    {/if}
+                                </td>
+                                {if $has_sfw}
+                                <td width="20%" class="red">
+                                    {if $ds.sfw}
+                                    <a href="/my/show_sfw?service_id={$s.service_id}&amp;int={$period}" class="red">{$ds.sfw}</a>
+                                    {else}
+                                    0
+                                    {/if}
+                                </td>
+                                {/if}
+                            </tr>
+                            {/foreach}
+                            {/foreach}
+                        </table>
+                        {/strip}
+                    </td>
+                    <td class="center">
+                        {if $s.week_stat_file}
+						<div>
+                        <img src="{$s.week_stat_file}" usemap="#week_stat_nav_{$s.service_id}" title="{$l_week_stat_desc}" alt="" />
+                        <map name="week_stat_nav_{$s.service_id}">
+                            {foreach from=$s.spam_coords item=c}
+                            <area shape="rect" coords="{$c.coords}" title="{$c.title}">
+                            {/foreach}
+                        </map>
+						</div>
+                        {else}
+                        -
+                        {/if}
+                    </td>
+                    <td width="150">
+                        <table class="center">
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td id="auth_key_{$s.service_id}" width="135">
+                                                ************
+                                            </td>
+                                            <td>
+                                                {if !$token_auth}
+                                                <a href="#/" id="key_{$s.service_id}" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                                                <input type="hidden" id="auth_key_h_{$s.service_id}" value="{$s.auth_key}">
+                                                {else}
+                                                <a href="/my/session?password_login=1" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {/foreach}
+            </table>
+            {/if}
+            {if $granted_services && !$search_service}
+            <h5 class="gray">{$l_delegated_sites}</h5>
+            <table class="table nobtmmargin">
+                {foreach from=$granted_services item=s name=services}
+                <tr id="s{$s.service_id}">
+                    {if $is_page_search}
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="ch" value="{$s.service_id}">
+                    </td>
+                    {/if}
+                    <td class="w40 site_height site_line" id="site_{$s.service_id}">
+                        <img src="{$s.favicon}" width="16" alt="" class="favicon" />&nbsp;<span class="site_name">{$s.visible_name}</span>
+                        <br>
+                        {$l_service} #{$s.service_id} ({if $s.grantwrite}{$l_grants_read_write}{else}{$l_grants_read}{/if}){if $s.release_version}, {$l_app_version} {$s.release_version}{/if}.
+                        <div id="site_menu_{$s.service_id}" class="gray">
+                            <a href="/my/show_requests?service_id={$s.service_id}&int={$s.details_period}">{$l_log}</a>&nbsp;|&nbsp;
+                            <a href="/my/service?action=edit&amp;service_id={$s.service_id}" title="{$l_settings}">{$l_settings}</a>&nbsp;|&nbsp;
+                            <a href="/my/show_private?service_id={$s.service_id}&amp;service_type=antispam">{$l_black_white_lists}</a>
+                        </div>
+                    </td>
+                    <td class="center">
+                        {if $s.status_message_class eq update_app}
+                        <span class="orange">
+                        {/if}
+                        {if $s.status_message_class eq ''}
+                            <span class="green">
+                        {/if}
+                        {if $s.status_message_class eq offline}
+                            <span class="red">
+                        {/if}
+                        {$s.status_message}
+                        </span>
+                        {if $s.status_message_hint}
+                            <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top" title="{$s.status_message_hint}"></span>
+                        {else if $s.status_message_class eq update_app}
+                            <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top" title="{$l_tooltip_update}"></span>
+                        {/if}
+                        {if !$s.online && !$user_info.moderate}
+                            <br>
+                            <span class="being_updated">{$l_status_updated}</span>
+                            <div class="gray"><a href="/my/bill/recharge">{$l_renew_antispam}</a></div>
+                        {else}
+                            {if !$s.connected && $s.check_setup}
+                                <a href="/faq#waiting_first" target="_blank"><img src="/images/icons/help.png" alt="" /></a>
+                            {/if}
+                            {if $s.check_setup}
+                                <div class="gray">{$s.check_setup}</div>
+                            {/if}
+                            {if $s.update_app.files[0].app_file}
+                            <span class="update_file"><a href="{$s.update_app.files[0].app_file}" class="gray"><img src="/images/icons/16x16/Down.png" alt="Download" class="update_icon" />{$s.update_app.files[0].link_name}</a></span>
+                            {/if}
+                        {/if}
+                    </td>
+                    <td>
+                        {strip}
+                        <table class="center w100">
+                            {foreach from=$s.r_stat item=d}
+                            {foreach from=$d item=ds key=period}
+                            <tr>
+                                <td width="40%" align="left" class="gray">{$ds.period_name}</td>
+                                <td width="{if $has_sfw}20{else}30{/if}%" class="green">
+                                    {if $ds.allow}
+                                    <a href="/my/show_requests?service_id={$s.service_id}&amp;int={$period}&amp;allow=1" class="green">{$ds.allow}</a>
+                                    {else}
+                                    {$ds.allow}
+                                    {/if}
+                                </td>
+                                <td width="{if $has_sfw}20{else}30{/if}%" class="red">
+                                    {if $ds.spam}
+                                    <a href="/my/show_requests?service_id={$s.service_id}&amp;int={$period}&amp;allow=0" class="red">{$ds.spam}</a>
+                                    {else}
+                                    {$ds.spam}
+                                    {/if}
+                                </td>
+                                {if $has_sfw}
+                                <td width="20%" class="red">
+                                    {if $ds.sfw}
+                                    <a href="/my/show_sfw?service_id={$s.service_id}&amp;int={$period}" class="red">{$ds.sfw}</a>
+                                    {else}
+                                    0
+                                    {/if}
+                                </td>
+                                {/if}
+                            </tr>
+                            {/foreach}
+                            {/foreach}
+                        </table>
+                        {/strip}
+                    </td>
+                    <td class="center">
+                        {if $s.week_stat_file}
+                        <img src="{$s.week_stat_file}" usemap="#week_stat_nav_{$s.service_id}" title="{$l_week_stat_desc}" alt="" />
+                        <map name="week_stat_nav_{$s.service_id}">
+                            {foreach from=$s.spam_coords item=c}
+                            <area shape="rect" coords="{$c.coords}" title="{$c.title}">
+                            {/foreach}
+                        </map>
+                        {else}
+                        -
+                        {/if}
+                    </td>
+                    <td width="150">
+                        <table class="center">
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td id="auth_key_{$s.service_id}" width="135">
+                                                ************
+                                            </td>
+                                            <td>
+                                                {if !$token_auth}
+                                                <a href="#/" id="key_{$s.service_id}" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                                                <input type="hidden" id="auth_key_h_{$s.service_id}" value="{$s.auth_key}">
+                                                {else}
+                                                <a href="/my/session?password_login=1" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {/foreach}
+            </table>
+            {/if}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {if $is_page_search && $number_sites >= 10 && !$search_not_found}
+                <button type="button" class="btn btn-default btn-sm disabled delbulk"><i class="fa fa-trash-o" aria-hidden="true"></i> {$l_delete_selected}</button>
+            {/if}
+        </div>
+    </div>
+    {if $show_apps_services || !$services}
+    {*<link href="/my/css/cleantalk.min.css?v831072017" rel="stylesheet">
+    <div class="back-link back-link-md-hide">
+        <a href="/my">
+            <i class="glyphicon glyphicon-arrow-left"></i>
+            Dashboard
+        </a>
+    </div>*}
+    <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 center">
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 center">
+            {if $search_not_found}
+            <br>
+            <div class="marg10px">
+                <div class="alertpriv">
+                    {$search_not_found}
+                </div>
+            </div>
+            <br>
+            <style type="text/css">
+                .back-link { position: fixed;top: 140px;left: 1%;width: 100px;height: 100px;background-color: #eee;padding-top: 20px;margin-top: 15px;}
+                .back-link a { display: block;text-align: center;text-decoration: none;}
+                .back-link i { display: block;font-size: 50px;}  
+                @media screen and (min-width: 1399px){ .back-link { left: 5%;} }
+                @media screen and (max-width: 1399px){ 
+                    .back-link { position: inherit; display: block; width: 100%; height: 50px; margin-top: 0; margin-bottom: 15px; padding-top: 5px;top: 30px;left: 0;} 
+                    .back-link i { font-size: 20px; }
+                }  
+            </style>
+            <div class="back-link">
+                <a href="/my">
+                    <i class="glyphicon glyphicon-arrow-left"></i>
+                    Dashboard
+                </a>
+            </div>
+            {else}
+            <h5>{$l_add_antispam_apps|default:"Антиспам приложения"}:</h5>
+            {foreach from=$apps item=a}
+            {if $a.engine}
+            <a href="/my/service?action=new&amp;platform={$a.engine}"><img src="/images/{$a.engine}.ico" alt="{$a.info}" width="16" height="16" />{$a.info}</a>
+            {/if}
+            {/foreach}
+            <br><br><br><br>
+            {/if}
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 center">
+        </div>
+    </div>
+    {/if}
+    {if !$search_service}
+    <br><br><div class="row">
+    {if $trial}
+    <div class="col-xs-12">
+        {else}
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            {/if}
+            {if $setup_service}
+            {include file="setup_hint.html"}
+            {else}
+			{if $need_review && $revbon && $ct_lang != 'ru'}
+            <div class="alert alert-default alert-dismissible center review_banner" role="alert" id="reviewalert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {include file="review_hint.html"}
+            </div>
+            {/if}
+            {if $ep_display}
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    {/if}
+                    {if !$reviews}
+                    {if !$hide_package_info}
+                    <div class="left_border">
+                        <h4>{$l_package}</h4>
+                        <span class="text-muted">
+                            	{$package_info}{if $user_info.tariff.pmi > 0} {$l_tariff_info_pmi|default:"Ручное продление доступа каждые {$user_info.tariff.pmi} одобренных запросов"}.{/if}
+                        	</span>
+                        {/if}
+                        {if $user_info.trial == 0}
+						{*<br>
+						<span>{$paid_till_info}</span>*}
+                        {if $valid_till_info}<br><span class="text-muted">{$valid_till_info}</span>{/if}
+                        {if !empty($user_info.addons)}
+                            <h5>Addon packages</h5>
+                            {foreach from=$user_info.addons item=package}
+                                <span class="text-muted">
+                                    {if $package.addon_id == 1}{$l_addon_45_days_log}{/if}
+                                    {if $package.addon_id == 2}{$l_addon_stop_words}{/if}
+                                    {if $package.addon_id == 3}{$l_addon_country_blacklist}{/if}
+                                    {if $package.addon_id == 4}{$l_addon_message_to_forbidden_visitors}{/if}
+                                    {if $package.addon_id == 5}{$l_addon_website_access_delegation}{/if}
+                                </span><br>
+                            {/foreach}
+                        {/if}
+                        {/if}
+                    </div>
+                    <div class="gray">
+                        {if $will_extend}
+                        {$l_will_extend|default:"Будет автоматически продлена {$user_info.paid_till} на {$user_info.tariff.period} день"}
+                        {/if}
+                    </div>
+                    {if $show_account_status}
+                    {$l_account_status|default:"Статус акаунта"}
+                    {if $user_info.freeze}
+                    <span class="label_freeze">	 {$l_account_stalled|default:"приостановлен"}
+                            </span>
+                    <br />
+                    <span class="gray">
+                                {if $need_recharge_pm}
+                                    {$l_few_minutes|default:"Необходимо ручное продление доступа к сервису!"}<br />
+                                {/if}
+                                {if $user_info.freeze_mpd}
+                                    {$l_next_day|default:"Будет восстановлен в начале следующих суток"}
+                                {/if}
+                            </span>
+                    {elseif $user_info.moderate}
+                    <span class="green">	{$l_account_enabled|default:"включен"}
+                            </span>
+                    {elseif !$user_info.moderate && !$user_info.first_pay_id}
+                    <span class="red bold">{$l_trial_expired}</span>
+                    {else}
+                    <span class="red">{$l_account_disabled|default:"выключен"}
+                            </span>
+                    {/if}
+                    {/if}
+                    {if $user_info.balance > 0 || $user_info.bonus > 0}
+                    <br>
+                    {$l_balance|default:"Текущий счет"}: {$user_info.balance} {if $user_info.bonus > 0}({$l_bonus|default:"бонус"} +{$user_info.bonus}) {/if}{$l_currency}
+                    <br />
+                    {/if}
+                    {if $user_info.tariff.pmi}
+                    <br>
+                    {$free_positive_requests}&nbsp;<a href="/faq#manual_extend" class="hint_link" target="_blank">[?]</a>
+                    <br>
+                    {/if}
+                    {if $user_info.tariff.pmi}
+                    <button type="button" {if $user_info.limit_pm <= 0} onclick="window.location.replace('/my/bill/recharge_pm');" style="color: #000000; font-weight: bold;"{else}disabled{/if}>{$l_extend_connection|default:"Продлить доступ к сервису"}</button>
+                    {/if}
+                    {/if}
+                    {if $show_follow_us}
+                    <br>
+                    <ul>
+                        <li><img src="/images/icons/forum.png" alt="Forum" /><a href="/forum">{$l_forum}</a></li>
+                        {if $ct_lang == 'ru'}
+                        <li><img src="/images/icons/blogger.png" alt="Blog" /><a href="/itkitchen">Блог</a></li>
+                        <li><img src="/images/twitter_icon.png" alt="Twitter" /><a href="/go?url=twitter.com/cleantalk_ru" rel="nofollow">Твиттер</a></li>
+                        {/if}
+                        {if $ct_lang == 'en'}
+                        <li><img src="/images/icons/blogger.png" alt="Blog" /><a href="/blog">Blog</a></li>
+                        <li><img src="/images/twitter_icon.png" alt="Twitter" /><a href="go?url=twitter.com/cleantalk_en" rel="nofollow">Follow us</a></li>
+                        {/if}
+                    </ul>
+                    <br>
+                    {/if}
+                    {if $trial_notice && !$reviews}
+                    <h4>{$paid_till_info_trial}. {$l_down_up_cancel}</h4>
+                    <div>
+                        {$l_trial_notice}
+                        <span id="trial_notice_text">{$l_trial_notice_text}</span>
+                        <br>
+                        <a href="#/" id="more_trial_notice" class="gray underline">{$l_more}</a>
+                    </div>
+                    {/if}
+                    {if $show_reviews && $reviews}
+                    <div class="left_border">
+                        {foreach from=$reviews item=r name=rvw}
+                        <table>
+                            <tr valign="top">
+                                <td width="50">
+                                    <img src="{$r.review_avatar_data}" alt="" class="reviews_avatar"/>
+                                </td>
+                                <td class="review_customer">
+                                    <div>
+                                    <span>
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    </span>
+                                        <span class="review_title">{$r.review_title}</span>
+                                    </div>
+                                    <div class="gray">
+                                        By {$r.review_author}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="gray review_text">
+                                        {$r.review_text}{if $r.review_host}&nbsp;<a href="/go?url={$r.review_url}" target="_blank" class="grey_text" >{$r.review_host}</a>{/if}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        {if !$smarty.foreach.rvw.last}
+                        <br>
+                        {/if}
+                        {/foreach}
+                    </div>
+                    {/if}
+                    {if $show_mobile_apps}
+                    {if $ep_display_info}
+                    <br><div class="left_border">
+                    {if $ep_display === 'info'}
+                    <h4>{$ep_info.title_enabled}</h4>
+                    {else}
+                    <h4>{$ep_info.title_not_enabled}</h4>
+                    {/if}
+                    <ul class="grey_text">
+                        {foreach from=$ep_info.addons item=a}
+                        <li>{$a}</li>
+                        {/foreach}
+                    </ul>
+                    {if $ep_display !== 'info'}
+                    <a href="{$ep_info.url}" class="btn btn-primary btn-sm" style="text-decoration: none; margin-left: 2em">{$ep_info.buy_now}</a>
+                    {/if}
+                </div>
+                    {/if}
+                    {/if}
+                    {if $brute_display}
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                    {if $brute_display_info}
+                    <div class="left_border">
+                        <h4>{$l_brute_force_title}</h4>
+                        {$l_brute_force_desc}
+                        <a href="https://wordpress.org/plugins/security-malware-firewall/" class="btn btn-primary btn-sm" style="text-decoration: none; margin-left: 2em">{$l_brute_force_button}</a>
+                    </div>
+                    <br>
+                    {/if}
+                    <div class="left_border">
+                        <h4>{$l_use_mobile_app}</h4>
+                        <a href="https://itunes.apple.com/us/app/cleantalk/id825479913?mt=8" target="_blank"><img src="/images/ios_app.png" alt="" width="69" height="24"></a>
+                        <a href="https://play.google.com/store/apps/details?id=org.cleantalk.app" target="_blank">
+                            <img alt="Android app on Google Play"
+                                 src="/images/en_app_rgb_wo_45.png" width="69" height="24">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {/if}
+            {/if}
+        </div>
+        {if $trial}
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            {else}
+            <div class="col-xs-4">
+                {/if}
+                {if $middle_notice}
+                <br />
+                <h3>{$middle_notice}</h3>
+                <span class="grey_hint">{$middle_notice_hint}</span>
+                {else}
+                {/if}
+                {if !$trial && $country eq DE}
+                <div class="left_border">
+                    <h4>Can you give us a little help?</h4>
+                    We are going to translate the description plugin on Wordpress directory to German.
+                    <br>
+                    We will be grateful for your help!
+                    <br>
+                    <a href="https://translate.wordpress.org/projects/wp-plugins/cleantalk-spam-protect/stable-readme/de/default" target="_blank"><button class="btn btn-primary">Translate CleanTalk</button></a>
+                </div>
+                <br>
+                {/if}
+                {if $promo_discount}
+                <div class="left_border">
+                    <h4>{$promo_discount.title}</h4>
+                    <div class="promocode_info_hint grey_text">
+                        {$promo_discount.info}
+                    </div>
+                </div>
+                <br>
+                {/if}
+                {if $apps && $show_more_apps && $services}
+                <div class="left_border">
+                    <h4>{$l_add_antispam_apps|default:"Дополнительные антиспам приложения"}</h4>
+                        {foreach from=$apps item=a}
+                        {if $a.engine}
+                        <a href="/my/service?action=new&amp;platform={$a.engine}" class="grey_text" style="white-space: nowrap"><img src="/images/{$a.engine}.ico" alt="{$a.info}" width="16" height="16" />{$a.info}</a>&nbsp;
+                        {/if}
+                        {/foreach}
+                </div>
+            </div>
+            {/if}
+            {if $show_offer && !$smarty.cookies.extended}
+            <div class="left_border">
+                {include file=$offer_template}
+            </div>
+            {/if}
+            {if $show_hosting_offer}
+            <div class="left_border">
+                {include file="hosting_offer.html"}
+            </div>
+            {/if}
+            {if $smarty.cookies.extended}
+            <div class="left_border">
+                <div class="center">
+                    {$l_service_recharged}
+                    <img src="/images/icons/button_ok.png" valign="middle" alt="" />
+                    {if $ct_lang == 'en' && $paypal_business_accounts_issue}
+                    <div class="payment_error">
+                        {$l_payment_fail}
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            {/if}
+            {if $auto_bill_date}
+            <div class="left_border">
+                <div class="center">
+                    {$auto_bill_date}
+                    <img src="/images/icons/button_ok.png" valign="middle" alt="" />
+                </div>
+            </div>
+            {/if}
+            {if $trial_notice}
+            <div class="left_border">
+                <h4>{$paid_till_info_trial}. {$l_down_up_cancel}</h4>
+                <div class="gray">{$l_trial_notice}<span id="trial_notice_text" class="displaynone">{$l_trial_notice_text}</span>
+                    <br>
+                    <a href="#/" id="more_trial_notice" class="gray underline">{$l_more}</a>
+                    {if $free_cleantalk_message}
+                    <br />
+                    {include file="free_cleantalk_with_hosting.html"}
+                    {/if}
+                </div>
+                {/if}
+            </div>
+        </div>
+        {/if}
+    </div>
+    {if $show_world_map}
+    <div class="container-fluid">
+        {if $mapHidden}
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                <br><br><h4>{$l_map_user_title}</h4><hr>
+                <div class="text-center"><a href="?hidemap=0">{$l_map_show}</a></div>
+                <br><br>
+            </div>
+        </div>
+        {else}
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                <br><br><h4>{$mapTitle}</h4><hr>
+                <div class="text-center"><a href="?hidemap=1">{$l_map_hide}</a></div>
+                <br><br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+            <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                <div>
+                    {$l_map_source_requests}: <a href="#" id="world-map-approved-link">{$l_map_approved}</a> / <a href="#" id="world-map-spam-link"><strong>{$l_map_spam}</strong></a>
+                </div>
+                <br>
+                <div id="world-map-approved" style="width: 100%; height: 400px;"></div>
+                <div id="world-map-spam" style="width: 100%; height: 400px;"></div>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <div class="panel panel-default">
+                    <div class="alert alert-danger">
+                        <strong>{$l_map_top_spam_requests}</strong>
+                        <div>{$l_map_last_week}</div>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>{$l_map_country}</th>
+                            <th colspan="2">{$l_map_traffic}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {if !count($map['spam'])}
+                        <tr>
+                            <td colspan="2">{$l_map_no_requests}</td>
+                        </tr>
+                        {else}
+                        {foreach from=$map['spam'] item=v}
+                        <tr>
+                            <td>{$v.country}</td>
+                            <td>{number_format($v.spam, 0, '', ' ')}</td>
+                            <td>{$v.spamPercent}</td>
+                        </tr>
+                        {/foreach}
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="panel panel-default">
+                    <div class="alert alert-success">
+                        <strong>{$l_map_top_approved_requests}</strong>
+                        <div>{$l_map_last_week}</div>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>{$l_map_country}</th>
+                            <th colspan="2">{$l_map_traffic}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {if !count($map['approved'])}
+                        <tr>
+                            <td colspan="2">{$l_map_no_requests}</td>
+                        </tr>
+                        {else}
+                        {foreach from=$map['approved'] item=v}
+                        <tr>
+                            <td>{$v.country}</td>
+                            <td>{number_format($v.approved, 0, '', ' ')}</td>
+                            <td>{$v.approvedPercent}</td>
+                        </tr>
+                        {/foreach}
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+        </div>
+        {/if}
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><br><br><br></div>
+        </div>
+    </div>
+    {/if}
+    {if $uda_banner}
+    <div class="modal fade bs-example-modal-xs" id="banner_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header center">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{$l_use_antispam}</h4>
+                </div>
+                <div class="modal-body center">
+                    <img src="/images/useyourantispam.jpg" width="500" alt="">
+                    <h5>{$l_install_last}</h5>
+                    <a href="/install">
+                        <button class="btn btn-primary">{$l_download_app}</button>
+                    </a>
+                    <h5>{$l_get_3_bonus}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="uda_banner" value="1">
+    {/if}
+    <link rel="stylesheet" href="/css/jquery-jvectormap-2.0.3.css" type="text/css" media="screen">
+    <style>
+        .sort-link {
+            color: #555;
+        }
+        .sort-link:hover {
+            color: #000;
+        }
+        th.sort-links {
+            color: #777;
+        }
+    </style>
+    <script src="/my/js/main.js?v=18102017"></script>
+    <script src="/js/jquery-jvectormap-2.0.3.min.js"></script>
+    <script src="/js/jquery-jvectormap-world-mill.js"></script>
+    <script>
+        var gdpData = {$gdpData};
+    </script>
+    {literal}
+    <script>
+        function sep(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        $(function () {
+            $('#world-map-approved-link').click(function (e) {
+                $('#world-map-approved-link').html('<strong>Approved</strong>');
+                $('#world-map-spam-link').html('Spam');
+                $('#world-map-spam').hide();
+                $('#world-map-approved').show();
+                e.preventDefault();
+            });
+
+            $('#world-map-spam-link').click(function (e) {
+                $('#world-map-approved-link').html('Approved');
+                $('#world-map-spam-link').html('<strong>Spam</strong>');
+                $('#world-map-approved').hide();
+                $('#world-map-spam').show();
+                e.preventDefault();
+            });
+
+            $('#world-map-approved').vectorMap({
+                map: 'world_mill',
+                backgroundColor: '#ffffff',
+                zoomOnScroll: false,
+                regionStyle: {
+                    initial: {
+                        fill: '#aaaaaa'
+                    }
+                },
+                series: {
+                    regions: [{
+                        values: gdpData['approved'],
+                        scale: ['#99EE99', '#11AA11'],
+                        normalizeFunction: 'polynomial'
+                    }]
+                },
+                onRegionTipShow: function (e, el, code) {
+                    el.html(el.html() + ' (' + (gdpData['approved'][code] ? sep(gdpData['approved'][code]) : 0) + ')');
+                }
+            });
+
+            $('#world-map-spam').vectorMap({
+                map: 'world_mill',
+                backgroundColor: '#ffffff',
+                zoomOnScroll: false,
+                regionStyle: {
+                    initial: {
+                        fill: '#aaaaaa'
+                    }
+                },
+                series: {
+                    regions: [{
+                        values: gdpData['spam'],
+                        scale: ['#FFAAAA', '#EE1111'],
+                        normalizeFunction: 'polynomial'
+                    }]
+                },
+                onRegionTipShow: function (e, el, code) {
+                    el.html(el.html() + ' (' + (gdpData['spam'][code] ? sep(gdpData['spam'][code]) : 0) + ')');
+                }
+            });
+
+            $('#world-map-approved').hide();
+            $('#updateModal').on('show.bs.modal', function (event) {
+                var wordpress = {/literal}{if $wordpress}{$wordpress}{else}0{/if}{literal};
+                var button = $(event.relatedTarget);
+                var version = button.data('version');
+                var host = button.data('host');
+                var link = button.data('link');
+                var file = button.data('file');
+                var service_id = button.data('service_id');
+                $(this).find('#js-update-btn').data('service_id',service_id);
+                var update = $(this).find('#js-update');
+                var label = $(this).find('#j-label1');
+                var update_file = $(this).find('.update_file');
+                if(wordpress<2){
+                    $('#allSites').parent().addClass('hidden');
+                }
+                update.text(update.text().replace(':VERSION:',version).replace(':HOST:',host));
+                label.text(label.text().replace(':VERSION:',version).replace(':WORDPRESS:',wordpress));
+                update_file.html(update_file.html().replace(':LINK:',link).replace(':FILE:',file));
+                if(file){
+                    update_file.removeClass('hidden');
+                }else{
+                    update_file.addClass('hidden');
+                }
+            });
+            $('#js-update-btn').click(function(){
+                if(!$(this).hasClass('disabled')){
+                    $(this).addClass('disabled');
+                    var service_id = $(this).data('service_id');
+                    var all_sites = +$('#allSites').prop('checked');
+                    var auto_update = +$('#autoUpdate').prop('checked');
+                    
+                    $.ajax({
+                        method: "GET",
+                        url: "/my/ajax?action=auto_update",
+                        data: {service_id: service_id, all_sites: all_sites, auto_update: auto_update},
+                        dataType: "json"
+                    }).done(function(data) {
+                        $('#js-update-btn').removeClass('disabled');
+                        $('#updateModal').modal('toggle');
+                        location.reload();
+                    }).error(function() {
+                        console.log('Error');
+                        $('#js-update-btn').removeClass('disabled');
+                    });
+                    
+                }
+            });
+            {/literal}
+            var delete_confirm = '{$l_delete_confirm}';
+            var message = '{$l_delete_message}';
+            var singl_confirm = '{$l_service_delete}';
+            {if $bulk_delete_count}
+                var msg = message.replace(':COUNT:',{$bulk_delete_count}).replace(':SITES:',plural({$bulk_delete_count},'сайт', 'сайта','сайтов'));
+                $('#information_message .alert').html(msg);
+                $('#information_message').modal('show');
+                setTimeout(function(){ $('#information_message').modal('hide'); }, 5000);
+            {/if}
+            {literal}
+            $(document).on('click', '.delbulk', function() {
+                var btn = $(this);
+                if(btn.hasClass('disabled')){
+                    return false;
+                }
+                var msg_confirm = delete_confirm.replace(':COUNT:',$('.ch:checked').length).replace(':SLECTED_SITES:',plural($('.ch:checked').length,'выбранный сайт', 'выбранных сайта','выбранных сайтов'));
+                $('#confirmation .modal-body').html(msg_confirm);
+                $('#confirmation').data('singl',0);
+                $('#confirmation').modal('show');
+            });
+            $('#confirmation-confirm').click(function(){
+                if($('#confirmation').data('singl')==1){
+                    $('#confirmation').data('singl',0);
+                    window.location.href = $('#confirmation').data('singl-url');
+                    return
+                }
+                $('#confirmation').modal('hide');
+                var btn = $(".delbulk");
+                if(btn.hasClass('disabled')){
+                    return false;
+                }
+                $('.delbulk').addClass('disabled');
+
+                var ids = [];            
+                $('.loading').show();
+                $('.ch:checked').each( function(index, value) {
+                    ids.push(this.value);
+                });
+                $.ajax({
+                    url: '/my/ajax?action=delete_antispam',
+                    method: "POST",
+                    dataType: "json",
+                    data: ({ids: ids}),
+                    success: function(response) {
+                        $('.loading').hide();
+                        location.reload();
+                    }
+                });
+            });
+            $('#chAll').change(function(){
+                $('.ch').prop('checked',$('#chAll').prop('checked'));
+            });
+            $('.ch,#chAll').change(function(){
+                if($('.ch:checked').length){
+                    $('.delbulk').removeClass('disabled');
+                }else{
+                    $('.delbulk').addClass('disabled');
+                }
+                
+            });
+            $('.singl-delete').click(function(e){
+                 //onclick="return confirm('{sprintf($l_service_delete, $s.service_id)}')"
+                e.preventDefault();
+                var msg_confirm = singl_confirm.replace('%d',$(this).data('id')+' '+$(this).parents('.site_line').find('.site_name').text());
+                $('#confirmation .modal-body').html(msg_confirm);
+                $('#confirmation').data('singl',1);
+                $('#confirmation').data('singl-url',$(this).attr('href'));
+                $('#confirmation').modal('show');
+            });
+        });
+        function plural(number, one, two, five) {
+            let n = Math.abs(number);
+            n %= 100;
+            if (n >= 5 && n <= 20) {
+              return five;
+            }
+            n %= 10;
+            if (n === 1) {
+              return one;
+            }
+            if (n >= 2 && n <= 4) {
+              return two;
+            }
+            return five;
+        }
+        
+    </script>
+    {/literal}
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="Confirm Modal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{$l_update_app}</h4>
+      </div>
+      <div class="modal-body">
+        <h4 id="js-update" class="text-center">{$l_update_title}</h4>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="allSites">
+          <label class="form-check-label" for="allSites" style="font-weight: normal;" id="j-label1">{$l_update_all_sites}</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="autoUpdate">
+          <label class="form-check-label" for="autoUpdate" style="font-weight: normal;display: inline;">{$l_auto_update} <span class="glyphicon glyphicon-question-sign tt" data-toggle="tooltip" data-placement="top" title="{$l_auto_update_description}"></span></label>
+        </div>
+        <br>     
+        <div class="text-center">
+            <button type="button" class="btn btn-lg btn-success" id="js-update-btn" style="width: 80px; margin-right: 20px;">{$l_yes}</button>
+            <button type="button" class="btn btn-lg btn-default" data-dismiss="modal" style="width: 80px;">{$l_no}</button>            
+        </div>
+        <br>
+        <div class="text-center">
+            {$l_manual_update|replace:'%s':'wordpress'}
+            <br>
+            <span class="update_file hidden"><a href=":FILE:" class="gray"><img src="/images/icons/16x16/Down.png" alt="Download" class="update_icon" />:LINK:</a></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="alert alert-warning text-center">
+          <p>{$l_wp_recomend}</p>  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="loading"></div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Information modal" id="information_message">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert alert-success text-center" style="margin-bottom: 0"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Confirmation" id="confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">{$l_confirmation}</h4>
+            </div>
+            <div class="modal-body text-center">
+            </div>
+             <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmation-confirm">{$l_confirm}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="confirmation-cancel">{$l_cancel}</button>
+            </div>
+        </div>
+    </div>
+</div>

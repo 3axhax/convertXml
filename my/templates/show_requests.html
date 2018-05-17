@@ -1,0 +1,177 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <table width="100%">
+                <tbody>
+                <tr>
+                    <td valign="middle">
+                        <table width="100%">
+                            <tbody>
+                            <tr>
+                                <td class="fs2em" valign="middle" width="1%">Anti-Spam&nbsp;log</td>
+                                <td valign="middle">
+                                    &nbsp;&nbsp;{$records_found}
+                                    {if count($requests)}
+                                    &nbsp;&nbsp;<img src="/images/icons/csv.png" width="16" height="16">&nbsp;<a href="{$smarty.server.REQUEST_URI}&mode=csv" style="font-size: 12px;">Export to CSV</a>
+                                    {/if}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    {if $keep_history_45 != 'none'}
+                        {if $keep_history_45 eq 'info'}
+                    <td valign="top" rowspan="2">
+                        <div class="gray right" style="white-space: nowrap">{$l_keep_history_45}</div>
+                        {else}
+                    <td valign="top">
+                        <a href="{$paid_addons_s.keep_history_45_days.url}" class="btn btn-primary btn-sm btn-block">{$keep_history}</a>
+                        {/if}
+                    </td>
+                    {/if}
+                </tr>
+                <tr>
+                    <td style="padding-top: 1em">
+                        <span class="gray">{$l_log_updated}<br>{$l_ufbtext}</span>
+                    </td>
+                    {if $keep_history_45 != 'none' and $keep_history_45 != 'info'}
+                    <td style="vertical-align: top">
+                        <span class="help-block">{$keep_history_hint}</span>
+                    </td>
+                    {/if}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-right">
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="well">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-{if $smarty.get.int eq today}primary{else}default{/if} btn-sm filter" id="today">{$ints.today}</button>
+                    <button type="button" class="btn btn-{if $smarty.get.int eq yesterday}primary{else}default{/if} btn-sm filter" id="yesterday">{$ints.yesterday}</button>
+                    <button type="button" class="btn btn-{if $smarty.get.int eq week}primary{else}default{/if} btn-sm filter" id="week">{$ints.week}</button>
+                </div>
+                &nbsp;
+                <input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 210px; display: inline;" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$date_range_begin} - {$date_range_end}">
+                &nbsp;
+                <select id="statuses" class="form-control filter_select">
+                  <option value="">{$l_logs_status}</option>
+                  <option value="0"{if $smarty.get.allow == 0 && $smarty.get.allow ne ''} selected{/if}>{$l_denied}</option>
+                  <option value="1"{if $smarty.get.allow == 1} selected{/if}>{$l_approved}</option>
+                </select>
+                &nbsp;
+                <select id="services" class="form-control filter_select">
+                  <option value="">{$l_logs_websites}</option>
+                  {if $services}
+                  <optgroup label="---">
+                  {foreach from=$services item=oneservice key=k}
+                  <option value="{$k}"{if $k eq $smarty.get.service_id} selected{/if}>{$oneservice.service_name}</option>
+                  {/foreach}
+                  </optgroup>
+                  {/if}
+                  {if $granted_services}
+                  <optgroup label="---{$l_granted_services}---">
+                  {foreach from=$granted_services item=onegservice key=gk}
+                  <option value="{$onegservice.service_id}"{if $onegservice.service_id eq $smarty.get.service_id} selected{/if}>{if $onegservice.hostname}{$onegservice.hostname}{else}#{$onegservice.service_id}{/if}</option>
+                  {/foreach}
+                  </optgroup>
+                  {/if}
+                </select>
+                &nbsp;
+                <select id="countries" class="form-control filter_select">
+                  <option value="">{$l_logs_countries}</option>
+                  {foreach from=$logs_countries item=onecountry}
+                  <option value="{$onecountry.countrycode}"{if $onecountry.countrycode eq $smarty.get.country} selected{/if}>{$onecountry.langname}</option>
+                  {/foreach}
+                </select>
+                &nbsp;
+                <input type="text" class="form-control" placeholder="{$l_ipemailnick}" style="width: 160px; display: inline;" value="{$ipemailnick}" id="ipemailnick">
+                <button type="submit" class="btn btn-default filter">{$l_show}</button>
+            <div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="requests_table">
+            <table class="table">
+                <tbody id="requests_results">
+                <tr>
+                    <th>{$l_table_date}</th>
+                    <th>{$l_table_status}</th>
+                    <th>{$l_table_author}</th>
+                </tr>
+                {include file="show_requests_ajax.html"}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    {if $approved_requests}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <button class="btn btn-primary" id="delete_bulk">{$l_delete_all_approved}</button>
+            <br><br>
+            <span class="gray">{$l_delete_all_approved_hint}</span>
+        </div>
+    </div>
+    {/if}
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="notice_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{$notice_1}</h4>
+      </div>
+      <div class="modal-body">
+        <textarea class="w100" rows="7" id="notice_text"></textarea>
+        <div class="gray center">{$notice_2}</div>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" class="btn btn-primary" id="save_notice">{$l_save}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="thanks">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        {$thanks_notice}
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{if $show_modal}{include file="tools/license_modal.html"}{/if}
+<input type="hidden" id="count" value="1">
+<input type="hidden" id="resultsy" value="">
+<input type="hidden" id="requests_limit" value="{$requests_limit}">
+<input type="hidden" id="recs_found" value="{$recs_found}">
+<input type="hidden" id="ajax_url" value="{$ajaxurl}">
+<input type="hidden" id="notice_rq_id" value="">
+<input type="hidden" id="delete_message" value="{$l_confirm_deletion}">
+<input type="hidden" id="delete_bulk_message" value="{$confirm_deletion_bulk}">
+<script src="/my/js/datepicker.js?v=21032016"></script>
+<script src="/my/js/requests.js?v=20122016a"></script>
+<link href="/my/css/datepicker.min.css?v=21032016" rel="stylesheet">
+<script>
+    window.addEventListener('load', function () {
+        $('#keep_history').change(function () {
+            $('#keep_history_form').submit();
+        });
+    });
+</script>

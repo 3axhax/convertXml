@@ -1,0 +1,34 @@
+{if $form_notification}<p class="alert alert-info text-center">{$form_notification}</p>{/if}
+{if isset($errors['global'])}
+<div class="alert alert-danger text-center">{$errors['global']}</div>
+{/if}
+<form action="/my/support/open" method="post" id="support-create-form" data-toggle="validator" role="form">
+    <input type="hidden" name="reply_code" value="{$reply_code}">
+    <div class="form-group{if isset($errors['subject'])} has-error{/if}">
+        <input type="text" name="subject" id="field_subject" value="{$info.subject}" class="form-control" placeholder="{$l_subject}" required>
+    </div>
+    <div id="articles" class="hidden">
+        <ul>
+        </ul>
+    </div>
+    <div class="form-group">
+        <select name="service_id" class="form-control selectpicker">
+            <option value="">-- {$l_choose_site} --</option>
+            {foreach from=$services item=s}
+			<option value="{$s.service_id}"{if $s.service_id == $info.service_id} selected{/if}>{$s.service_name} ({$s.descr_en})</option>
+            {/foreach}
+        </select>
+    </div>
+    <div class="form-group">
+        <textarea name="message" rows="5" placeholder="{$l_description}" class="form-control" required>{$info.message}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">{$l_create_ticket}</button>
+</form>
+<form action="/my/support?action=upload" method="post" class="dz-form" enctype="multipart/form-data" id="ticket-dropzone">
+    <input type="hidden" name="ticket_id" value="0">
+    <input type="hidden" name="reply_code" value="{$reply_code}">
+    <div class="dz-message" data-dz-message>
+        <span>Drop files here or click to upload</span>
+        <p>Please, attach screenshots and files which can help in solving this problem. Thank you in advance.</p>
+    </div>
+</form>

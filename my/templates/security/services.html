@@ -1,0 +1,122 @@
+<div class="back-link back-link-md-hide">
+    <a href="/my">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+        {$l_cp}
+    </a>
+</div>
+{if $info}<div class="alert alert-success text-center">{$info}</div>{/if}
+{if $already_exists}<div class="alert alert-danger text-center">{$already_exists}</div>{/if}
+
+<div id="multiple-box" {if !$services}class="hidden"{/if}>
+<form method="post" role="form">
+    <div class="alert alert-success text-center">
+        {*<h4 style="margin: 15px 0;"><a href="/install" style="color: #3c763d;">{$l_setup_key2}</a></h4>*}
+        <h4><a href="/install?platform=wordpress-security" target="_blank" class="alert-link">{$l_setup_key2}</a></h4>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>{$l_th_url}</th>
+            <th>{$l_th_service_name}</th>
+            <th>{$l_th_auth_key}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {if $services}
+        {foreach from=$services item=service}
+        <tr>
+            <td style="vertical-align: middle">
+                <input type="hidden" name="services[]" value="{$service.id}">
+                <input type="hidden" name="hostname[{$service.id}]" value="{$service.hostname}">
+                <input type="hidden" name="auth_key[{$service.id}]" value="{$service.auth_key}">
+                {$service.hostname}
+            </td>
+            <td>
+                <input type="text" name="name[{$service.id}]" value="{$service.name}" placeholder="{$l_service_name_hint}" class="form-control">
+            </td>
+            <td style="vertical-align: middle">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="auth_key[{$service.id}]" id="auth_key_{$service.id}" value="{$service.auth_key}" title="{$l_key_copied}" data-toggle="tooltip" data-placement="top" data-container="body" readonly>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" data-clipboard-target="#auth_key_{$service.id}"><span class="glyphicon glyphicon-copy"></span></button>
+                    </span>
+                </div>
+            </td>
+        </tr>
+        {/foreach}
+        {/if}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3">
+                <button type="submit" class="btn btn-primary btn-block">{$l_button_update_services}</button>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</form>
+</div>
+<script>
+var l_service_created_js = '{$l_service_created_js}';
+var l_already_exists = '{$l_already_exists}';
+var email = '{$user_info.email}';
+var user_token = '{$user_info.user_token}';
+var row_tpl = '<tr><td><input type="hidden" name="services[]" value=":SERVICE_ID:"><input type="hidden" name="hostname[:SERVICE_ID:]" value=":HOSTNAME:"><input type="hidden" name="auth_key[:SERVICE_ID:]" value=":AUTH_KEY:">:HOSTNAME:</td><td><input type="text" name="name[:SERVICE_ID:]" value="" placeholder="Fill a name of web-site (Optional)" class="form-control"></td><td><div class="input-group"><input type="text" class="form-control" name="auth_key[:SERVICE_ID:]" id="auth_key_:SERVICE_ID:" value=":AUTH_KEY:" title="The auth key is copied" data-toggle="tooltip" data-placement="top" data-container="body" readonly><span class="input-group-btn"><button class="btn btn-default" type="button" data-clipboard-target="#auth_key_:SERVICE_ID:"><span class="glyphicon glyphicon-copy"></span></button></span></div></td></tr>';
+var row_error = '<tr><td colspan="3" class="alert-danger text-center">:MESSAGE:</td></tr><tr><td colspan="3"></td></tr>';
+var lang = '{$ct_lang}';
+var product_name = 'security';
+    window.addEventListener('load', function () {
+        var clipboard = new Clipboard('.btn');
+        clipboard.on('success', function (e) {
+            e.clearSelection();
+            var selector = $(e.trigger).data('clipboard-target');
+            $(selector).tooltip('show');
+            setTimeout(function () {
+                $(selector).tooltip('destroy');
+            }, 2000);
+        });
+    });
+</script>
+{if !$services}
+<div class="panel panel-default" id="add-box">
+    <div class="panel-heading">{$l_add_sites_by_list}</div>
+    <div class="panel-body">
+        <form method="post" data-toggle="validator" role="form" class="mform">
+            <div class="form-group">
+                <label for="service_urls">{$l_service_urls}</label>
+                {if $other_services}
+                    <a href="#" class="pull-right import-services" style="color: #777;">{$l_import_from_antispam}</a>
+                {/if}
+                <textarea name="service_urls" id="hostnames" class="form-control" rows="10" required></textarea>
+                <p class="help-block">{$service_urls_hint}</p>
+            </div>
+            <button type="submit" class="btn btn-block btn-primary" id="add_new_multiple">{$button_title}</button>
+        </form>
+    </div>
+</div>
+{/if}
+<br><br>
+<div class="back-link">
+    <a href="/my">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+        {$l_cp}
+    </a>
+</div>
+{if $other_services}
+<script>
+    window.addEventListener('load', function () {
+        $('.import-services').click(function(e){
+            var os = {$other_services};
+            var items = [];
+            if(Array.isArray(os)){
+                os.forEach(function(i) {
+                    var parts = i.split('#');
+                    items.push(parts[0]);
+                });
+                $('#hostnames').val(items.join('\n'));
+            }
+            return false;
+        })
+    });
+</script>
+{/if}

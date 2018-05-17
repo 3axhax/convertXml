@@ -1,0 +1,119 @@
+    <tr class="h_left_v_top">
+        <td class="align_center">
+            <table class="align_center width_100_percent bonuses_table" border="0">
+                <tr>
+                    {if $user_info.first_pay_id}
+                    <td class="user_bonus valign_top" width="33%">
+                        <h3>{$bonuses.facebook.title}</h3>
+                        <div class="bonus_desc">
+                            {$bonuses.facebook.desc}    
+                        </div>
+                        {if $bonuses.facebook.activated}
+                            <br><br>
+                            <div class="bonus_activated">
+                                <span class="green_text">{$bonuses.facebook.activated}</span></div>
+                            </div>
+                        {else}        
+                            {if $fblink}
+                                <br><br>
+                                <a href="/{$fblink}">
+                                    https://cleantalk.org/{$fblink}
+                                </a>
+                            {/if}
+                        {/if}   
+                    </td>
+                    <td class="user_bonus valign_top{if $bonuses.twitter.activated} bonus_activated{/if}  width_50_percent">
+                        <h3>{$bonuses.twitter.title}</h3>
+                        <div class="bonus_desc">
+                            {$bonuses.twitter.desc}
+                        </div>
+                            {if $bonuses.twitter.activated}
+                                <div class="bonus_activated">
+                                    <span class="green_text">{$bonuses.twitter.activated}</span></div>
+                                </div>
+                            {else}
+                                <div class="bonus_button">
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="{if $pagetotwitter}https://cleantalk.org/{$pagetotwitter}{else}{$share_url_twitter}{/if}" data-text="{$share_title_twitter}" data-size="large" data-related="cleantalk_en" data-hashtags="{$share_engine_twitter}">Tweet</a> 
+{literal}
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+{/literal}
+                                 </div>
+ 
+
+                               <br />
+                                <br />
+                                <div>
+                                    {$social_review_hint}
+                                </div>
+                            {/if}
+                    </td>
+                    {/if}
+                    {if $bonuses.friend.show}
+                    <td class="user_bonus valign_top{if $bonuses.friend.activated} bonus_activated{/if}">   
+                        <h3>{$bonuses.friend.title}</h3>
+                        <div class="bonus_desc">
+                            {$bonuses.friend.desc}
+                        </div>
+                        <br>
+                        <table class="share_friend_table align_center" border="0">
+                            <tr class="h_left_v_top">
+                                <th class="h_left_v_top">
+                                    {$l_friend_buttons} 
+                                </th>
+                                {*
+                                <th class="h_left_v_top">
+                                    {$l_friend_buttons} 
+                                </th>
+                                *}
+                            </tr>
+                            <tr class="h_left_v_top">
+                                <td class="align_center">
+                                    <div class="share_buttons">
+        <a  href="http://www.facebook.com/share.php?u={$share_url}" target="_blank"><img src="/images/icons/social/facebook.png" alt="" /></a>
+                                    <a href="http://twitter.com/share?url={$share_url}&text={$share_title}&related=cleantalk_en" target="_blank"><img src="/images/icons/social/twitter.png" alt="" /></a>
+                                    <a href="https://plus.google.com/share?url={$share_url}" target="_blank"><img src="/images/icons/social/googleplus.png" alt="" /></a>
+                                    <a href="http://www.linkedin.com/shareArticle?mini=true&url={$share_url}&title={$share_title}" target="_blank"><img src="/images/icons/social/linkedin.png" alt="" /></a>
+                                    </div>
+                                    <div>
+                                    <input type="text" value="{$share_url}" />
+                                    </div>
+                                </td>
+                                {*
+                                <td class="share_buttons h_left_v_top">
+        <a  href="http://www.facebook.com/share.php?u={$share_url}" target="_blank"><img src="/images/icons/social/facebook.png" alt="" /></a>
+                                    <a href="http://twitter.com/share?url={$share_url}&text={$share_title}&related=cleantalk_en" target="_blank"><img src="/images/icons/social/twitter.png" alt="" /></a>
+                                    <a href="https://plus.google.com/share?url={$share_url}" target="_blank"><img src="/images/icons/social/googleplus.png" alt="" /></a>
+                                    <a href="http://www.linkedin.com/shareArticle?mini=true&url={$share_url}&title={$share_title}" target="_blank"><img src="/images/icons/social/linkedin.png" alt="" /></a>
+                                </td>
+                                *}
+                            </tr>
+                        </table>
+                        {if $bonuses.friend.activated}
+                          <div class="bonus_activated">
+                            <span class="green_text">{$bonuses.friend.activated}</span></div>
+                          </div>
+                        {/if} 
+                    </td>
+                    {/if}
+                    {if $bonuses.review_external.show}
+                    <td class="user_bonus valign_top{if $bonuses.review_external.activated} bonus_activated{/if}">   
+                        <h3>{$bonuses.review_external.title}</h3>
+                        <div class="bonus_desc">
+                            {$bonuses.review_external.desc}
+                        </div>
+                            {if $bonuses.review_external.activated}
+                                <div class="bonus_activated">
+                                    <span class="green_text">{$bonuses.review_external.activated}</span></div>
+                                </div>
+                            {else}
+                                <div class="bonus_button">
+                                    <a href="/my/support?openf=1&subjf=Review" class="giveone">{$l_send_the_link}</a>
+                                </div>
+                            {/if}
+                    </td>
+                    {/if}
+                </tr>
+            </table>
+        </td>
+    </tr>
+

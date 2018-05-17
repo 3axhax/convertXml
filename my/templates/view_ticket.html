@@ -1,0 +1,109 @@
+<script src="/js/jquery.min.js"></script>
+<script src="/my/js/tickets.js?v=25032016"></script>
+<script src="/my/js/dropzone.js?v=25032016"></script>
+<script src="/tinymce/tinymce.min.js"></script>
+<link rel="stylesheet" href="/my/css/dropzone.css?v=25032016">
+{literal}<script>tinymce.init({selector:'textarea',
+                              menubar: false,
+                              toolbar: "bold italic underline | bullist numlist | blockquote",
+                              autosave_ask_before_unload: false,
+                              max_height: 200,
+                              min_height: 160,
+                              height: 200,
+                              content_css : "/my/css/tinymce.css?v=10112015"
+                              });</script>{/literal}
+<script>
+  // myDropzone is the configuration for the element that has an id attribute
+  // with the value my-dropzone (or myDropzone)
+  Dropzone.options.myDropzone = {
+    init: function() {
+      this.on("success", function(file,responsetext) {
+  
+        // Create the remove button
+        var removeButton = Dropzone.createElement('<span class="t_datetime" id="' + responsetext + '"' + '><a>Remove file</a></span>');
+
+
+        // Capture the Dropzone instance as closure.
+        var _this = this;
+
+        // Listen to the click event
+        removeButton.addEventListener("click", function(e) {
+          // Make sure the button click doesn't submit the form:
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Remove the file preview.
+          _this.removeFile(file);
+          
+          $.get("/my/support?action=delete_file&file_id=" + this.id);    
+
+        });
+
+        // Add the button to the file preview element.
+        file.previewElement.appendChild(removeButton);
+      });
+    }
+  };
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>  
+        </div>  
+    </div>
+    {if $show_message}
+    <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 center">
+            <div class="alert alert-success">{$comment_message}</div>  
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div>  
+    </div>
+    {/if}
+    <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <h1>{$ticket.subject}</h1>
+            {$ticket.message}
+            <br><br>
+            {if $ticket.file_block}
+            <div class="file_block"><div>{$ticket.file_block}</div></div><br>
+            {/if}  
+            {foreach from=$replies item=reply}
+                <a name="{$reply.reply_id}"></a>
+                <div class="t_datetime"><br><a href="/my/support?action=view_ticket&ticket_id={$ticket.ticket_id}#{$reply.reply_id}">Re: {$ticket.subject}</a> {$reply.user},&nbsp;{$reply.datetime}</div>
+                <div class="t_message">
+                    {$reply.message}
+                    {if $reply.file_block}
+                    <br><br>
+                    <div class="file_block">{$reply.file_block}</div><br>
+                    {/if}
+                </div>
+                <br>
+            {/foreach}
+            <br>
+            <form action="/my/support?action=view_ticket" method="post" id="t_form">
+                <input type="hidden" name="ticket_id" value="{$ticket.ticket_id}">
+                <input type="hidden" name="reply_code" value="{$reply_code}">
+                <div>
+                  <label style="font-size: 12px; color: #666;">{$l_comment}</label>
+                </div>    
+                <textarea name="replymessage" id="replymessage" rows="8" style="width: 100%;"></textarea>
+                <br>
+                <button type="submit" class="btn btn-primary btn-block" id="t_button">{$l_save}</button>
+            </form>  
+            <br>
+            <form action="/my/support?action=upload_files" method="post" class="dropzone" enctype="multipart/form-data" id="my-dropzone">
+                <input type="hidden" name="ticket_id" value="{$ticket.ticket_id}">
+                <input type="hidden" name="reply_code" value="{$reply_code}">
+                <span class="dz-message"><img src="/images/clip.png">&nbsp;Drop files here to upload or click.</span>
+            </form>
+        </div> 
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div> 
+    </div>
+
+</div>

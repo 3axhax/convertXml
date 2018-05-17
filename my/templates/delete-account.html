@@ -1,0 +1,72 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 center">
+            <br><br><br>   
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-lg-2 center">
+            &nbsp;   
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+            <div class="center">
+                <h3>{$delete_account_title}</h3>                
+                <div class="gray">{$l_delete_account_notice}</div>
+            </div>
+            <br>
+            <div class="alert alert-success" role="alert">
+                {$l_account_delete_notice}
+            </div>
+
+        </div>
+        <div class="col-md-2 col-lg-2 center">
+            &nbsp;   
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-lg-4 center">
+            &nbsp;   
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            {if $password_error}
+            <div class="alert alert-danger" role="alert">
+                {$password_error}
+            </div>
+            {/if}
+            <form method="post">
+            <div class="form-group">
+                <label for="password">{$l_password|default:"Пароль"}:</label>
+                <input type="password" class="form-control" name="password" id="password">
+            </div>
+            <div class="form-group">
+                <label for="notice">{$l_delete_account_reason|default:"Причина удаления?"}</label>
+                <textarea class="form-control" name="notice" id="notice"  maxlength="100" rows="3"></textarea>
+            </div> 
+            <div class="form-group center"> 
+                <button class="btn btn-primary" disabled="disabled" id="delete_button">{$l_delete_account|default:"Удалить акаунт"}</button>
+            </div>      
+            </form>    
+        </div>
+        <div class="col-md-4 col-lg-4 center">
+            &nbsp;   
+        </div>
+    </div>
+    {if $free_cleantalk_message}
+    <div class="row">
+        <div class="col-md-4 col-lg-4 center">
+            &nbsp;   
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <div class="alert alert-success" role="alert">
+                <h5>{$l_free_cleantalk_title}</h5>
+                {$free_cleantalk_message}
+            </div>    
+        </div>
+        <div class="col-md-4 col-lg-4 center">
+            &nbsp;   
+        </div>
+    </div>
+    {/if}
+</div>
+
+

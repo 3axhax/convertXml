@@ -1,0 +1,21 @@
+                            <h3>
+                            {if $bonuses.review.title}
+                                {$bonuses.review.title}
+                            {else}
+                                {$l_help_other_know}
+                            {/if}
+                            </h3>
+                            <div class="review_message">{$need_review}</div>
+                            <div class="review_button">
+                                <a href="/go?url={$review_link}" class="giveone" target="_blank"><img src="/images/icons/like.png" alt="like" title="{$l_rate_it_now}" class="like" />{$l_rate_it_now}</a>
+                            </div>
+                            <div>
+                                <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                                <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                                <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                                <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                                <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                            </div> 
+                            {if !$no_bonus}
+                                <span class="red">{$need_review_notice}</span>
+                            {/if}

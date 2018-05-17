@@ -1,0 +1,153 @@
+{if $certificates}
+<h2 class="page-header">{$l_ssl_dashboard_title}
+<a href="/my/service" title="{$l_add_cert}"><button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus"></span> {$l_add_cert}</button></a></h2>
+{$flash_message}
+<table class="table table-hover table-security simple-sort" id="services-table">
+    <thead>
+    <tr>
+        <th>{$l_ssl_th_cert_id}</th>
+        <th>{$l_ssl_th_domains}</th>
+        <th>{$l_ssl_th_type}</th>
+        <th>{$l_ssl_th_valid}</th>
+        <th class="sort-default" data-sort-method="date">{$l_ssl_th_created}</th>
+        <th data-sort-method="date">{$l_ssl_th_expires}</th>
+        <th>{$l_ssl_th_status}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$certificates item=certificate}
+    <tr>
+        <td>{$certificate.id}</td>
+        <td><img src="{$certificate.favicon}" width="16" height="16"> {$certificate.domains}</td>
+        <td>{$certificate.name}</td>
+        <td>{$certificate.years}</td>
+        <td>{$certificate.created}</td>
+        <td>{$certificate.expires}</td>
+        <td style="width: 25%" id="cert_{$certificate.id}">
+            {if isset($certificate['status']['link'])}
+            {if $certificate['status']['allow_delete']}
+            <div class="row">
+                <div class="col-xs-6" style="padding-right:5px">
+                    <a href="{$certificate['status']['link']}" class="btn btn-block btn-sm {$certificate['status']['class']}">{$certificate['status']['text']}</a>
+                </div>
+                <div class="col-xs-6" style="padding-left:5px">
+                    <button type="button" class="btn btn-block btn-sm btn-danger delete-link" data-id="{$certificate.id}">{$l_ssl_btn_delete}</button>
+                </div>
+            </div>
+            {else}
+            <a href="{$certificate['status']['link']}" class="btn btn-block btn-sm {$certificate['status']['class']}">{$certificate['status']['text']}</a>
+            {/if}
+            <div class="text-muted text-center br" style="font-size: 12px;margin-top:5px;">{$certificate['status']['hint']}</div>
+            {else}
+            <div class="{$certificate['status']['class']}">{$certificate['status']['text']} <img src="/my/images/loading.gif" width="16" class="hidden" id="cert_loading_{$certificate.id}"></div>
+            <div class="text-muted br" style="font-size: 12px">{$certificate['status']['hint']}</div>
+            {/if}
+            {if $certificate.key}
+            <div class="row">
+                <div class="col-xs-12 text-center" style="margin-top: 5px;">
+                    <form action="/my/service" method="post">
+                        <input type="hidden" name="mode" value="download">
+                        <input type="hidden" name="csr" value="{$certificate.csr}">
+                        <input type="hidden" name="key" value="{$certificate.key}">
+                        <button type="submit" class="btn btn-sm btn-default" id="generator-modal-download"><i class="fa fa-download" aria-hidden="true"></i> {$l_ssl_btn_download} CSR + Private key</button>
+                    </form>
+                    
+                </div>
+            </div>
+            {/if}
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="alert-border">
+            <div class="alert" role="alert" id="ssl-helpful-links">
+                <h4>{$l_ssl_helpful}</h4>
+                <ul>
+                    {foreach from=$l_ssl_helpful_links item=helpful}
+                    <li><a href="{$helpful.url}" target="_blank"><span class="glyphicon glyphicon-question-sign"></span> {$helpful.text}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="delete-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{$l_ssl_modal_delete_title}</h4>
+            </div>
+            <div class="modal-body" id="log-delete-modal-message">
+                {$l_ssl_modal_delete_message}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$l_ssl_btn_cancel}</button>
+                <button type="button" class="btn btn-danger" id="log-delete-modal-delete">{$l_ssl_btn_delete}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dcv-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="bg-danger text-danger text-center modal-body" id="dcv-modal-error">Internal Server Error</div>
+            <div class="modal-body" id="dcv-modal-loading"><div class="text-center"><img src="/images/loading.gif"></div></div>
+            <div class="modal-body" id="dcv-modal-content">
+                <form action="/my/" method="post" id="dcv-form">
+                    <input type="hidden" name="dcv" value="" id="dcv-form-id">
+                    <div></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$l_ssl_btn_cancel}</button>
+                <button type="button" class="btn btn-primary">{$l_ssl_btn_send_email}</button>
+            </div>
+        </div>
+    </div>
+<script>
+    window.addEventListener('load', function () {
+        new SSLDashboard({$processed}, {
+            'dcv_title': '{$l_ssl_dcv_title}'
+        });
+    });
+</script>
+{else}
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6 text-center" id="ssl-index-header">
+        {$l_ssl_empty_header}
+    </div>
+    <div class="col-md-3"></div>
+</div>
+</div>
+<div id="ssl-index-block">
+    <div class="container">
+        <h1>{$l_ssl_empty_title}</h1>
+        <div class="row">
+            {foreach from=$l_ssl_empty_features item=features}
+            <div class="col-xs-6">
+                <ul>
+                {foreach from=$features item=feature}
+                <li><span class="glyphicon glyphicon-star"></span> {$feature}</li>
+                {/foreach}
+                </ul>
+            </div>
+            {/foreach}
+        </div>
+        <a href="/my/service" class="btn btn-lg">{$l_ssl_btn_get_now}</a>
+    </div>
+</div>
+<div class="container" id="ssl-index-footer">
+    {foreach from=$l_ssl_empty_footer item=f}
+    <p>{$f}</p>
+    {/foreach}
+    <p><img src="/images/Official-SSL-Partner2.gif"></p>
+{/if}

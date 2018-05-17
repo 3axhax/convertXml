@@ -1,0 +1,72 @@
+<div class="row">
+    <div class="hidden-xs col-sm-1"></div>
+    <div class="col-xs-8 col-sm-7">
+        {if $open_mode}
+        <br><br><br>
+        <table width="100%">
+            <tbody>
+            <tr>
+                <td style="white-space: nowrap; padding: 0 25px 15px 0;">
+                    <a href="{$open_mode.link}" class="btn btn-primary" target="_blank">{$l_add_support_ticket}</a>
+                </td>
+                <td style="padding-bottom: 15px">
+                    {$open_mode.text}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="text-center text-muted" style="padding-top: 15px; border-top: 1px solid #ccc">
+                    {$l_ticket_open_text2}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {else}
+        <div class="text-center"><br><br><br>
+            <a href="/my/support/open" class="btn btn-primary">{$l_add_support_ticket}</a>
+        </div>
+        {/if}
+        {if $show_message}<br><div class="alert alert-success">{$show_message}</div>{/if}
+        {if count($tickets)}
+		<br />
+        <table class="table table-hover table-tickets">
+            <tbody>
+            {foreach from=$tickets item=ticket}
+            <tr>
+                <td>
+					<h3>
+                    {if $ticket.is_updated}<span class="glyphicon glyphicon-exclamation-sign text-success"></span>{/if}
+						<a href="/my/support?action=view_ticket&ticket_id={$ticket.ticket_id}" class="{$ticket.is_updated}">{$ticket.subject}</a>
+		{if $show_rate_notice && $ticket.rate_url && $ticket.resolved}
+    	<link href="/my/css/cleantalk.css?v=01112017" rel="stylesheet">
+		<div class="give_feedback">
+			<small>(
+			<a href="/go?url={$ticket.rate_url}" target="_blank">{$l_rate_us}</a>
+			<img src="/images/icons/star.png" alt="" />
+			<img src="/images/icons/star.png" alt="" />
+			<img src="/images/icons/star.png" alt="" />
+			<img src="/images/icons/star.png" alt="" />
+			<img src="/images/icons/star.png" alt="" />
+			)</small>
+		</div>
+		{/if}
+		</h3>
+
+                    <div class="text-muted">
+                        #{$ticket.ticket_id} {$l_opened} {$ticket.created}{if $ticket.updated ne NULL}, {$l_updated} {$ticket.updated}{/if}{if $ticket.hostname}, {$ticket.hostname}{/if}.
+                    </div>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+        {/if}
+    </div>
+    <div class="hidden-xs col-sm-1"></div>
+    <div class="col-xs-4 col-sm-2">
+        <br><br><br>
+        <a href="/help" class="btn">{$l_ticket_help}</a><br>
+        <a href="{$community_link}" class="btn" target="_blank">{$l_ticket_forum}</a><br>
+        <a href="/my/support/outsourcing" class="btn">{$l_outsourcing_websites}</a>
+    </div>
+    <div class="hidden-xs col-sm-1"></div>
+</div>

@@ -1,0 +1,23 @@
+<div class="modal modal-license fade" tabindex="-1" role="dialog" aria-labelledby="modalLicense" id="modal-license" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title text-danger">{$l_log_modal_title}</h4>
+            </div>
+            <div class="modal-body text-center">
+                {$l_log_modal_description}
+            </div>
+            <div class="modal-footer text-center">
+                <a href="{$modal_license}" class="btn btn-primary">{$l_log_modal_button}</a>
+                <div><a href="/my" class="text-muted">{$l_log_modal_return}</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+{if !$script_disable}
+<script>
+    window.addEventListener('load', function () {
+        $('#modal-license').modal('show');
+    });
+</script>
+{/if}

@@ -1,0 +1,108 @@
+</div>
+<div id="footer-margin"></div>
+<nav class="navbar navbar-default navbar-fixed-bottom" id="footernav" style="position: absolute;display: block!important;">
+    <div class="container">
+        <div class="row" style="padding-bottom: 15px;">
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/">{$smarty.server.HTTP_HOST}</a><br>
+                <a href="/my" title="{$l_dashboard}" rel="nofollow">{$l_dashboard}</a><br>
+                <a href="/price" title="{$l_pricing}" rel="nofollow">{$l_pricing}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/api" title="API" rel="nofollow">API</a><br>
+                <a href="/blacklists" title="{$l_blacklists_link}">{$l_blacklists_link}</a><br>
+                <a href="/blog/" title="{$l_blog}">{$l_blog}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/help/hostingpartner" title="{$l_to_partners}" rel="nofollow">{$l_to_partners}</a><br>
+                <a href="/spam-stats" title="{$l_stats}">{$l_stats}</a><br><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/help" title="{$l_help|default:"Помощь"}">{$l_help|default:"Помощь"}</a><br>
+                <a href="/my/support" title="{$l_submit_ticket}">{$l_submit_ticket}</a><br>
+                <a href="//community.cleantalk.org/" title="{$l_support_forum}">{$l_support_forum}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/about" title="{$l_about}" rel="nofollow">{$l_about}</a><br>
+                <a href="/contact-us" title="{$l_contacts_menu}">{$l_contacts_menu}</a><br>
+                {if $ct_lang == 'en'}
+                <div class="dropup">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Policy <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/publicoffer#privacy" rel="nofollow">{$l_privacy_policy}</a></li>
+                        <li><a href="/publicoffer#refund" rel="nofollow">{$l_refund_policy}</a></li>
+                        <li><a href="/publicoffer" rel="nofollow">{$l_license}</a></li>
+                    </ul>
+                </div>
+                {else}
+                <a href="/publicoffer" rel="nofollow">{$l_license}</a>
+                {/if}
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <div class="dropdown" id="footer-lang" style="display: {if $ct_lang|upper == 'RU'}inline-block{else}none{/if};">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="footer-lang-toggle">
+                        <img class="flag_icon" alt="" src="{$static_host_url}/images/langs/{$ct_lang}.png" alt="{$ct_langs.ct_lang}">&nbsp;{$ct_lang|upper}<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {foreach from=$ct_langs item=l key=k}
+                        <li><a class="menulangs" id="{$k}" href="?lang={$k}"><img class="flag_icon" src="/images/langs/{$k}.png" alt="{$k}" title="{$l}">&nbsp;{$k|upper}</a></li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">#footer-margin{ height: 96px;} .mt15{ margin-top: 15px; width: auto;} #footernav .row{ margin: 0 auto; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;}@media (max-width: 620px){ #footer-margin { width: 160px;}}@media (max-width: 638px){ .mt15{ width: 160px;}} .mt15 a{ color: #777;}html{ height: 100%;} body{ min-height: 100%;position: relative;}</style>
+</nav>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/my/js/cleantalk.min.js?v26062017c"></script>
+<script src="/my/js/{if $ct_lang eq 'ru'}cleantalk-i18n_ru.min.js{else}cleantalk-i18n_en.min.js{/if}"></script>
+{if $scripts}
+{foreach from=$scripts item=script}
+<script src="{$script}"></script>
+{/foreach}
+{/if}
+{if $ct_lang|upper != 'RU'}
+<script src="/js/jquery.cookie.js"></script>
+<script type="text/javascript">var ip = '{$smarty.server.REMOTE_ADDR}';</script>
+<script src="/js/language-switch.js"></script>
+{/if}
+{if $load_counters && $load_yandex_metric}
+{literal}
+<!-- Yandex.Metrika counter --><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter4881448 = new Ya.Metrika({id:4881448, webvisor:true, clickmap:true}); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/4881448" style="position:absolute; left:-9999px;" alt="" /></div></noscript><!-- /Yandex.Metrika counter -->
+{/literal}
+{/if}
+{if $smarty.server.SERVER_NAME ne 'localhost' && $load_counters && $show_ga}
+    {if $smarty.server.SERVER_NAME eq 'cleantalk.org'}
+    {literal}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-45397928-1', 'cleantalk.org');
+      ga('send', 'pageview');
+
+    </script>
+    {/literal}
+    {/if}
+    {if $smarty.server.SERVER_NAME eq 'cleantalk.ru'}
+    {literal}
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45397928-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+    {/literal}
+    {/if}
+{/if}
+
+</body>
+</html>

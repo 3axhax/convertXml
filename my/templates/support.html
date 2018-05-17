@@ -1,0 +1,150 @@
+<script src="/my/js/tickets.js?v=25032016"></script>
+<script src="/my/js/dropzone.js?v=25032016"></script>
+<link rel="stylesheet" href="/my/css/dropzone.css?v=25032016">
+{if $openf}
+    <style>
+      .new_ticket_form { display: block; }
+      #create_ticket_btn { display: none; }
+    </style>
+{/if}
+{if $review}
+{literal}
+<script>
+  $(document).ready(function(){
+    $('#ticketmessage').focus();
+  });
+</script>
+{/literal}
+{/if}
+<script>
+  // myDropzone is the configuration for the element that has an id attribute
+  // with the value my-dropzone (or myDropzone)
+  Dropzone.options.myDropzone = {
+    init: function() {
+      this.on("success", function(file,responsetext) {
+
+        // Create the remove button
+        var removeButton = Dropzone.createElement('<span class="t_datetime" id="' + responsetext + '"' + '><a>Remove file</a></span>');
+
+
+        // Capture the Dropzone instance as closure.
+        var _this = this;
+
+        // Listen to the click event
+        removeButton.addEventListener("click", function(e) {
+          // Make sure the button click doesn't submit the form:
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Remove the file preview.
+          _this.removeFile(file);
+
+          $.get("/my/support?action=delete_file&file_id=" + this.id);
+
+        });
+
+        // Add the button to the file preview element.
+        file.previewElement.appendChild(removeButton);
+      });
+    }
+  };
+</script>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 center">
+			<br><br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 center">
+			<a href="/help"><button class="btn btn-primary">{$l_ticket_help}</button></a>
+			&nbsp;
+			<a href="{$community_link}" target="_blank"><button class="btn btn-primary">{$l_ticket_forum}</button></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 center">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row new_ticket_form">
+		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+		</div>
+		<div class="col-sm-8 col-xs-8 col-md-8 col-lg-8">
+			<form action="/my/support?action=create_ticket" method="post" id="t_form">
+				<input type="hidden" name="reply_code" value="{$reply_code}">
+          		<input type="text" placeholder="{$l_subject}" class="form-control" id="t_subject" name="t_subject" required value="{$subjf}{if $review}{$l_review}{/if}">
+              <br>
+              <div id="searchphrase" class="displaynone"></div>
+          		<select class="form-control" name="t_service">
+            		<option value="0">-- {$l_choose_site} --</option>
+            		{foreach from=$services item=nitem}
+              			<option value="{$nitem.service_id}">{if $nitem.hostname}{$nitem.hostname}{else}#{$nitem.service_id}{/if}</option>
+            		{/foreach}
+          		</select>
+        	    <br>
+          		<textarea placeholder="{$l_description}" class="form-control" name="t_message" id="ticketmessage" required rows="5">{if $signature}{$signature}{/if}</textarea>
+				<br>
+				<button type="submit" class="btn btn-primary btn-block" id="t_button"/>{$l_create_ticket}</button>
+			</form>
+		</div>
+		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+		</div>
+	</div>
+	<div class="row new_ticket_form">
+		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+		</div>
+		<div class="col-sm-8 col-xs-8 col-md-8 col-lg-8">
+			<br>
+			<form action="/my/support?action=upload_files" method="post" class="dropzone" enctype="multipart/form-data" id="my-dropzone">
+      		<input type="hidden" name="ticket_id" value="0">
+      		<input type="hidden" name="reply_code" value="{$reply_code}">
+      		<span class="dz-message"><img src="/images/clip.png">&nbsp;Drop files here to upload or click.</span>
+    		</form>
+		</div>
+		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+		</div>
+	</div>
+	{if $show_message}
+	<div class="row">
+    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    </div>
+    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 center">
+      <div class="alert alert-success">{$ticket_message}</div>
+    </div>
+    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    </div>
+  </div>
+  {/if}
+  {if $tickets}
+  <div class="row">
+		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+		<div class="col-sm-8 col-xs-8 col-md-8 col-lg-8">
+  			<h3>{$l_tickets}</h3>
+  			{foreach from=$tickets item=nticket}
+        	{if $nticket.showcircle eq 1}<img src="images/icons/circle.jpg" width="10" height="10">&nbsp;{/if}
+        	<a href="/my/support?action=view_ticket&ticket_id={$nticket.ticket_id}" class="t_subject" id="{$nticket.ticket_id}">
+          	{if $nticket.showcircle eq 1}<b>{/if}
+          		{$nticket.subject}
+          	{if $nticket.showcircle eq 1}</b>{/if}
+        	</a>
+        	<br />
+        	<span class="ticket_info">#{$nticket.ticket_id} {$l_opened} {$nticket.created}{if $nticket.updated ne NULL}, {$l_updated} {$nticket.updated}{/if}{if $nticket.hostname}, {$nticket.hostname}.{else}.{/if}</span>
+        	<br><br>
+  			{/foreach}
+  		</div>
+  		<div class="col-sm-2 col-xs-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+	</div>
+  {/if}
+  <div class="row">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 center">
+            <a href="/my/support/outsourcing" class="btn btn-primary">{$l_outsourcing_websites}</a>
+  		    <a href="/my/support/open" class="btn btn-primary">{$l_add_support_ticket}</a>
+  	    </div>
+  </div>
+</div>
+<input type="hidden" id="v_ticket" value="{$vid}">

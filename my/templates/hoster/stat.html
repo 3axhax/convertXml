@@ -1,0 +1,56 @@
+<div class="log-header row">
+    <div class="col-sm-12 col-md-4 col-lg-6">
+        <h2>{$l_stat_title}</h2>
+        <p class="text-muted">{$l_stat_subtitle}</p>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-6">
+        <div class="well">
+            <div class="row filters-row">
+                <div class="col-xs-6">
+                    <input type="text" placeholder="Custom dates" class="form-control" id="datepicker">
+                </div>
+                <div class="col-xs-6">
+                    <select name="ip" class="selectpicker form-control" title="{$l_stat_ip}" id="ip">
+                        {foreach from=$ips item=ip}
+                        <option value="{$ip}">{$ip}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="row filters-row">
+                <div class="col-xs-8">
+                    <button type="button" class="btn btn-block btn-primary" id="btn_search">{$l_btn_search}</button>
+                </div>
+                <div class="col-xs-4">
+                    <button type="button" class="btn btn-block btn-default" id="btn_reset">{$l_btn_reset}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="log-table-responsive">
+    <table class="table table-hover simple-sort" id="log-table">
+        <thead>
+        <tr>
+            <th class="nw sort-default">IP</th>
+            <th class="nw">Account name</th>
+            <th class="nw">Hostname</th>
+            <th class="nw">Spam attacks</th>
+            <th class="nw">Approved</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+{if $modal_license}{include file="includes/modal_license.html"}{/if}
+<script>
+    window.addEventListener('load', function () {
+        hostingStat({
+            url: '{$smarty.server.REQUEST_URI}'
+        });
+    });
+</script>

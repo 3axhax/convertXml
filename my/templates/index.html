@@ -1,0 +1,19 @@
+{if $bsdesign}
+	{include file="bsheader.html"}
+{else}
+	{include file="header.html"}
+{/if}
+		{if $content_message}
+                <div class="action_message">
+                        {$content_message}
+                </div>
+        {else}
+			{include file=$template}
+        {/if}
+	
+{if $bsdesign}
+	{include file="bsfooter.html"}
+{else}			
+	{include file="../../templates/footer.html"}
+{/if}
+

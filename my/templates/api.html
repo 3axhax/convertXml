@@ -1,0 +1,196 @@
+<style>
+    .stat-item {
+        cursor: default;
+    }
+    .stat-item:hover {
+        color: #a94442;
+    }
+</style>
+<div class="container-fluid">
+    <table width="100%" style="margin-top: 5em">
+        <tbody>
+        <tr class="page-header">
+            <td style="vertical-align: middle;">
+                <h2>{$l_api_title}</h2>
+            </td>
+            <td style="vertical-align: middle; white-space: nowrap; width: 250px">
+                {if $api.key}
+                <div id="api-key" data-key="{$api.key}">
+                    <button type="button" class="btn btn-success btn-block" id="api-key-button">{$l_api_key}</button>
+                </div>
+                {else}
+                <div id="get-api-key">
+                    <button type="button" id="get-api-key-button" class="btn btn-success btn-block">{$l_api_get_key}</button>
+                </div>
+                {/if}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    {if $api.enabled}
+    <div class="row" style="margin-bottom: 2px; margin-top: 10px;">
+        <div class="col-xs-12">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>{$l_api_method}</th>
+                    <th>{$l_api_calls}</th>
+                    <th>{$l_api_period_end}</th>
+                    <th>{$l_api_last_call}</th>
+                    <th>{$l_api_status}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach from=$api.methods item=m}
+                <tr>
+                    <td>
+                        <strong>{$m.name}()</strong>
+                        <div class="help-block">{$m.description}</div>
+                        <a href="{$m.help}">{$l_api_method_help}</a>
+                    </td>
+                    <td>
+                        {$m.stats.calls}/{$api.license.max_calls}
+                    </td>
+                    <td>
+                        {$api.license.period_end}
+                    </td>
+                    <td>
+                        {$m.stats.last_call}
+                    </td>
+                    {if $api.license.status}
+                    <td class="text-success">{$l_api_status_active}</td>
+                    {else}
+                    <td class="text-danger">{$l_api_status_disabled}</td>
+                    {/if}
+                </tr>
+                {/foreach}
+                </tbody>
+                <tfoot>
+                <tr class="active">
+                    <td colspan="5"><a href="/spambots-check">Manual Bulk Spam Bots Search</a></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {else}
+    <div class="row" style="margin-bottom: 2px; margin-top: 10px;">
+        <div class="col-xs-12">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>{$l_api_method}</th>
+                    <th>{$l_api_calls}</th>
+                    <th>{$l_api_period_end}</th>
+                    <th>{$l_api_last_call}</th>
+                    <th>{$l_api_status}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach from=$api.methods item=m}
+                <tr>
+                    <td>
+                        <strong>{$m.name}()</strong>
+                        <div class="help-block">{$m.description}</div>
+                        <a href="{$m.help}">{$l_api_method_help}</a>
+                    </td>
+                    <td>
+                        -
+                    </td>
+                    <td>
+                        -
+                    </td>
+                    <td>
+                        -
+                    </td>
+                    <td class="text-danger">
+                        {$l_api_status_disabled}
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {/if}
+    <div class="row" style="margin-bottom: 2px; margin-top: 10px;">
+        <div class="col-xs-6">
+            {if $license_info}
+            <div class="left_border">
+                <div class="alert">
+                    <h4>License</h4>
+                    <p>{$license_info}</p>
+                </div>
+            </div>
+            {/if}
+            <div style="padding: 0 1em" class="left_border">
+                <h4>At the moment CleanTalk database includes</h4>
+                <ul>
+                    <li class="stat-item">{$bl_ips_count} Spam activity IP's</li>
+                    <li class="stat-item">{$bl_emails_count} Spam activity Emails</li>
+                    <li class="stat-item">{$bl_domains_count} Domains for BlackSEO</li>
+                </ul>
+            </div>
+        </div>
+        {if $pay_banner}
+        <div class="col-xs-6">
+            <div class="left_border">
+                <div class="alert alert-warning" role="alert">
+                    <h3 class="center">{$pay_banner.text}</h3>
+                    <br><br>
+                    <div class="center">
+                        <a href="{$pay_banner.link}"><button type="button" class="btn btn-primary">{$pay_banner.button}</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>
+<script>
+    window.addEventListener('load', function () {
+        var el_api_key = document.getElementById('api-key');
+        var el_api_key_view = document.getElementById('api-key-view');
+        var el_get_api_key = document.getElementById('get-api-key');
+
+        if (el_api_key) {
+            var api_key = el_api_key.getAttribute('data-key');
+            document.getElementById('api-key-button').addEventListener('click', function (e) {
+                el_api_key.innerHTML = '<code style="font-size:1.2em;display:block;text-align:center">' + api_key + '</code>';
+            });
+        } else if (el_get_api_key) {
+            document.getElementById('get-api-key-button').addEventListener('click', function (e) {
+                if (e.target.className.indexOf('disabled') == -1) {
+                    e.target.blur();
+                    e.target.className += ' disabled';
+                    e.target.innerHTML = '{$l_api_get_key} <img src="https://cdn.cleantalk.org/images/loading.gif" width="16" height="16">';
+
+                    var xhr = new XMLHttpRequest();
+                    var q = 'email=' + encodeURIComponent('{$user_info.email}') + '&product_name=' + encodeURIComponent('database_api');
+
+                    xhr.open('GET', '/my/?get_api_key=1', true);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState != 4) return;
+
+                        if (xhr.status != 200) {
+                            e.target.className = 'btn btn-danger disabled';
+                            e.target.innerHTML = '{$l_api_get_key}: ERROR';
+                        } else {
+                            var response = JSON.parse(xhr.response);
+                            if (!response || response['error']) {
+                                e.target.className = 'btn btn-danger disabled';
+                                e.target.innerHTML = '{$l_api_get_key}: ERROR';
+                            } else {
+                                el_get_api_key.innerHTML = '<code style="font-size:1.2em;display:block;text-align:center">' + response['data']['auth_key'] + '</code>';
+                            }
+                        }
+                    };
+
+                    xhr.send(q);
+                }
+            });
+        }
+    });
+</script>

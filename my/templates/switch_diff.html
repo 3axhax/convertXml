@@ -1,0 +1,33 @@
+<table border="0" class="reset" width="100%">
+    <tr valign="top">
+        <td width="50%" align="left">
+            <h3>{$l_current_tariff|default:"Текущий тариф"}</h3>
+            <ul>
+                {if $tariffs[$user_info.fk_tariff].pmi}
+                <li>{$tariff_info_pmi_offer|default:"Ручное продление через каждые {$tariffs[$user_info.fk_tariff].pmi} одобренных запросов"}</li>
+                {/if}
+                <li>{$services_count_current|default:"Количество сайтов {$tariffs[$user_info.fk_tariff].services}"}<br />
+                    <span class="grey_hint">{$websites}</span>
+                </li>
+            </ul>
+        </td>
+        <td align="left">
+            <h3>{$l_new_tariff|default:"Новый тариф"}</h3>
+            <ul>
+                {if $tariffs[$user_info.fk_tariff].pmi}
+                <li><strike>{$tariff_info_pmi_offer|default:"Ручное продление через каждые {$tariffs[$user_info.fk_tariff].pmi} одобренных запросов"}</strike></li>
+                <li><b>{$l_unlimited_protection|default:"Неограниченная фильтрация спама"}</b></li>
+                {/if}
+                <li>{$services_count_new}</li>
+                {if $upgrade_info}
+                <li><b>{if $ct_lang != 'ru'}{$currencies.$currency.currency_sign}{/if}{$upgrade_info.discount} {if $ct_lang == 'ru'}{$l_currency}{/if}</b> {$l_upgrade_discount_title}</li>
+                {/if}
+            </ul>
+            <br />
+            {include file="charge_form.html"}
+            <br />
+            <br />
+        </td>
+    </tr>
+</table>
+

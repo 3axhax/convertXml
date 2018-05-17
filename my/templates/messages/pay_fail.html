@@ -1,0 +1,17 @@
+<div class="action_message">
+    <center>
+    <div class="pay_hint">
+        <h3>{$l_pay_fail|default:"Ошибка проведения платежа! Пожалуйста повторите попытку, либо свяжитесь с нами"} {mailto address="support@cleantalk.org" encode="javascript"}!</h3> &nbsp;<img src="/images/icons/warning_big.png" valign="middle" />
+        {if $ct_lang == 'en' && $paypal_business_accounts_issue}
+        <div class="payment_error">
+            {$l_payment_fail}
+        </div>
+        {/if}
+    </div>
+    </center>
+<br />
+<br />
+<a href="/my">{$l_go_panel|default:"Веруться в панель управления"} >>></a>
+
+</div>
+

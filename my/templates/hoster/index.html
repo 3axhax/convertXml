@@ -1,0 +1,144 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="center">IP licenses</h4>
+    </div>
+    {if $ips}
+    <table class="table table-hover table-hosting-antispam">
+        <thead>
+        <tr>
+            <th>IP address (Hostname)</th>
+            <th>Status</th>
+            <th>Week requests count</th>
+            <th>Valid up till</th>
+        </tr>
+        </thead>
+        <tbody>
+            {foreach from=$ips item=i}
+            <tr>
+            <td>
+                {$i.visible_name}
+                <div>
+                    <a href="hoster-ip?ip_id={$i.ip_id}&action=edit">{$l_service_settings}</a>
+                    <a href="stat#ip={$i.ip}">{$l_service_statistic}</a>
+                </div>
+            </td>
+            <td>
+                <span class="{$i.status_message_class}">{$i.status}</span>
+            </td>
+            <td>
+                {$i.week_requests_count}
+            </td>
+                <td>
+                    {$i.valid_till}
+                </td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    {/if}
+    {if $users}
+    <div class="panel-heading">
+        <h4 class="center">Customers</h4>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Account name</th>
+            <th>Signed up</th>
+            <th>Week requests count</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach from=$users item=u}
+        <tr>
+            <td>{$u.email}</td>
+            <td>
+                <span class="{$i.status_message_class}">{$u.created_visible}</span>
+            </td>
+            <td>
+                {$u.week_requests_count}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {/if}
+    {if $ips}
+    <div class="alert alert-warning">
+        <ol>
+            <li>{$l_setup_hosting_addon}</li>
+            <li>Look your <a href="/my/profile">profile</a> to find Hoster API key.</li>
+        </ol>
+    </div>
+    {else}
+    <div class="alert alert-warning center">{$l_to_start_work}</div>
+    <div class="panel-footer">
+        <a href="hoster-ip?action=new" class="btn btn-primary btn-lg btn-block">{$l_submit_ip}</a>
+    </div>
+    {/if}
+</div>
+
+{if $annotation}
+<div class="list-group">
+    <div class="list-group-item text-center">
+        <h4>{$annotation.title}</h4>
+        {$annotation.text}
+    </div>
+</div>
+{/if}
+
+{if $license_info}
+    <div class="alert alert-border">
+        <h4>License</h4>
+        <p>{$license_info}</p>
+    </div>
+{/if}
+
+<div class="row" style="margin-top: 5em">
+    <div class="col-sm-12 col-md-6">
+        <div class="list-group">
+            <a class="list-group-item" name="q1" href="#q1">
+                <h4>What are the billing terms that my account is subject to?</h4>
+                <p class="list-group-item-text">
+                    Payments are debited on a monthly basis for all IP addresses.
+                </p>
+            </a>
+            <a class="list-group-item" name="q2" href="#q2">
+                <h4>I have made a payment, but are not sure what my monthly bill will be?</h4>
+                <p class="list-group-item-text">
+                    You can see all payments on <strong>Dashboard -> Billing</strong>.
+                </p>
+            </a>
+            <a class="list-group-item" name="q3" href="#q3">
+                <h4>What access key(s) should my customers use?</h4>
+                <p class="list-group-item-text">
+                    Your customers don't use access key, plugin will work without access key on all IP addresses,
+                    which you added in CleanTalk Control Panel.
+                    But if your customers need anti-spam statistics, they should register in CleanTalk service.
+                    During registration we send access key. It need for get statistics.
+                </p>
+            </a>
+            <a class="list-group-item" name="q4" href="#q4">
+                <h4>Do you have auto payments?</h4>
+                <p class="list-group-item-text">
+                    No, we don't have auto payments. You can pay as required.
+                </p>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        {if $pay_banner}
+        <div class="alert-border">
+            <div class="alert alert-warning text-center" role="alert">
+                <h3 class="center">{$pay_banner.title}</h3>
+                <br><br>
+                <div class="center">
+                    <a href="{$pay_banner.link}"><button type="button" class="btn btn-primary">Pay Hosting Anti-Spam</button></a>
+                </div>
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>
+
+<br><br><br>

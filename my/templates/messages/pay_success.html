@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-lg-3">&nbsp;</div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 center">
+            {if $payment_processed}
+            <div class="alert alert-info text-center" id="payment_processed">
+                <h3>{$l_payment_processed}</h3>
+                <div class="text-center" id="preloader-api"><div class="preloader"></div></div>
+                <p>{$l_payment_processed_hint}</p>
+            </div>
+            {/if}
+            <div class="{if $payment_processed}hidden{/if}" id="payment_success">
+                <div class="alert alert-success text-center">
+                    <h3>{$l_pay_success} &nbsp;<img src="/images/icons/button_ok.png" valign="middle" /></h3>
+                    <p>{$l_thanks}</p>
+                    <br />
+                </div>
+                
+                <br />
+                {if $free_months}
+    			<div class="important_hint"><h3>{$free_months}</h3></div>
+                {/if}
+                {if $show_security_review_bonus && $cp_mode eq 'security'}
+                <div class="pay_border review_banner">
+                    <h3>{$l_help_other_know}</h3>
+                    <div class="review_message">{$review_bonus_description}</div>
+                    <div class="review_button">
+                        <a href="{$review_bonus_link}" class="giveone" target="_blank"><img src="/images/icons/like.png" alt="like" class="like" />{$review_bonus_button}</a>
+                    </div>
+                    <div>
+                        <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                        <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                        <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                        <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                        <img src="/images/icons/Actions-rating-icon.png" alt="" width="16" height="16" />
+                    </div>
+                </div>
+                {else}
+                {/if}
+                {if $cp_mode eq 'antispam'}
+                {*
+                <div class="alert alert-info">
+                    {$l_wp_attention}
+                </div>
+                *}
+                <br />
+    			{if $need_review && $revbon && $ct_lang != 'ru'}
+                <div class="pay_border review_banner">
+                    {include file="review_hint.html"}
+                </div>
+                {/if}
+                {/if}
+                {if $payment_redirect}
+                <div class="alert alert-warning">
+                    {$payment_redirect}
+                </div>
+                <p class="text-center"><a href="/my">{$l_goto_dashboard}</a></p>
+                {/if}
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3">&nbsp;</div>
+    </div>
+</div>
+<!-- Google Code for payments Conversion Page -->
+<script type="text/javascript">
+    /* <![CDATA[ */
+    var google_conversion_id = 947290935;
+    var google_conversion_language = "en";
+    var google_conversion_format = "3";
+    var google_conversion_color = "ffffff";
+    var google_conversion_label = "mD0QCIiE4WgQt4bawwM";
+    var google_remarketing_only = false;
+    /* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+    <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/947290935/?label=mD0QCIiE4WgQt4b…"/>
+    </div>
+</noscript>
+{if $payment_processed}
+<script type="text/javascript">
+window.addEventListener('load', function () {
+    var delay = 2500;
+    var updater = setInterval(function(){
+         $.ajax({
+            url: '/my/ajax?action=bill_status&bill_id={$get_bill_id}',
+            dataType: 'json'
+        }).done(function(data) {
+            if(data.paid==1){
+                clearInterval(updater);
+                $('#payment_processed').addClass('hidden');
+                $('#payment_success').removeClass('hidden');
+            }
+        });
+    },delay);
+})
+</script>
+{/if}
+<style type="text/css">
+.preloader {
+    border: 5px solid #f3f3f3;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    border-top: 5px solid #3090c7;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    margin: 20px;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>

@@ -1,0 +1,93 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<span class="fs2em">SpamFireWall {$l_log}</span>
+    		&nbsp;&nbsp;
+    		{$l_log_updated}	
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<table>
+				<tr>
+					<td class="w40">
+						<select id="service_id" class="form-control filter_sfw">
+        					<option value="">{$l_choose_site}</option>
+        					{foreach from=$sfw_services item=oneservice}
+        						<option value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{$oneservice.hostname}</option>
+        					{/foreach}
+      					</select>
+      				</td>
+      				<td>&nbsp;</td>
+      				<td class="w30">	
+      					<select id="int" class="form-control filter_sfw">
+        					<option value="">{$l_choose_period}</option>
+        					<option value="today"{if $interval eq today} selected{/if}>{$ints.today}</option>
+        					<option value="yesterday"{if $interval eq yesterday} selected{/if}>{$ints.yesterday}</option>
+        					<option value="week"{if $interval eq week} selected{/if}>{$ints.week}</option>
+      					</select>
+      				</td>
+      				<td>&nbsp;</td>
+      				<td class="w30">
+      					<select id="country" class="form-control filter_sfw">
+      						<option value="">{$l_choose_country}</option>
+      						{foreach from=$countries item=onecountry}
+        						<option value="{$onecountry.countrycode}"{if $smarty.get.country eq $onecountry.countrycode} selected{/if}>{$onecountry.langname}</option>
+        					{/foreach}
+      					</select>
+      				</td>
+      			</tr>
+      		</table>
+      		<div class="mtop10px">
+      			<table class="w100">
+      				<tr>
+      					<td><input type="text" placeholder="{$l_search_ip}" class="form-control" id="search_ip" value="{$search_ip}"></td>
+      					<td>&nbsp;</td>
+      					<td class="w15"><button type="button" class="btn btn-primary btn-block" id="search_ip_btn">{$l_search}</button></td>
+      				</tr>
+      			</table>			
+      		</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br>
+			{if $sfw_rows}
+				<table class="table w100">
+					<tr class="active main_page_theader">
+						<th>{$l_session_begin}</th>
+    					<th>IP</th>
+    					<th>{$l_sfw_country}</th>
+    					<th>{$l_sfw_ipowner}</th>
+    					<th>{$l_hits_total}</th>
+    					<th>{$l_hits_allow}</th>
+					</tr>
+             	   {foreach from=$sfw_rows item=onelogrec}
+  						<tr>
+	    					<td width="20%" align="left">{$onelogrec.mindt}</td>
+    						<td width="16%" align="left"><a href="/blacklists/{$onelogrec.sfw_ip}">{$onelogrec.sfw_ip}</a></td>
+    						<td width="16%" align="left"><img src="/images/flags/{if $onelogrec.countrycode}{$onelogrec.countrycode}{else}a1{/if}.png" alt="{$onelogrec.countrycode|upper}" title="{$onelogrec.countryname}" width="16">&nbsp;{$onelogrec.countryname}</td>
+    						<td width="16%" align="left">{if $onelogrec.asn_id}<a href="/blacklists/AS{$onelogrec.asn_id}">AS {$onelogrec.asn_id} {$onelogrec.org_name}</a>{else}-{/if}</td>
+    						<td width="16%" class="center">{$onelogrec.sumnumtotal}</td>
+    						<td width="16%" class="center">{$onelogrec.sumnumallow}</td>
+  						</tr>
+  					{/foreach}
+  					<tr>
+    					<td>&nbsp;</td>
+    					<td>&nbsp;</td>
+    					<td>&nbsp;</td>
+    					<td>&nbsp;</td>
+    					<td class="center"><b>{$l_total}{$total_sfw}</b></td>
+    					<td class="center"><b>{$l_total}{$allow_sfw}</b></td>
+  					</tr>
+  				</table>
+  			{else}
+  				<h4>{$l_sfw_no_records}</h4>	
+  			{/if}	 
+		</div>
+	</div>
+</div>	
+<script src="/my/js/sfw.js?v=130420161"></script>

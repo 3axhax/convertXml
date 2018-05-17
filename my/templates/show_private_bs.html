@@ -1,0 +1,262 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br><br>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div class="alert alert-success{if $addedrecords}{else} displaynone{/if}" role="alert" id="upper_message">{$addedrecords}
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+        </div>
+    </div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div class="well privwellh">
+			<table class="w100">
+				<tr>
+					<td>
+						<form method="post" id="add_record_form">
+                        	<textarea id="add_record" name="add_record" placeholder="{$l_add_record}" rows="3" cols="30" class="form-control"></textarea>&nbsp;
+                        	<input type="hidden" name="action" value="add_record">
+                        	<input type="hidden" name="service_id" value="{$service_id}">
+                        	<input type="hidden" id="add_status" name="add_status" value="">
+                        </form>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="valigntop">
+                   		<button type="button" class="btn btn-success btn-sm add_records" id="allow">{$l_allow}</button>
+                        <div style="margin-top: 5px;"></div>
+                        <button type="button" class="btn btn-danger btn-sm add_records" id="deny">{$l_deny}</button>
+                    </td>
+                    <td class="valigntop">
+                    	<a style="cursor: pointer;" data-toggle="modal" data-target=".bs-example-modal-lg">{$l_add_country}</a>
+                        {if $paid_addons_s.words_stop_list.show_label || 1}
+                        	<br>
+                            <span class="label label-warning">
+								{$l_addon}
+								<a class="white" target="_blank" href="/extra-package">[?]</a>
+							</span>
+                        {/if}
+                    </td>
+                </tr>
+            </table>
+            <form action="/my/show_private" method="post" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td>{$l_format_desc}:</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="file" name="upfile">
+                        <input type="hidden" name="action" value="upload_csv">
+                        <input type="hidden" name="service_id" value="{$service_id}">
+                    </td>
+                    <td>
+                        <button type="submit">{$l_save}</button>
+                    </td>
+                </tr>
+            </table>
+            </form>
+            </div>
+            <span class="gray">
+                {if $service_type == 'spamfirewall'}
+                    {$l_addrecord_hint_spamfirewall}
+                {else}
+                    {$l_addrecord_hint}
+                {/if}
+                <br>
+                {$l_add_instruction}
+            </span>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div class="well privwellh">
+			<table class="w100">
+				<tr>
+                    <td class="w40">
+                        <select id="service_id" class="form-control filter_private">
+                            <option value="">{$l_choose_site}</option>
+                            <optgroup label="---">
+                            {foreach from=$services item=oneservice}
+                                <option value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                            {/foreach}
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="w30">
+                        <select class="form-control filter_private" id="status">
+                            <option value="">{$l_choose_status}</option>
+                            <optgroup label="---">
+                            <option value="allow" {if $status eq allow}selected{/if}>{$l_allow}</option>
+                            <option value="deny" {if $status eq deny}selected{/if}>{$l_deny}</option>
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+            		<td class="w30">
+            			{if $show_record_type}
+            			<select id="service_type" class="form-control filter_private">
+                			<option value="">{$l_service}</option>
+                			<optgroup label="---">
+                			{foreach from=$record_type_service_display item=r key=k}
+                				<option value="{$k}" {if $k == $service_type}selected{/if}>{$r}</option>
+                			{/foreach}
+                			</optgroup>
+            			</select>
+            			{/if}
+            		</td>
+            	</tr>
+            </table>
+            <div class="mtop10px">
+                <table class="w100">
+            	   <tr>
+                        <td>
+                            <input type="text" placeholder="Custom dates" class="form-control datepicker-here" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$start_from} - {$end_to}">
+                        </td>
+                        <td>&nbsp;</td>
+            		    <td class="w20">
+            			     <button class="btn btn-primary btn-sm btn-block button_filter">{$l_stat_show}</button>
+            		    </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="mtop10px">
+                <table class="w100">
+                    <tr>
+                        <td>
+                            <input type="hidden" id="search_service_id" value="{$service_id}">
+                            <input type="text" id="search_record" placeholder="{$l_search_record}" required class="form-control">
+                        </td>
+                        <td>&nbsp;</td>
+                        <td class="w20">
+                            <button class="btn btn-primary btn-sm btn-block" id="search_by_record">{$l_search}</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </div>
+            {$l_private_text}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<table class="w100">
+                <tr>
+                    <td class="w30">
+                        <div style="margin-bottom: 3px;">
+                            {if $privaterecs}
+                                <button type="button" id="delbulk" class="btn btn-default btn-sm">{$l_delete_selected}</button>
+                            {else}
+                                <input type="hidden" id="delbulk">
+                            {/if}
+                        </div>
+                    </td>
+                    <td class="w40">
+                        <div class="alert alert-success displaynone" role="alert" id="deleted_records">
+
+                        </div>
+                    </td>
+                    <td class="w30 right">
+                        {$records_found}
+                        {if $privaterecs}
+                            <div style="display: inline-block;">
+                                {$l_export_data}:
+                                <a href="{$smarty.server.REQUEST_URI}&mode=csv"><img src="/images/icons/csv.png" alt="" style="height: 24px;"/></a>
+                            </div>
+                        {/if}
+                    </td>
+                </tr>
+            </table>
+			<table class="table w100">
+				<tr class="active main_page_theader">
+					<th><input type="checkbox" id="checkall"></th>
+    				<th>{$l_record}</th>
+    				<th>{$l_created}</th>
+    				<th>{$l_7_hits}</th>
+    				<th>
+        				{$l_status}
+        				<span class="tooltip" ttext="{$l_private_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+    				<th>{$l_service}
+        				<span class="tooltip" ttext="{$l_service_type_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+    				<th>{$l_delete_record}</th>
+				</tr>
+                {foreach from=$privaterecs item=onerec}
+                <tr id="record_{$onerec.record_id}">
+                    <td class="center"><input type="checkbox" class="recordcb" value="{$onerec.record_id}"></td>
+                    <td width="20%" align="left"><span id="onlyrec_{$onerec.record_id}">{$onerec.record}</span>
+                        {if $onerec.countrycode}
+                        (<img src="/images/flags/{if $onerec.countrycode}{$onerec.countrycode}{else}a1{/if}.png" alt="{$onerec.countrycode|upper}" title="{$onerec.countryname}" width="16">
+                        &nbsp;{$onerec.countryname})
+                        {/if}
+                    </td>
+                    <td class="center">{$onerec.created}</td>
+                    <td class="center">
+                        {if $onerec.hits && $service_type == 'antispam'}
+                            <a href="/my/show_requests?start_from={$sfip}&end_to={$etip}&ipemailnick={$onerec.record}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $service_type == 'spamfirewall'}
+                            <a href="/my/show_sfw?ip={$onerec.record}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else}
+                            0
+                        {/if}
+                    </td>
+                    <td width="15%" align="center">
+                        <div id="allow_{$onerec.record_id}" style="display:{if $onerec.status eq allow}block{else}none{/if};"><a href="#/" id="cs_{$service_id}_{$onerec.record_id}_0" class="green chrecstatus">{$l_allow}</a></div>
+                        <div id="deny_{$onerec.record_id}" style="display:{if $onerec.status eq deny}block{else}none{/if};"><a href="#/" id="cs_{$service_id}_{$onerec.record_id}_1" class="red chrecstatus">{$l_deny}</a></div>
+                    </td>
+                    <td align="center" class="service_tools">
+                        {$onerec.service_type_display}
+                    </td>
+                    <td width="15%" align="center" class="service_tools">
+                        <img height="12" alt="Удалить" src="/images/icons/16x16/Delete.png">
+                        <a href="#/" id="delete_{$service_id}_{$onerec.record_id}" class="delete_record">{$l_delete}</a>
+                    </td>
+                </tr>
+                {/foreach}
+			</table>
+		</div>
+	</div>
+</div>
+<div class="modal fade bs-example-modal-lg" id="countries_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{$l_add_country}</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/my/show_private" method="post" id="countries_form">
+            {$countries}
+            <input type="hidden" name="service_id" value="{$service_id}">
+            <input type="hidden" name="add_countries" value="1">
+            <input type="hidden" name="action" value="add_record">
+            <input type="hidden" id="countries_status" name="countries_status" value="">
+        </form>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" class="btn btn-success btn-sm allow_countries countries">{$l_allow}</button>
+        <button type="button" class="btn btn-danger btn-sm deny_countries countries">{$l_deny}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="deleted_recs_text" value="{$deleted_recs_text}">
+<script src="/my/js/private.js?v=07042016"></script>
+<script src="/my/js/datepicker.js?v=07042016"></script>
+<link href="/my/css/datepicker.min.css?v=07042016" rel="stylesheet">

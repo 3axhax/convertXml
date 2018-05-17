@@ -1,0 +1,68 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">	
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<br>
+            {foreach from=$errors item=e}
+                <div class="alert alert-danger">{$e}</div>
+            {/foreach}
+            {if $activation_code_sent}
+            <div class="alertpriv">
+                {$activation_code_sent}
+            </div>
+            <br>
+            {/if}
+            {if $changed_email}
+                <br />
+                <div class="alertpriv">
+                    {$changed_email}  <img src="/images/icons/button_ok.png" alt="" />
+                </div>
+            {/if}
+			{if $changed_email}
+				<p class="center"><a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a></p>
+			{else}
+				<form method="post">	
+				<div class="panel panel-default">
+                	<div class="panel-heading">
+                    	<span class="panel-title">{$l_change_email}</span>
+                	</div>
+                	<div class="panel-body">
+                        {if $smarty.get.activation_code_sent == 1}
+                            <b>{$l_new_email}:</b>
+                            <br>
+                            {$new_email}
+                            <br><br>
+                            <label for="activation_code">{$l_activation_code}:</label>
+                            <input type="activation_code" name="activation_code" id="activation_code" value="{$info.activation_code}" class="form-control" required/>
+                            <br>
+                        {else}
+                            <b>{$l_current_email}:</b>
+                            <br>{$user_info.email}
+                            <br><br>  
+                		    <div class="form-group">
+                        	   <label for="password">{$l_password}:</label>
+                        	   <input type="password" class="form-control" name="password" id="password" value="{$info.password}" required>
+                    	    </div>  
+                    	    <div class="form-group">
+                        	    <label for="new_email">{$l_new_email}:</label>
+                        	    <input type="text" class="form-control" name="new_email" id="new_email" value="{$info.new_email}" required>
+                    	    </div>
+                        {/if}
+                    	<button type="submit" class="btn btn-primary">{$l_save}</button>
+                	</div>
+            	</div>
+            	</form>
+            {/if}
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">	
+		</div>
+	</div>
+</div>
+
+

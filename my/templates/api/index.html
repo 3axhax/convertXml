@@ -1,0 +1,107 @@
+<table width="100%">
+    <tbody>
+    <tr class="page-header">
+        <td>
+            <h2>{$l_api_title}</h2>
+        </td>
+        <td>
+            {if $api.key}
+            <div id="api-key" data-key="{$api.key}">
+                <button type="button" class="btn btn-success btn-block" id="api-key-button">{$l_api_key}</button>
+            </div>
+            {else}
+            <div id="get-api-key">
+                <button type="button" id="api-key-button" class="btn btn-success btn-block">{$l_api_get_key}</button>
+            </div>
+            {/if}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>{$l_api_method}</th>
+        <th title="{$l_api_checks_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_checks}</th>
+        <th title="{$l_api_calls_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_calls}</th>
+        <th title="{$l_api_blacklisted_checks_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_blacklisted_checks}</th>
+        <th title="{$l_api_efficiency_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_efficiency}, %</th>
+        <th>{$l_api_last_call}</th>
+        <th>{$l_api_period_end}</th>
+        <th>{$l_api_status}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach from=$api.methods item=m}
+    <tr>
+        <td>
+            <a href="/my/stat?method={$m.name}"><strong>{$m.name}()</strong></a>
+            <div class="help-block">{$m.description}</div>
+            <a href="/my/stat">Trends</a> | <a href="{$m.help}">{$l_api_method_help}</a>
+        </td>
+        <td>
+            {$m.stats.checks}&nbsp;/&nbsp;{$api.license.max_calls}
+        </td>
+        <td>{$m.stats.calls}</td>
+        <td>{$m.stats.blacklisted_checks}</td>
+        <td>{$m.stats.efficiency}</td>
+        <td>
+            {$m.stats.last_call}
+        </td>
+        <td>
+            {$api.license.license_valid}
+        </td>
+        {if $api.license.status}
+        <td class="text-success">{$l_api_status_active}</td>
+        {else}
+        <td class="text-danger">{$l_api_status_disabled}</td>
+        {/if}
+    </tr>
+    {/foreach}
+    </tbody>
+    <tfoot>
+    <tr class="active">
+        <td colspan="5"><a href="/spambots-check">Manual Bulk Spam Bots Search</a></td>
+    </tr>
+    </tfoot>
+</table>
+
+<div class="row">
+    <div class="col-xs-6">
+        {if $license_info}
+        <div class="alert alert-border">
+            <h4>License</h4>
+            <p>{$license_info}</p>
+        </div>
+        {/if}
+        <div class="alert alert-border">
+            <h4>At the moment CleanTalk database includes</h4>
+            <ul>
+                <li class="stat-item">{$bl_ips_count} Spam activity IP's (+{$bl_ips_week_count} records for past 7 days)</li>
+                <li class="stat-item">{$bl_emails_count} Spam activity Emails (+{$bl_emails_week_count} records for past 7 days)</li>
+                <li class="stat-item">{$bl_domains_count} Domains for BlackSEO (+{$bl_domains_week_count} records for past 7 days)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        {if $pay_banner}
+        <div class="alert alert-border alert-warning">
+            <h3 class="text-center">{$pay_banner.text}</h3>
+            <br><br>
+            <div class="text-center">
+                <a href="{$pay_banner.link}"><button type="button" class="btn btn-primary">{$pay_banner.button}</button></a>
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>
+<script>
+    window.addEventListener('load', function () {
+        new ApiKey({
+            l_api_get_key: '{$l_api_get_key}',
+            email: '{$user_info.email}'
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

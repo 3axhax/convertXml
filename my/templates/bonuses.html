@@ -1,0 +1,308 @@
+<link href="/my/css/font-awesome.min.css?v=13052016" rel="stylesheet">
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	{if $show_early_pay && $bonuses.early_pay.show && $user_info.trial == 1}
+	<div class="row">
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 center">
+			&nbsp;
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<h3>{$l_bonuses_page_trial_title}</h3>
+			<br>
+		<div class="panel panel-default">
+			<div class="panel-body center">
+				<span{if $bonuses.early_pay.activated} class="gray"{/if}>
+					<h3>{$bonuses.early_pay.title}</h3>
+					{$bonuses.early_pay.desc}
+				</span>
+				<br>
+				{if $bonuses.early_pay.activated}
+					<div class="green">
+						{$bonuses.early_pay.activated}
+					</div>
+				{else}
+					<br />
+					<a href="/my/bill/recharge"><button class="btn btn-primary btn-xs"><h4>{$l_take_free_months}</h4></button></a>
+				{/if}
+			</div>
+		</div>
+            <div class="alert center alert-warning">
+				{$l_bonuses_months_premium}
+			</div>
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 center">
+			&nbsp;
+		</div>
+	{else}
+	<div class="row">
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 center{if $smarty.cookies.show_all_bonuses!='1' && $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru' && $show_bonuses_part && ($bonuses.review.activated || $need_review) && $bonuses.review.show} hidden{/if}" id="r-box">
+            {if $show_bonuses_part}
+			<br>
+			<h2>{$free_months_percent}%</h2>
+			<div class="progress">
+  				<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {$free_months_percent}%;">
+    			<span class="sr-only">{$free_months_percent}% Complete</span>
+  				</div>
+			</div>
+			{$free_months_activate_notice}
+            <br><br><br>
+            {else}
+                &nbsp;
+            {/if}
+            <h5>
+                {$ufbdaystext}
+                <i class="fa fa-question-circle" aria-hidden="true" data-toggle="popover" data-placement="top"  data-html="true" data-content="{$l_ufbtext}"></i>
+            </h5>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{$ufbdays}" aria-valuemin="0" aria-valuemax="{$maxufbdays}" style="width: {$ufbdayspercent}%;">
+                <span class="sr-only"></span>
+                </div>
+            </div>
+            <br>
+            {$l_ufbdays_hint}
+		</div>
+		<div class="{if $smarty.cookies.show_all_bonuses!='1' && $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru' && $show_bonuses_part && ($bonuses.review.activated || $need_review) && $bonuses.review.show}col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2{else}col-xs-9 col-sm-9 col-md-9 col-lg-9{/if}" id="l-box">
+            {if $show_bonuses_part}
+			<h3 id="bonuses-title" {if $smarty.cookies.show_all_bonuses!='1' && $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru' && ($bonuses.review.activated || $need_review) && $bonuses.review.show}class="hidden"{/if}>{$l_bonuses_page_title}</h3>
+			<br>
+            {if $bonuses_avaible === 0}
+            <div class="alert center alert-warning">
+                {$l_no_free_bonuses}
+            </div>
+            {/if}
+			{if $show_early_pay && $bonuses.early_pay.show}
+            <div class="panel panel-default">
+  				<div class="panel-body center">
+                    <span{if $bonuses.early_pay.activated} class="gray"{/if}>
+                        <h3>{$bonuses.early_pay.title}</h3>
+                        {$bonuses.early_pay.desc}
+                    </span>
+                    <br>
+                    {if $bonuses.early_pay.activated}
+                        <div class="green">
+                            {$bonuses.early_pay.activated}
+                        </div>
+                    {else}
+                        <br />
+                        <a href="/my/bill/recharge"><button class="btn btn-primary btn-xs"><h4>{$l_take_free_months}</h4></button></a>
+                    {/if}
+                </div>
+            </div>
+            {/if}
+            {if $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru'}
+                {if ($bonuses.review.activated || $need_review) && $bonuses.review.show}
+                {if $bonuses.review.activated}
+                	<div class="panel panel-default">
+  						<div class="panel-body center">
+                            <span{if $bonuses.review.activated} class="gray"{/if}>
+                			<h3>{$bonuses.review.title}</h3>
+                			{$bonuses.review.desc}
+                            </span>
+                			<br>
+                			<span class="green">{$bonuses.review.activated}</span>
+                		</div>
+                	</div>
+                {else}
+                	<div class="panel panel-default">
+  						<div class="panel-body center">
+                            {include file="review_hint.html"}
+                    	</div>
+                    </div>
+                {/if}
+                <div class="text-center ">
+                    <a href="#" id="show-all-bonuses">{if $ct_lang != 'ru'}Show all available bonuses{else}Показать все доступные бонусы{/if} <span class="caret"></span></a>    
+                </div> 
+                {/if}
+            {/if}
+             
+            <div id="bonuses-box" {if $smarty.cookies.show_all_bonuses!='1' && $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru' && ($bonuses.review.activated || $need_review) && $bonuses.review.show}class="hidden"{/if}>
+            <table class="table table-bordered">
+            	<tr>
+            		{if $user_info.first_pay_id}
+                        {if $inlink && $bonuses.linkedin && $bonuses.linkedin.show}
+                        <td class="center">
+                            <span{if $bonuses.facebook.activated} class="gray"{/if}>
+                                <h3>{$bonuses.linkedin.title}</h3>
+                                {$bonuses.linkedin.desc}
+                            </span>
+                            <br>
+                            {if $bonuses.linkedin.activated}
+                                <br><br>
+                                <span class="green">{$bonuses.linkedin.activated}</span>
+                            {else}
+                                <br>
+                                <a href="/{$inlink}">https://cleantalk.org/{$inlink}</a>
+                            {/if}
+                        </td>
+                        {/if}
+            			{if $fblink && $bonuses.facebook && $bonuses.facebook.show}
+                    	<td class="center">
+                            <span{if $bonuses.facebook.activated} class="gray"{/if}>
+                        	<h3>{$bonuses.facebook.title}</h3>
+                            {$bonuses.facebook.desc}
+                            </span>
+                            <br>
+                        	{if $bonuses.facebook.activated}
+                            	<br><br>
+                            	<span class="green">{$bonuses.facebook.activated}</span>
+                        	{else}
+                            	{if $fblink}
+                            		<br>
+                                	<a href="/{$fblink}">
+                                    	https://cleantalk.org/{$fblink}
+                                	</a>
+                            	{/if}
+                        	{/if}
+                    	</td>
+                    	{/if}
+                        {if $bonuses.twitter.show}
+                    	<td class="center">
+                            <span{if $bonuses.twitter.activated} class="gray"{/if}>
+                        	<h3>{$bonuses.twitter.title}</h3>
+                            {$bonuses.twitter.desc}
+                            </span>
+                            <br>
+                            {if $bonuses.twitter.activated}
+                                <span class="green">{$bonuses.twitter.activated}</span>
+                            {else}
+                            	<br>
+								<a href="https://twitter.com/share" class="twitter-share-button" data-url="{if $pagetotwitter}https://cleantalk.org/{$pagetotwitter}{else}{$share_url_twitter}{/if}" data-text="{$share_title_twitter}" data-size="large" data-related="cleantalk_en" data-hashtags="{$share_engine_twitter}">Tweet</a>
+								{literal}
+									<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+								{/literal}
+                                <br>
+                                <div>
+                                    {$social_review_hint}
+                                </div>
+                            {/if}
+                        </td>
+                        {/if}
+                    {/if}
+                    {if $bonuses.review_external.show}
+                    <td class="center">
+                        <span{if $bonuses.review_external.activated} class="gray"{/if}>
+                        <h3>{$bonuses.review_external.title}</h3>
+                        {$bonuses.review_external.desc}
+                        </span>
+                        <br>
+                        {if $bonuses.review_external.activated}
+                        	<br>
+                            <span class="green">{$bonuses.review_external.activated}</span>
+                        {else}
+                            <br>
+                            <a href="/my/support?openf=1&subjf=Review"><button class="btn btn-primary">{$l_send_the_link}</button></a>
+                        {/if}
+                    </td>
+                    {/if}
+            	</tr>
+            </table>
+            {*if !$user_info.trial}
+            {if $ct_lang != 'ru'}
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-body center">
+                                <h2><strong>Tell about your website in our blog</strong></h2>
+                                <p>Tell users CleanTalk history of creation of your site/blog/project/service and we will post it in our blog</p>
+                                <a href="/help/guest-post"><img src="/images/learn_more.png"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-body center">
+                                <h2><strong>Share screenshots of your website in our Instagram!</strong></h2>
+                                <p>Send us a screenshot of your website and we will post it in our Instagram.</p>
+                                <a href="/help/share-in-our-instagram"><img src="/images/learn_more.png"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {else}
+                <div class="panel panel-default">
+                    <div class="panel-body center">
+                        <h2><strong>Делитесь скриншотами вашего сайта в нашем Instagram!</strong></h2>
+                        <p>Пришлите нам скриншот вашего сайта и мы разместим его в нашем Instagram.</p>
+                        <a href="/help/share-in-our-instagram"><img src="/images/learn_more.png"></a>
+                    </div>
+                </div>
+            {/if}
+            {/if*}
+			{if !$show_early_pay}
+            <div class="alert alert-info">
+                {$l_bonuses_alert}
+            </div>
+			{/if}
+            </div>
+            {/if}
+            <div id="activated-bonuses-box" {if $smarty.cookies.show_all_bonuses!='1' && $user_info.first_pay_id && $optionslinks && $ct_lang != 'ru' && $show_bonuses_part && ($bonuses.review.activated || $need_review) && $bonuses.review.show}class="hidden"{/if}>
+            {if $bonuses_activated}
+            <br />
+            <h3>{$l_activated_bonuses_title}</h3>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>{$l_bonus_name}</th>
+                    <th>{$l_activated}</th>
+                    <th>{$l_free_months_bonus_table}</th>
+                    <th>{$l_valid_till}</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {foreach from=$bonuses_activated item=b}
+                        <tr>
+                            <td>{$b.bonus_name_display}</td>
+                            <td>{$b.activated_display}</td>
+                            <td>{$b.free_months}</td>
+                            <td>{$b.paid_till_display}</td>
+                        </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+            {else}
+                &nbsp;
+            {/if}
+            </div>
+		</div>
+	</div>
+	{/if}
+</div>
+{literal}
+<style type="text/css">
+#show-all-bonuses{color: #777;text-decoration: none;font-size: 10px;}
+#show-all-bonuses:hover{text-decoration: underline dashed;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#show-all-bonuses').click(function(e){
+        e.preventDefault();
+        if($('#bonuses-box').hasClass('hidden')){
+            $('#bonuses-box').removeClass('hidden');
+            $('#activated-bonuses-box').removeClass('hidden');
+            $('#r-box').removeClass('hidden');
+            $('#l-box').removeClass('col-xs-offset-2').removeClass('col-xs-8').removeClass('col-sm-8').removeClass('col-md-8').removeClass('col-lg-8');
+            $('#l-box').addClass('col-xs-9').addClass('col-sm-9').addClass('col-md-9').addClass('col-lg-9');
+            $('#bonuses-title').removeClass('hidden');
+            $.cookie("show_all_bonuses", 1);
+        }else{
+            $.removeCookie("show_all_bonuses");
+            $('#bonuses-box').addClass('hidden');
+            $('#activated-bonuses-box').addClass('hidden');
+            $('#r-box').addClass('hidden');
+            $('#l-box').addClass('col-xs-offset-2').addClass('col-xs-8').addClass('col-sm-8').addClass('col-md-8').addClass('col-lg-8');
+            $('#l-box').removeClass('col-xs-9').removeClass('col-sm-9').removeClass('col-md-9').removeClass('col-lg-9');
+            $('#bonuses-title').addClass('hidden');
+        }
+    });
+});
+</script>
+{/literal}

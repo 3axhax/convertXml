@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+ 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {if $head.meta_description}
+	    <meta name="description" content="{$head.meta_description}">
+    {/if}
+
+    {if $header.refresh}
+    <meta http-equiv="refresh" content="{$header.refresh}" />
+    {/if}
+
+	<title>{$head.title}</title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css?v=11022017" />
+	<link rel="stylesheet" type="text/css" href="/{$uri_prefix}/css/style.css?v=11022018" />
+	<link rel="stylesheet" type="text/css" href="/{$uri_prefix}/css/nav.css?v=11022018" />
+	{if $help_link || $help_icon}
+	<link rel="stylesheet" type="text/css" href="/{$uri_prefix}/css/simplemodal.css" />
+  	{/if}
+
+    <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mootools-more/1.4.0.1/mootools-more-yui-compressed.min.js"></script>
+  	<script type="text/javascript" src="/{$uri_prefix}/js/tools.js?v=26112015"></script>
+  	<script type="text/javascript" src="/js/tools.js?v=1"></script>
+
+	{if $help_link || $help_icon}
+	<script type="text/javascript" src="/{$uri_prefix}/js/sm-cleantalk.js"></script>
+	<script type="text/javascript" src="/{$uri_prefix}/js/simple-modal.js"></script>
+  	{/if}
+
+    {if $show_datepicker}
+    <script src="/js/datepicker/Locale.en-US.DatePicker.js" type="text/javascript"></script>
+    <script src="/js/datepicker/Picker.js" type="text/javascript"></script>
+    <script src="/js/datepicker/Picker.Attach.js" type="text/javascript"></script>
+    <script src="/js/datepicker/Picker.Date.js" type="text/javascript"></script>
+
+    <link href="/js/datepicker/datepicker_dashboard/datepicker_dashboard.css" rel="stylesheet">
+    <link href="/js/datepicker/datepicker_minimal/datepicker_minimal.css" rel="stylesheet">
+    {/if}
+
+    {if $show_hint}
+    <link rel="stylesheet" href="/my/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/my/css/hint.min.css?v=29102015">
+    {/if}
+
+    {if $quiz_js}
+      <script src="/my/js/quiz.js?v=110920151"></script>
+    {/if}
+
+	{literal}
+	<script type="text/javascript">
+	window.addEvent('domready',function() {
+		new Fx.SmoothScroll({
+			duration: 200
+		},window);
+
+	});
+
+	window.onscroll = function() {
+		var nVScroll = document.documentElement.scrollTop || document.body.scrollTop;
+
+		if (nVScroll > 500)
+			$('top_panel').style.visibility = 'visible';
+		else
+			$('top_panel').style.visibility = 'hidden';
+
+	};
+
+    function switch_panel(version) {
+        Cookie.write('panel_version', version);
+        window.location.reload();
+        return true;
+    }
+        
+
+	</script>
+	{/literal}
+
+{literal}
+<style type="text/css">
+.container {border: none;}
+</style>
+{/literal}
+
+    {if $share_title}
+        <meta property="og:url" content="{$share_url}" />
+        <meta property="og:title" content="{$share_desc}" />
+        <meta property="og:description" content="{$share_desc}" />
+        <meta property="og:image" content="/images/cleantalk-logo-sign-en.png" />
+    {/if}
+
+</head>
+<body onload="{$jsf_on_load}">
+
+<div class="top_panel" id="top_panel">
+	<a href="#top">{$l_go_top|default:"Вверх"}</a>
+</div>
+{* -- Рамка -- *}
+<table class="container" id="container" border="0">
+{strip}
+<tr class="header_tr">
+    <td class="header_td" id="top">
+        <table class="header_table width_100_percent" border="0">
+        <tr>
+            <td class="top_left_go_main min_width_200px" id="logo_main">
+                <div>
+                <a href="/{if $is_auth}my{/if}" class="bold_link" id="main_page_link">
+                <img src="/images/cleantalk-logo-main.png" class="main_page_log" title="{$l_lp_title}" alt="CleanTalk logo" /><span id="brand_name"><span class="brand_part1">Clean</span><span class="brand_part2">Talk</span></span>
+                </a>
+                </div>
+            </td>
+            {if $is_auth}
+            <td class="header_main_links align_left valign_middle">
+                <div class="menu_part">
+                    {if $show_top_menu}
+                    <div class="links_part">
+                    {if $cp_mode == 'hosting-antispam'}
+                        <a href="/my/hoster-ip?action=new" class="giveone" style="background: #3090C7; color: #FFFFFF;">ADD IP</a>
+                    {elseif $cp_mode == 'antispam'}
+                        <a href="/my/service?action=new" class="giveone" style="background: #3090C7; color: #FFFFFF;">{$l_add_website}</a>
+                    {/if}
+                    {foreach from=$m_links item=l key=k}
+                        <a href="{$l.url}" {if $l.active && !$l.css_class}style="color: #000;"{/if} class="{if $l.css_class}{$l.css_class}{/if} top_link" id="top_link_{$k}">{$l.name}{if $l.show_counts && $user_info.free_months_avaible}&nbsp;<div class="red_circle">{$user_info.free_months_avaible}</div>{/if}</a>
+                    {/foreach}
+                    </div>
+                    {/if}
+                </div>
+                <div class="menu_part">
+                {if $show_mobile_apps_top &&  $cp_mode != 'hosting-antispam' && $user_info.moderate}
+                    <div id="top_menu_mobile_apps">
+                    <a href="https://itunes.apple.com/us/app/cleantalk/id825479913?mt=8" target="_blank"><img src="/images/icons/apple_grey.png" alt="iPhone/iPad app on Apple store" title="iPhone/iPad app on Apple store" class="top_menu_img" /></a><a href="https://play.google.com/store/apps/details?id=org.cleantalk.app" target="_blank"><img alt="Android app on Google Play" title="Android app on Google Play" src="/images/icons/android_grey.png" class="top_menu_img" /></a>
+                    </div>
+                {/if}
+                </div>
+                <div class="dashboard_menu_tools menu_part" id="top_menu_extra">
+                   {if $share_aa_results && !$second_top_button && $cp_mode == 'antispam'}
+                    <div class="top_giveone_buttons">
+                        <a href="#share_aa_results" class="giveone" style="font-size: 10pt; color: #fff;" onclick="">{$l_share_aa}</a>
+                    </div>
+                    {/if}
+                    {if $second_top_button}
+                        <div class="second_top_button">
+                            <a href="{$second_top_button.url}" class="giveone" style="{if $second_top_button.background_color}background: {$second_top_button.background_color};{/if}" >{$second_top_button.title}</a>
+                        </div>
+                    {/if}
+                </div>
+            </td>
+            {/if}
+            <td class="dashboard_menu_tools_profile align_right">
+                {if $is_auth}
+                <div class="align_right">
+                   <ul id="nav">
+                        <li class="top_link">
+                            <a href="#" onclick="javascript: $('nav_profile').toggle(); return false;" class="account"><img src="/images/icons/account.png" alt="" class="account_icon" /> {$user_info.email}</a>
+                            <ul class="profile" id="nav_profile">
+                                <li><a href="/my/profile" class="submenu">{$l_profile_link|default:"Профиль"}</a></li>
+                                {if $cp_mode == 'antispam'}
+                                <li><a href="/my/bill/recharge" class="submenu">{$l_billing}</a></li>
+                                {/if}
+                                <li><a href="/my/payments" class="submenu">{$l_payments}</a></li>
+                                {if $smarty.cookies.setup_new_password}
+                                    <li><a href="/my/new_password" style="color: #CC3300; font-weight: bold;" class="submenu">{$l_new_password|default:"Новый пароль"}</a></li>
+                                {else}
+                                    <li><a href="/my/new_password" class="submenu">{$l_change_password}</a></li>
+                                {/if}
+                                <li><a href="/my/change-email" class="submenu">{$l_change_email}</a></li>
+                                {if $show_affiliate_program}
+                                <li><a href="/my/partners" class="submenu">{$l_affiliate_program}</a></li>
+                                {/if}
+                                <li><hr></li>
+                                <li><a href="/my?cp_mode=antispam" class="submenu">{$l_website_dashboard}</a></li>
+                                <li><a href="/my?cp_mode=hosting-antispam" class="submenu">{$l_hosting_dashboard}</a></li>
+                                <li><a href="/my?cp_mode=api" class="submenu">{$l_api_dashboard}</a></li>
+                                <li><hr></li>
+                                <li><a href="/my/logout" class="submenu">{$l_logout|default:"Завершить работу"}</a></li>
+                            </ul>
+
+                        </li>
+                    </ul>
+                </div>
+                {else}
+                    {if $show_signup_login}
+                        <div class="top_signup_login_div">
+                            <a href="/register" class="giveone" style="background: #FF7E47;">{$l_signup}</a>
+                            <a href="/my" class="giveone">{$l_login}</a>
+                        </div>
+                    {/if}
+                {/if}
+            </td>
+        </tr>
+        </table>
+    </td>
+</tr>
+{/strip}
+<tr class="h_left_v_top">
+	<td class="container">
+{* -- Рамка -- *}
+
+{literal}
+<script type="text/javascript">
+/*
+	Функция обработки закрытия блока помощи
+*/
+function close_hint(element, value) {
+	Cookie.write(element, value, {duration: hint_off_timeout}); // Сохраняем куку 1 год
+	var slide = new Fx.Slide(element, {duration: 50});
+    slide.toggle();
+	return true;
+}
+
+</script>
+{/literal}
+
+<table class="inner_container align_center">
+	<tr class="h_left_v_top">
+		<td class="container_notice_cell">
+            &nbsp;
+        </td>
+    </tr>
+	<tr class="h_left_v_top">
+		<td class="container_main_cell">
+

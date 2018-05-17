@@ -1,0 +1,165 @@
+<div class="log-header row">
+    <div class="col-sm-12 col-md-4 col-lg-6">
+        <h2>
+            SpamFireWall {$l_log}
+            <span class="hint">{$l_log_updated}</span>
+        </h2>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-6 log-filters">
+        <form action="/my/show_sfw">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4">
+                <select id="service_id" name="service_id" class="form-control selectpicker filter">
+                    <option value="">{$l_choose_site}</option>
+                    {if $sfw_services}
+                    <optgroup>
+                        {foreach from=$sfw_services item=service}
+                        <option value="{$service.service_id}"{if $service.service_id eq $smarty.get.service_id}selected{/if}>{if $service.hostname}{$service.hostname}{else}#{$service.service_id}{/if}</option>
+                        {/foreach}
+                    </optgroup>
+                    {/if}
+                    {if $granted_services}
+                    <optgroup label="{$l_granted_services}">
+                        {foreach from=$granted_services item=service}
+                        <option value="{$service.service_id}"{if $service.service_id eq $smarty.get.service_id}selected{/if}>{$service.hostname}</option>
+                        {/foreach}
+                    </optgroup>
+                    {/if}
+                </select>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <select id="int" name="int" class="form-control selectpicker filter" data-title="{$l_choose_period}">
+                    <option value="today"{if $interval eq today} selected{/if}>{$ints.today}</option>
+                    <option value="yesterday"{if $interval eq yesterday} selected{/if}>{$ints.yesterday}</option>
+                    <option value="week"{if $interval eq week} selected{/if}>{$ints.week}</option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-sm-5">
+                <select id="countries" name="country" class="form-control selectpicker filter" data-live-search="true" data-size="10">
+                    <option value="">{$l_logs_countries}</option>
+                    {foreach from=$countries item=country}
+                    <option value="{$country.countrycode}" class="flag {strtolower($country.countrycode)}"{if $country.countrycode eq $smarty.get.country} selected{/if}>{$country.langname}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-7">
+                <input type="text" placeholder="{$l_search_ip}" class="form-control" id="search_ip" name="search_ip" value="{$search_ip}">
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <button type="button" class="btn btn-primary btn-block" id="search_ip_btn">{$l_search}</button>
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                <button type="button" class="btn btn-default btn-block" id="reset_btn">Reset</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+<br>
+
+<div class="log-table-responsive">
+<table class="table table-hover simple-sort" id="log-table" style="width: 100%;">
+    <thead>
+    {if $sfw_rows}
+    <tr class="bulk-row " style="transition: none;">
+        <th style="vertical-align: middle">
+            <input type="checkbox" class="bulk-check">
+        </th>
+        <th colspan="6">
+            <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-top">
+                <option value="deny">Add to Personal BlackList</option>
+            </select>
+            <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+        </th>
+    </tr>
+    {/if}
+    <tr>
+        <th> </th>
+        <th class="nw sort-default" width="20%" data-sort-method="date" title="{$l_session_begin_hint}" data-toggle="tooltip" data-placement="right" data-container="body">{$l_session_begin}</th>
+        <th width="16%" data-sort-method="dotstep" title="{$l_ip_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_ip}</th>
+        <th width="16%" title="{$l_sfw_country_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_sfw_country}</th>
+        <th width="16%" class="nw" title="{$l_sfw_ipowner_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_sfw_ipowner}</th>
+        <th width="16%" title="{$l_hits_total_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_hits_total}</th>
+        <th width="16%" title="{$l_hits_allow_hint}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_hits_allow}</th>
+    </tr>
+
+    </thead>
+    <tbody>
+    {if $sfw_rows}
+    {foreach from=$sfw_rows item=row}
+    <tr class="log-row">
+        <td><input type="checkbox" value="{$row.sfw_ip}" class="r-check" name="rid[]"></td>
+        <td>{$row.mindt}</td>
+        <td class="nw" data-order="{$row.sfw_ip}"><a href="#" class="ip-filter">{$row.sfw_ip}</a> <a href="/blacklists/{$row.sfw_ip}" class="external"></a></td>
+        <td class="nw" data-order="{$row.countryname}"><img src="/images/flags/{if $row.countrycode}{$row.countrycode}{else}a1{/if}.png" alt="{$row.countrycode|upper}" title="{$row.countryname}" width="16">&nbsp;{$row.countryname}</td>
+        <td class="nw">{if $row.asn_id}AS {$row.asn_id} {$row.org_name}{else}-{/if}</td>
+        <td>{$row.sumnumtotal}</td>
+        <td>{$row.sumnumallow}</td>
+    </tr>
+    {/foreach}
+    <tfoot>
+    <tr class="bulk-row " style="transition: none;">
+        <th style="vertical-align: middle">
+            <input type="checkbox" class="bulk-check">
+        </th>
+        <th colspan="6">
+            <select class="selectpicker bulk-action" name="bulk-action" title="Bulk actions" id="bulk-action-bottom">
+                <option value="deny">Add to Personal BlackList</option>
+            </select>
+            <button type="button" class="btn btn-default disabled bulk-btn">Apply</button>
+        </th>
+    </tr>
+    </tfoot>
+    {else}
+    <!--<tr><td colspan="7" class="text-center">{$l_sfw_no_records}</td></tr>-->
+    {/if}
+    </tbody>
+</table>
+</div>
+<div id="log-bulk-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            
+            <div class="modal-body text-center bg-success" id="log-bulk-modal-result"></div>
+            <div class="modal-body bg-danger text-danger text-center" id="log-bulk-modal-error">Internal Server Error</div>
+            <div class="modal-body text-center" id="log-bulk-modal-loading"><img src="/images/loading.gif"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="log-bulk-modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{if $show_modal}{include file="tools/license_modal.html"}{/if}
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
+<style type="text/css">
+#log-table_wrapper{ width: 98%; margin-bottom: 20px;}
+.selected{ background-color: #f5f5f5;}
+</style>
+<script>
+
+    var service_type = 'spamfirewall';
+    window.addEventListener('load', function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        sfwLog({
+            url: '{$smarty.server.REQUEST_URI}'
+        });
+        $("#log-table").DataTable({
+            "responsive": true,
+            "paging":   false,
+            "ordering": true,
+            "info":     false,
+            "searching": false,
+            "columns": [{ ordertable: false }, { "type": "date" }, { "type": "ip-address" }, { "type": "html" }, { "type": "html" }, { "type": "num" }, { "type": "num" }],
+            "order": [[ 1, "desc" ]],
+            "stateSave": true,
+            "stateDuration": 60 * 60 * 24 * 365
+        });
+    });
+</script>

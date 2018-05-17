@@ -1,0 +1,533 @@
+<style>
+    table th.sort-header {
+        cursor: default;
+    }
+    table th.sort-header:after {
+        content: '';
+        float: right;
+        margin-top: 7px;
+        border-width: 0 4px 4px;
+        border-style: solid;
+        border-color: #404040 transparent;
+        visibility: hidden;
+    }
+    table th.sort-header:hover:after {
+        visibility: visible;
+    }
+    table th.sort-up:after,
+    table th.sort-down:after,
+    table th.sort-down:hover:after {
+        visibility: visible;
+        opacity: 0.4;
+    }
+    table th.sort-up:after {
+        border-bottom: none;
+        border-width: 4px 4px 0;
+    }
+</style>
+<div class="container-fluid">
+	<div class="log-header row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br /><h2>{$l_personal_lists}</h2>
+			<p class="text-muted">{$l_private_text}</p>
+			<br />
+		</div>
+	</div>
+    {*<div class="row" style="height: 24px;">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <div class="alertpriv{if $addedrecords}{else} displaynone{/if}" id="upper_message">
+                {$addedrecords}
+            </div>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        </div>
+    </div>*}
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div class="well">
+			<table class="w100">
+				<tr>
+					<td>
+						<form method="post" action="/my/show_private" id="add_record_form">
+							<textarea id="add_record" name="add_record" placeholder="{$l_add_record}" rows="2" cols="30" class="form-control"{if $grantwrite}{else} disabled{/if}>{if $add_record}{$add_record}{else}{$smarty.get.add_record}{/if}</textarea>
+                            <input type="text" name="note" placeholder="{$l_note_hint}" class="form-control" maxlength="100" style="margin: 4px 0;">
+                            <input type="checkbox" name="all_sites"{if $grantwrite}{else} disabled{/if}>&nbsp;<span class="details">{$l_add_allsites}</span>
+                        	<input type="hidden" name="action" value="add_record">
+                        	<input type="hidden" name="service_id" value="{$service_id}">
+                        	<input type="hidden" id="add_status" name="add_status" value="">
+                        </form>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="valigntop">
+                   		<button type="button" class="btn btn-success btn-sm add_records" id="allow"{if !$grantwrite} disabled="disabled"{/if}>{$l_allow}</button>
+                        <div style="margin-top: 5px;"></div>
+                        <button type="button" class="btn btn-danger btn-sm add_records" id="deny"{if $grantwrite}{else} disabled="disabled"{/if}>{$l_deny}</button>
+                    </td>
+                    <td class="valigntop">
+                    	{if $grantwrite}
+                            <a style="cursor: pointer;" data-toggle="modal" data-target=".bs-example-modal-lg">{$l_add_country}</a>
+                            {if $paid_addons_s.words_stop_list.show_label}
+                        	   <br>
+                                <span class="label label-warning">
+								    {$l_addon}
+								    <a class="white" target="_blank" href="/extra-package">[?]</a>
+							     </span>
+                            {/if}
+                        {else}
+                            &nbsp;
+                        {/if}
+                    </td>
+                </tr>
+            </table>
+            {if $grantwrite}
+            <form action="/my/show_private" method="post" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td>{$l_format_desc}:</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="file" name="upfile">
+                        <input type="hidden" name="action" value="upload_csv">
+                        <input type="hidden" name="service_id" value="{$service_id}">
+                    </td>
+                    <td>
+                        <button type="submit">{$l_save}</button>
+                    </td>
+                </tr>
+            </table>
+            </form>
+            {/if}
+            </div>
+            <span class="gray">
+                {if $service_type == 'spamfirewall'}
+                    {$l_addrecord_hint_spamfirewall}
+                {else}
+                    {$l_addrecord_hint}
+                {/if}
+                <br>
+                {$l_add_instruction}
+            </span>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div class="well privwellh">
+			<table class="w100">
+				<tr>
+                    <td class="w40">
+                        <select id="service_id" class="form-control filter_private">
+                            <optgroup label="---">
+                            {foreach from=$services item=oneservice}
+                                <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $service_id} selected{/if}>{$oneservice.service_name}</option>
+                            {/foreach}
+                            </optgroup>
+                            {if $granted_services}
+                                <optgroup label="---{$l_granted_services}---">
+                                    {foreach from=$granted_services item=oneservice}
+                                        <option data-product="{$oneservice.product_id}" value="{$oneservice.service_id}"{if $oneservice.service_id eq $smarty.get.service_id}selected{/if}>{if $oneservice.hostname}{$oneservice.hostname}{else}#{$oneservice.service_id}{/if}</option>
+                                    {/foreach}
+                                </optgroup>
+                            {/if}
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="w30">
+                        <select class="form-control filter_private" id="status">
+                            <option value="">{$l_choose_status}</option>
+                            <optgroup label="---">
+                            <option value="allow" {if $status eq allow}selected{/if}>{$l_allow}</option>
+                            <option value="deny" {if $status eq deny}selected{/if}>{$l_deny}</option>
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+            		<td class="w30">
+            			{if $show_record_type}
+            			<select id="service_type" class="form-control filter_private">
+                			<option value="">{$l_service}</option>
+                			<optgroup label="---">
+                			{foreach from=$record_type_service_display item=r key=k}
+                				<option value="{$k}" {if $k == $service_type}selected{/if}>{$r}</option>
+                			{/foreach}
+                			</optgroup>
+            			</select>
+            			{/if}
+            		</td>
+            	</tr>
+            </table>
+            <div class="mtop10px">
+                <table class="w100">
+            	   <tr>
+                        <td>
+                            <input type="text" placeholder="Custom dates" class="form-control datepicker-here" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$start_from} - {$end_to}">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="mtop10px">
+                <table class="w100">
+                    <tr>
+                        <td>
+                            <input type="hidden" id="search_service_id" value="{$service_id}">
+                            <input type="text" id="search_record" placeholder="{$l_search_record}" class="form-control">
+                        </td>
+                        <td>&nbsp;</td>
+                        <td class="w20">
+                            <button class="btn btn-primary btn-sm btn-block button_filter" type="button" id="button-filter">{$l_stat_show}</button>
+                            {*<button class="btn btn-primary btn-sm btn-block" id="search_by_record">{$l_search}</button>*}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br />
+			<table class="w100">
+                <tr>
+                    <td class="w20">
+                        <div style="margin-bottom: 3px;">
+                            {if $privaterecs && $grantwrite}
+                                <button type="button" id="delbulk" class="btn btn-default btn-sm">{$l_delete_selected}</button>
+                            {else}
+                                <input type="hidden" id="delbulk">
+                            {/if}
+                        </div>
+                    </td>
+                    <td class="">
+                        &nbsp;
+                    </td>
+                    <td class="right">
+                        {$records_found}
+                        {if $privaterecs && $grantwrite}
+                            <div style="display: inline-block;">
+                                {$l_export_data}:
+                                <a href="{$smarty.server.REQUEST_URI}&mode=csv"><img src="/images/icons/csv.png" alt="" style="height: 24px;"/></a>
+                            </div>
+                        {/if}
+
+                    </td>
+					{if $pages}
+                    <td class="w30 right">
+						<nav aria-label="Page navigation">
+						  <ul class="pagination pagination-sm" style="margin: 0em;">
+							<li>
+								<a href="{$request_uri_page_free}&page={$page_prev}" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							  </a>
+							</li>
+							{foreach from=$pages item=page}
+							<li><a href="{$request_uri_page_free}&page={$page}">{$page}</a></li>
+							{/foreach}
+							<li>
+							  <a href="{$request_uri_page_free}&page={$page_next}" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							  </a>
+							</li>
+						  </ul>
+						</nav>
+                    </td>
+					{/if}
+                </tr>
+            </table>
+            <div class="modal fade" tabindex="-1" id="comment-modal" role="dialog" aria-labelledby="commentModal">
+                <div class="modal-dialog" role="document">
+                    <form method="post" action="/my/show_private">
+                        <input type="hidden" name="record_id" value="">
+                        <input type="hidden" name="service_id" value="{$service_id}">
+                        <input type="hidden" name="action" value="note">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <span class="text-muted">Created:</span> <span id="comment-modal-created"></span>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="text-muted">Status:</span> <span class="" id="comment-modal-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <textarea class="form-control" name="note"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+			<table class="table w100" id="records-table">
+                <thead>
+				<tr class="active main_page_theader">
+					<th class="no-sort">
+                        {if $grantwrite}
+                            <input type="checkbox" id="checkall">
+                        {/if}
+                    </th>
+    				<th id="th_record">{$l_record}</th>
+    				<th id="th_created">{$l_created}</th>
+    				<th id="th_hits">{$l_7_hits}</th>
+    				<th id="th_status">
+        				{$l_status}
+        				<span class="tooltip" ttext="{$l_private_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+    				<th id="th_service">{$l_service}
+        				<span class="tooltip" ttext="{$l_service_type_hint}">
+            				<i class="fa fa-question-circle"></i>
+        				</span>
+    				</th>
+                    <th class="no-sort">{$l_note}</th>
+    				<th class="no-sort">{$l_delete_record}</th>
+				</tr>
+                </thead>
+                <tbody>
+                {foreach from=$privaterecs item=onerec}
+                <tr id="record_{$onerec.record_id}">
+                    <td class="center">
+                        {if $grantwrite}
+                        <input type="checkbox" class="recordcb" value="{$onerec.record_id}">
+                        {/if}
+                    </td>
+                    <td width="20%" align="left"><span id="onlyrec_{$onerec.record_id}">{$onerec.record}</span>
+                        {if $onerec.countrycode}
+                        (<img src="/images/flags/{if $onerec.countrycode}{$onerec.countrycode}{else}a1{/if}.png" alt="{$onerec.countrycode|upper}" title="{$onerec.countryname}" width="16">
+                        &nbsp;{$onerec.countryname})
+                        {/if}
+                    </td>
+                    <td class="center">{$onerec.created}</td>
+                    <td class="center" data-sort="{$onerec.hits}">
+                        {if $onerec.hits && $onerec.record_type neq 6 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?start_from={$sfip}&end_to={$etip}&ipemailnick={$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 6}
+                            <a href="/my/show_sfw?ip={$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 7 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?ipemailnick={$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 1 && $onerec.product_id eq 1}
+                            <a href="/my/show_requests?ipemailnick={$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 1 && $onerec.product_id eq 4}
+                            <a href="/my/logs_firewall?ip=$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else if $onerec.hits && $onerec.record_type eq 7 && $onerec.product_id eq 4}
+                            <a href="/my/logs_firewall?ip={$onerec.sourcerecord}" target="_blank">
+                                {$onerec.hits}
+                            </a>
+                        {else}
+                        	0
+						{/if}
+                    </td>
+                    <td width="15%" align="center" data-sort="{$onerec.status}">
+                        {if $grantwrite}
+                            <div id="allow_{$onerec.record_id}" style="display:{if $onerec.status eq allow}block{else}none{/if};"><a href="#/" id="cs_{$service_id}_{$onerec.record_id}_0" class="green chrecstatus">{$l_allow}</a></div>
+                            <div id="deny_{$onerec.record_id}" style="display:{if $onerec.status eq deny}block{else}none{/if};"><a href="#/" id="cs_{$service_id}_{$onerec.record_id}_1" class="red chrecstatus">{$l_deny}</a></div>
+                        {else}
+                            {if $onerec.status eq allow}
+                                <span class="green">{$l_allow}</span>
+                            {else}
+                                <span class="red">{$l_deny}</span>
+                            {/if}
+                        {/if}
+                    </td>
+                    <td align="center" class="service_tools">
+                        {$onerec.service_type_display}
+                    </td>
+                    <td style="width: 15%">
+                        <span id="note_{$service_id}_{$onerec.record_id}">{$onerec.note}</span>
+                        {if $grantwrite}
+                        <a href="#" class="edit-note" data-toggle="modal" data-target="#comment-modal"
+                                data-id="{$onerec.record_id}"
+                                data-title="{$onerec.record}"
+                                data-created="{$onerec.created}"
+                                data-status="{if $onerec.status eq allow}{$l_allow}{else}{$l_deny}{/if}"
+                                data-status-class="{if $onerec.status eq allow}text-success{else}text-danger{/if}"
+                                data-note="#note_{$service_id}_{$onerec.record_id}"
+                        ><span class="glyphicon glyphicon-pencil"></span></a>
+                        {/if}
+                    </td>
+                    <td width="15%" align="center" class="service_tools">
+                        {if $grantwrite}
+                            <img height="12" alt="Удалить" src="/images/icons/16x16/Delete.png">
+                            <a href="#/" id="delete_{$service_id}_{$onerec.record_id}" class="delete_record">{$l_delete}</a>
+                        {else}
+                            -
+                        {/if}
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="modal fade bs-example-modal-lg" id="countries_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <table>
+            <tr>
+                <td>
+                    <h4 class="modal-title" id="myModalLabel">{$l_add_country}</h4>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>
+                    &nbsp;<input type="checkbox" id="allcountries">&nbsp;<label for="allcountries">{$l_select_all_countries}</label>
+                </td>
+            </tr>
+        </table>
+      </div>
+      <div class="modal-body">
+        <form action="/my/show_private" method="post" id="countries_form">
+            {$countries}
+            <input type="hidden" name="service_id" value="{$service_id}">
+            <input type="hidden" name="add_countries" value="1">
+            <input type="hidden" name="action" value="add_record">
+            <input type="hidden" id="countries_status" name="countries_status" value="">
+        </form>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" class="btn btn-success btn-sm allow_countries countries">{$l_allow}</button>
+        <button type="button" class="btn btn-danger btn-sm deny_countries countries">{$l_deny}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Information modal" id="information_message">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert alert-success" style="margin-bottom: 0">{$addedrecords}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="includes/modal_license.html" script_disable=true}
+<input type="hidden" id="deleted_recs_text" value="{$deleted_recs_text}">
+<script src="/my/js/private.js?v=28072017"></script>
+<script src="/my/js/datepicker.js?v=05052016"></script>
+<link href="/my/css/datepicker.min.css?v=05052016" rel="stylesheet">
+
+<script src="/js/tablesort/tablesort.min.js"></script>
+<script src="/js/tablesort/tablesort.date.js"></script>
+<script src="/js/tablesort/tablesort.number.js"></script>
+<script>
+    var fld = {if $sort}'{$sort.field}'{else}false{/if};
+    var cls = {if $sort}'{$sort.class}'{else}false{/if};
+    var table = document.getElementById('records-table');
+    var sort = new Tablesort(table);
+
+    function tableListen() {
+        table.addEventListener('afterSort', function () {
+            var th = null;
+            var srt = null;
+            if (document.getElementsByClassName('sort-down').length) {
+                th = document.getElementsByClassName('sort-down')[0];
+                srt = 'down';
+            } else if (document.getElementsByClassName('sort-up').length) {
+                th = document.getElementsByClassName('sort-up')[0];
+                srt = 'up';
+            }
+            if (th && srt) {
+                th = th.innerHTML.match(/^\s*([\wа-я ]+)/i)[1];
+                document.cookie = "showPrivateSort=" + th + "|" + srt + "; path=/";
+            }
+        });
+    }
+
+    window.addEventListener('load', function () {
+        new PrivateLists({$licenses_moderate});
+
+        $('#comment-modal').on('show.bs.modal', function (e) {
+            var btn = $(e.relatedTarget);
+            var modal = $(this);
+
+            modal.find('input[name=record_id]').val(btn.data('id'));
+            modal.find('h4').text('Private note for the ' + btn.data('title'));
+            modal.find('#comment-modal-created').text(btn.data('created'));
+            modal.find('#comment-modal-status').text(btn.data('status')).attr('class', btn.data('status-class'));
+            modal.find('textarea').val($(btn.data('note')).text());
+        });
+    });
+
+    if (fld) {
+        window.addEventListener('load', function () {
+            switch (fld) {
+                case '{$l_status}':
+                    $('#th_status').trigger('click');
+                    if (cls == 'sort-up') $('#th_status').trigger('click');
+                    break;
+                case '{$l_record}':
+                    $('#th_record').trigger('click');
+                    if (cls == 'sort-up') $('#th_record').trigger('click');
+                    break;
+                case '{$l_created}':
+                    $('#th_created').trigger('click');
+                    if (cls == 'sort-up') $('#th_created').trigger('click');
+                    break;
+                case '{$l_7_hits}':
+                    $('#th_hits').trigger('click');
+                    if (cls == 'sort-up') $('#th_hits').trigger('click');
+                    break;
+                case '{$l_service}':
+                    $('#th_service').trigger('click');
+                    if (cls == 'sort-up') $('#th_service').trigger('click');
+                    break;
+            }
+            tableListen();
+        });
+    } else {
+        tableListen();
+    }
+</script>
+<style>
+    .modal-license {
+        text-align: center;
+        padding: 0 !important;
+    }
+    .modal-license:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-right: -4px;
+    }
+    .modal-license .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .modal-license .modal-footer {
+        text-align: center !important;
+    }
+    .modal-license .modal-footer a.btn {
+        text-decoration: none;
+    }
+    .modal-license .modal-footer a.text-muted {
+        font-size: 12px;
+    }
+    #records-table tbody tr .edit-note {
+        visibility: hidden;
+    }
+    #records-table tbody tr:hover .edit-note {
+        visibility: visible;
+    }
+</style>

@@ -1,0 +1,28 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<h3>{$setup_hint_title} {$setup_service.visible_name}</h3>
+			<ul>
+				<li>1. {$l_setup_hint_key}: <b>{$setup_service.auth_key}</b></li>
+				<li>2. {$l_setup_hint_test} <span class="red_text bold_text">{$test_email}</span>.</li>
+				<li>3. {$l_setup_hint_see},<br /><br />
+				<pre>*** Forbidden. Sender blacklisted. Antispam service cleantalk.org. ***</pre>
+				</li>
+			</ul>
+			<br>
+			<p>{$l_setup_hint_if_something_wrong} <a href="/install?platform={$setup_service.engine}">{$l_setup_manul}</a>.</p>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			&nbsp;
+		</div>
+	</div>
+</div>		
+

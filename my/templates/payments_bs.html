@@ -1,0 +1,89 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+			<span class="fs24px">{$l_payments}</span>
+		</div>
+	</div>	
+	{if $pays}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br>
+			<table class="table">
+				<tr class="active main_page_theader">
+					<th>#</th>
+					<th>{$l_date|default:"Дата"}</th>
+					<th>{$l_service}</th>
+					<th>{$l_cost|default:"Сумма"}</th>
+				</tr>
+				{section loop=$pays name=pay}
+					<tr>
+						<td>
+							{$pays[pay].pay_id}
+						</td>
+						<td>
+							{$pays[pay].date}
+						</td>
+						<td>
+							{$pays[pay].comment}
+							<br>
+							{if $ct_lang == 'ru'}
+                    			<a href="?get_act=1&bill_id={$pays[pay].bill_id}">Скачать акт</a>
+                    			(заполните <a href="/my/profile" target="_blank">реквизиты</a> юрлица).
+                			{else}
+                    			<a href="?get_invoice=1&bill_id={$pays[pay].bill_id}">Invoice</a>
+                    			(fill <a href="/my/profile" target="_blank">billing</a> info).
+                			{/if}
+                			{if $pays[pay].promocode_info}
+                				<br>
+            					<div class="alertpriv">
+                    				{$pays[pay].promocode_info}
+            					</div>
+            				{/if}
+						</td>
+						<td class="right">
+							{$pays[pay].cost_human}
+						</td>
+					</tr>	
+				{/section} 
+			</table>
+		</div>
+	</div>
+	{else}
+	<div class="row">
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<h5>{$l_payments_not_found}</h5>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		</div>
+	</div>	
+	{/if}
+	<div class="row">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+		</div>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<span class="gray">{$l_payments_not_found_hint} {mailto address="welcome@cleantalk.org" encode="javascript"}.</span>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+		</div>
+	</div>	
+	<div class="row">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+		</div>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 center">
+			<br><br>
+			<a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+		</div>
+	</div>	
+</div>	
+<script src="/my/js/grants.js?v=14062016"></script>
+<input type="hidden" id="wrong_message" value="{$wrong_message}">	
+<input type="hidden" id="success_message" value="{$success_message}">

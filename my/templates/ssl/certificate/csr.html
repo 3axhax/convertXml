@@ -1,0 +1,43 @@
+<div class="panel panel-default panel-ripple-loader hidden" id="form-csr">
+    <div class="loader hidden"><div><div></div></div></div>
+    <div class="panel-heading">
+        <div class="panel-title">{$l_ssl_csr_title}</div>
+    </div>
+    <div class="panel-body bg-danger text-danger text-center hidden" id="form-csr-error"></div>
+    <form method="post" data-toggle="validator" role="form">
+        <input type="hidden" name="step" value="1">
+        <div class="panel-body">
+            <div class="form-group{if isset($error_fields['csr'])} has-error{/if}">
+                <textarea name="csr" id="csr_field" class="form-control" rows="10" required></textarea>
+                {if isset($error_fields['csr'])}
+                <p class="help-block">Error: {$error_fields['csr']}</p>
+                {/if}
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-block btn-primary">{$l_ssl_csr_read}</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="csr-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{$l_ssl_csr_modal_title}</h4>
+            </div>
+            <table class="table table-hover">
+                <tbody>
+                {foreach from=$l_ssl_csr_modal_items item=v key=k}
+                <tr><th>{$v}:</th><td id="csr-details-{$k}"></td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">{$l_ssl_btn_cancel}</button>
+                <button type="button" class="btn btn-success" id="csr-modal-submit">{$l_ssl_btn_looks_good}</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<section id="security-private-lists">
+    <header>
+        {if $addedrecords}<div class="alert alert-success" role="alert">{$addedrecords}</div>{/if}
+    </header>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="well">
+                <table class="main-form">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <form method="post">
+                                <textarea name="add_record" placeholder="{$l_add_record}" rows="3" class="form-control"></textarea>
+                                <div><input type="checkbox"> {$l_add_allsites}</div>
+                                <input type="hidden" name="action" value="add_record">
+                                <input type="hidden" name="service_id" value="{$service_id}">
+                                <input type="hidden" name="add_status" value="">
+                            </form>
+                        </td>
+                        <td class="buttons">
+                            <button type="button" class="btn btn-success btn-sm btn-block">{$l_allow}</button>
+                            <button type="button" class="btn btn-danger btn-sm btn-block">{$l_deny}</button>
+                        </td>
+                        <td class="text-right">
+                            <a href="#">{$l_add_country}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="form-group">
+                                <label for="upfile">{$l_format_desc}:</label>
+                                <input type="file" name="upfile" id="upfile" class="form-control">
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    window.addEventListener('load', function () {
+        $('input[type=file]').bootstrapFileInput();
+    });
+</script>

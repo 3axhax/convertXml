@@ -1,0 +1,68 @@
+<br><br>
+<div class="row">
+    <div class="col-xs-6">
+        {if $show_reviews && $reviews}
+        <div class="left_border">
+            {foreach from=$reviews item=r name=rvw}
+            <table>
+                <tr valign="top">
+                    <td width="50">
+                        <img src="{$r.review_avatar_data}" alt="" class="reviews_avatar"/>
+                    </td>
+                    <td class="review_customer">
+                        <div>
+                                    <span>
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    <img src="/images/icons/star.png" alt="" width="17" height="16" />
+                                    </span>
+                            <span class="review_title">{$r.review_title}</span>
+                        </div>
+                        <div class="gray">
+                            By {$r.review_author}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="gray review_text">
+                            {$r.review_text}{if $r.review_host}&nbsp;<a href="/go?url={$r.review_url}" target="_blank" class="grey_text" >{$r.review_host}</a>{/if}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            {if !$smarty.foreach.rvw.last}
+            <br>
+            {/if}
+            {/foreach}
+        </div>
+        {/if}
+    </div>
+    <div class="col-xs-6">
+        {if $show_offer && !$smarty.cookies.extended}
+        <div class="left_border">
+            {include file=$offer_template}
+        </div>
+        {/if}
+        {if $show_hosting_offer}
+        <div class="left_border">
+            {include file="hosting_offer.html"}
+        </div>
+        {/if}
+        {if $trial_notice}
+        <div class="left_border">
+            <h4>{$paid_till_info_trial}. {$l_down_up_cancel}</h4>
+            <div class="gray">{$l_trial_notice}<span id="trial_notice_text" class="displaynone">{$l_trial_notice_text}</span>
+                <br>
+                <a href="#/" id="more_trial_notice" class="gray underline">{$l_more}</a>
+                {if $free_cleantalk_message}
+                <br />
+                {include file="free_cleantalk_with_hosting.html"}
+                {/if}
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>

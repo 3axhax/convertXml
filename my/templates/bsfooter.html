@@ -1,0 +1,113 @@
+<div id="footer-margin"></div>
+<nav class="navbar navbar-default navbar-fixed-bottom" id="footernav" style="position: absolute;margin-bottom: -70px;display: block!important;bottom: 0;">
+    <div class="container">
+        <div class="row" style="padding-bottom: 15px;">
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/">{$smarty.server.HTTP_HOST}</a><br>
+                <a href="/my" title="{$l_dashboard}" rel="nofollow">{$l_dashboard}</a><br>
+                <a href="/price" title="{$l_pricing}" rel="nofollow">{$l_pricing}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/api" title="API" rel="nofollow">API</a><br>
+                <a href="/blacklists" title="{$l_blacklists_link}">{$l_blacklists_link}</a><br>
+                <a href="/blog/" title="{$l_blog}">{$l_blog}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/help/hostingpartner" title="{$l_to_partners}" rel="nofollow">{$l_to_partners}</a><br>
+                <a href="/spam-stats" title="{$l_stats}">{$l_stats}</a><br><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/help" title="{$l_help|default:"Помощь"}">{$l_help|default:"Помощь"}</a><br>
+                <a href="/my/support" title="{$l_submit_ticket}">{$l_submit_ticket}</a><br>
+                <a href="//community.cleantalk.org/" title="{$l_support_forum}">{$l_support_forum}</a><br>
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <a href="/about" title="{$l_about}" rel="nofollow">{$l_about}</a><br>
+                <a href="/contact-us" title="{$l_contacts_menu}">{$l_contacts_menu}</a><br>
+                {if $ct_lang == 'en'}
+                <div class="dropup">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Policy <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/publicoffer#privacy" rel="nofollow">{$l_privacy_policy}</a></li>
+                        <li><a href="/publicoffer#refund" rel="nofollow">{$l_refund_policy}</a></li>
+                        <li><a href="/publicoffer" rel="nofollow">{$l_license}</a></li>
+                    </ul>
+                </div>
+                {else}
+                <a href="/publicoffer" rel="nofollow">{$l_license}</a>
+                {/if}
+            </div>
+            <div class="col-md-2 col-xs-4 text-nowrap mt15">
+                <div class="dropdown" id="footer-lang" style="display: {if $ct_lang|upper == 'RU'}inline-block{else}none{/if};">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="footer-lang-toggle">
+                        <img class="flag_icon" alt="" src="{$static_host_url}/images/langs/{$ct_lang}.png" alt="{$ct_langs.ct_lang}">&nbsp;{$ct_lang|upper}<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {foreach from=$ct_langs item=l key=k}
+                        <li><a class="menulangs" id="{$k}" href="?lang={$k}"><img class="flag_icon" src="/images/langs/{$k}.png" alt="{$k}" title="{$l}">&nbsp;{$k|upper}</a></li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">#footer-margin{ height: 96px;} .mt15{ margin-top: 15px; width: auto;} #footernav .row{ margin: 0 auto; width: -webkit-fit-content; width: -moz-fit-content; width: fit-content;}@media (max-width: 620px){ #footer-margin { width: 160px;}}@media (max-width: 638px){ .mt15{ width: 160px;}} .mt15 a{ color: #777;}html{ height: 100%;} body{ min-height: 100%;position: relative;}</style>
+</nav>
+
+<script src="/my/js/bootstrap.min.js"></script>
+<script src="/my/js/bsdesign.js?v=01042016"></script>
+<script src="/js/jquery.cookie.js"></script>
+{if $ct_lang|upper != 'RU'}
+<script type="text/javascript">var ip = '{$smarty.server.REMOTE_ADDR}';</script>
+<script src="/js/language-switch.js"></script>
+{/if}
+{literal}
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-45397928-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script>
+    window.addEventListener('load', function () {
+        $('.menulangs').each(function () {
+            var url = document.URL;
+            if (url.indexOf('?') != -1) {
+                url = url.split('?');
+                url[1] = url[1].split('&');
+                var params = [];
+                for (var i = 0; i < url[1].length; i++) {
+                    var p = url[1][i].split('=');
+                    if (p[0] != 'lang') params.push(p[0] + '=' + p[1]);
+                }
+                if (params.length) {
+                    url = url[0] + '?' + params.join('&') + '&lang=' + $(this).attr('id');
+                } else {
+                    url = url[0] + '?lang=' + $(this).attr('id');
+                }
+            } else {
+                url += '?lang=' + $(this).attr('id');
+            }
+            $(this).attr('href', url);
+        });
+    });
+</script>
+{/literal}
+{if $news && !$hide_submenu}
+<script src="/my/js/news.js?v=21122016"></script>
+{/if}
+
+{if $load_yandex_metric}
+{literal}
+<script type="text/javascript">var ya_params = {/*Здесь параметры визита*/};</script><div style="display:none;"><script type="text/javascript">(function(w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter4881448 = new Ya.Metrika({id:4881448, enableAll: true,params:window.ya_params||{ }}); } catch(e) { } }); })(window, "yandex_metrika_callbacks");</script></div><script src="//mc.yandex.ru/metrika/watch.js" type="text/javascript" defer="defer"></script><noscript><div><img src="//mc.yandex.ru/watch/4881448" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+{/literal}
+{/if}
+
+{if !$smarty.cookies.ct_user_timezone || true}
+    <script src="/js/get_timezone.js?id=8"></script>
+{/if}
+</body>
+</html>

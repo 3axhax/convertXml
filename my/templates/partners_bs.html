@@ -1,0 +1,342 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<br><br><br>
+		</div>
+	</div>
+	{if $smarty.get.need_agree}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <span>{$smarty.cookies.agree_transfer}</span>
+            {if $smarty.cookies.partner_balance != 0}
+            	<br />
+            	<br />
+            	<form method="post">
+                	<input type="hidden" name="transfer_type" value="{$smarty.cookies.transfer_type}">
+                	<input type="hidden" name="account" value="{$smarty.cookies.account}">
+                	<input type="hidden" name="agree" value="1">
+                	<button type="submit" class="btn btn-primary">		  {$l_agree|default:"Да, перевести!"}</button>
+            	</form>
+            {/if}
+            <br>		
+    		<div>
+        		<a href="/my/partners">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+    		</div>
+		</div>
+	</div>
+	{elseif $smarty.get.transfer_complete}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+			<br><br>
+            {if $smarty.cookies.balance_negative}
+                <span>{$smarty.cookies.transfer_complete}</span>
+            {else}
+                <span>{$smarty.cookies.transfer_complete} <img src="/images/icons/button_ok.png" valign="middle" /></span>
+            {/if}
+           	{if $smarty.cookies.balance_hint}
+                <div>{$smarty.cookies.balance_hint}</div>
+            {/if}
+            <br><br>
+    		<div>
+    			<a href="/my/partners">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+    		</div>
+    	</div>
+    </div>
+	{else}
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<h3>{$l_affiliate_program|default:"Партнерская программа"}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+			<table class="w100">
+				<tr>
+					<td width="23%">
+						<div class="well">{$l_clicks|default:"Переходов"}<div class="aff_numbers">{$partner.clicks|default:0}</div></div>
+					</td>
+					<td width="3%"></td>
+					<td width="23%">
+						<div class="well">{$l_regs|default:"Регистраций"}<div class="aff_numbers">{$partner.regs|default:0}</div></div>
+					</td>
+					<td width="3%"></td>
+					<td width="23%">
+						<div class="well">{$l_pays|default:"Оплат"}<div class="aff_numbers">{$partner.pays|default:0}</div></div>
+					</td>
+					<td width="3%"></td>
+					<td width="23%">
+						<div class="well">{$l_revenue|default:"Баланс"}<div class="aff_numbers">{$smarty.cookies.partner_balance|default:0.00} {$l_currency}</div></div>
+					</td>
+				</tr>
+			</table>
+			<br>
+			<table class="w100">
+				<tr>
+					<td width="32%">
+						<button class="btn btn-default btn-block" id="show_saccs">{$l_accounts_list|default:"Список акаунтов"}</button>
+					</td>
+					<td></td>
+					<td width="32%">
+						<button class="btn btn-default btn-block" id="show_ppays">{$l_pays_list|default:"Список платежей"}</button>
+					</td>
+					<td></td>
+					<td width="32%">
+						<button class="btn btn-default btn-block" id="new_account">{$l_new_account|default:"Создать акаунт"}</button>
+						<input type="hidden" id="na_partner_id" value="{$user_info.user_id}">
+					</td>
+				</tr>
+			</table>
+			<br>
+			<div class="w100 gray center">
+				<br>
+				Rates - 30% from first payment, 10% from subsequent payments ...
+				<br><br>
+			</div>
+			<br>
+			<div class="well displaynone" id="tables_well">
+				<span id="saccs">
+					{if $accounts}
+					<table class="w100 table lefttd">
+						<tr>
+							<th>#</th>
+							<th>Email</th>
+							<th>Registered</th>
+							<th>Paid till</th>
+							<th>Last seen</th>
+						</tr>
+						{section loop=$accounts name=account}
+                		<tr align="right">
+                    		<td>
+                        		{$smarty.section.account.index + 1}
+                    		</td>
+                    		<td>
+                        		{$accounts[account].email}
+                    		</td>
+                    		<td>
+                        		{$accounts[account].created}
+                    		</td>
+                    		<td>
+                        		{$accounts[account].paid_till}
+                    		</td>
+                    		<td>
+                        		{$accounts[account].last_seen}
+                    		</td>
+                		</tr>
+                		{/section}
+					</table>
+					{else}
+					 	{$l_no_paccounts|default:"Регистрации по партнерской программе отсутствуют"}
+					{/if}
+				</span>
+				<div id="ppays">
+                	{if $partner_pays}
+                	<table class="table w100 lefttd">
+                		<tr align="center" style="font-weight: bold;">
+                    		<th width="20">
+                      			#	
+                    		</th>
+                    		<th>
+                        		Email	
+                    		</th>
+                    		<th>
+                        		{$l_date|default:"Дата"}	
+                    		</th>
+                    		<th>
+                        		{$l_commission|default:"Комиссия"}, %	
+                    		</th>
+                    		<th>
+                        		{$l_sum|default:"Сумма"}, {$l_currency}.
+                    		</th>
+                		</tr>
+                		{section loop=$partner_pays name=pay}
+                		<tr>
+                    		<td>
+                        		{$smarty.section.pay.index + 1}
+                    		</td>
+                    		<td>
+                      			{$partner_pays[pay].email}
+                    		</td>
+                    		<td>
+                       			{$partner_pays[pay].date}
+                    		</td>
+                    		<td>
+                        		{$partner_pays[pay].fee}
+                   			</td>
+                    		<td>
+                        		{$partner_pays[pay].partner_cost}
+                    		</td>
+                		</tr>
+                		{/section}
+                		<tr>
+                    		<td colspan="4" class="right">
+                        		Итого:
+                    		</td>
+                    		<td class="right">
+                    			<b>{$total_sum}</b>
+                    		</td>
+                		</tr>
+                	</table>
+                	{else}
+                    	{$l_no_ppays|default:"Платежи по партнерской программе отсутствуют"}
+                	{/if}
+                </div>	
+			</div>
+			<div class="well">
+				<form method="post" id="transfer_form">
+				<table class="w100">
+					<tr>
+						<td width="20%" class="center">
+							<b>{$l_transfer_to|default:"Вывести деньги на"}</b>
+						</td>
+						<td class="center">
+							<div class="displaynone red" id="transfer_hint">{$l_choose_transfer_type}</div>
+							<div class="btn-group" role="group" aria-label="...">
+  								<button type="button" class="btn btn-default ct-balance transfer-button">{$l_transfer_to_ct|default:"Счёт CleanTalk"}</button>
+  								{if $ct_lang == 'ru'}
+  								<button type="button" class="btn btn-default ym-balance transfer-button">{$l_transfer_to_ym|default:"Яндекс.Деньги"}</button>
+  								<button type="button" class="btn btn-default"  disabled="disabled">{$l_transfer_to_wm|default:"WebMoney"}</button>
+  								{/if}
+  								<button type="button" class="btn btn-default"  disabled="disabled">{$l_transfer_to_pp|default:"PayPal"}</button>
+							</div>    
+						</td>
+						<td width="20%" class="center">
+							<button class="btn btn-success" id="make_transfer">{$l_transfer|default:"Вывести"}</button>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="transfer_type" id="transfer_type" value="">
+				</form>
+			</div>
+		</div>
+		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			<table class="w100">
+				<tr class="center aff_link" >
+					<td colspan="3">
+						<h3>{$l_affiliate_link|default:"Партнерская ссылка"}</h3>
+						<input type="text" class="w90" value="http://{$ct_host}/?pid={$user_info.user_id|default:1}">
+						<br>
+						{if $smarty.cookies.ct_lang == 'ru'}
+                    		{$l_get_banner|default:"Баннеры"}:
+                    		<br />
+                    		<a href="/my/banner" title="{$l_get_banner|default:"Получить баннер"}">
+                    			<img src="/banners/234x60-phpbb3-cleantalk.gif">
+                    		</a>
+                    		<br>
+                		{/if}
+                		<br>
+					</td>
+				<tr>
+				<tr class="aff_tell_friends">
+					<td colspan="3">
+						<br>
+						<div class="w100 center">
+						&nbsp;&nbsp;&nbsp;{$l_share|default:"Рассказать друзьям"}
+						<br>
+						&nbsp;&nbsp;&nbsp;<a href="http://twitter.com/home/?status={$l_share_subject}+http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><button type="button" class="btn social_buttons">twitter</button></a>
+						<a href="http://www.facebook.com/sharer.php?u=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><button type="button" class="btn social_buttons">facebook</button></a>
+						<a href="https://plus.google.com/share?url=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><button type="button" class="btn social_buttons">google+</button></a>
+                        {if $ct_lang == 'ru'}
+						<a href="http://vkontakte.ru/share.php?url=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><button type="button" class="btn social_buttons">VK</button></a>
+						<a href="http://www.odnoklassniki.ru/dk?st.cmd=addShare&st._surl=http://{$ct_host}/?pid={$user_info.user_id}" target="_blank"><button type="button" class="btn social_buttons">OK</button></a>
+                        {/if}
+                        </div>
+                        <br>
+					</td>
+				<tr>
+			</table>
+			{if $partner_pays || $accounts}
+			<script src="./js/Chart.js"></script>
+			<script>
+			datelabels = [{foreach from=$template_chart key=k item=v}
+							'{$k}',
+						  {/foreach}	
+						 ];
+			regs = [{foreach from=$template_chart item=v1}
+							'{$v1.regs}',
+					 {/foreach}	
+				    ];
+			pays = [{foreach from=$template_chart item=v2}
+							'{$v2.pays}',
+					 {/foreach}	
+				    ];
+			regslegend = '{$l_accounts_list}';	
+			payslegend = '{$l_pays_list}';  
+			</script>
+			{literal}
+			<script>
+			var barChartData = {
+				labels : datelabels, 
+				datasets : [
+					{
+                		label: regslegend,
+						strokeColor : "#CC3300",
+						highlightFill: "#eee",
+						highlightStroke: "#fff",
+                		pointColor: "#CC3300",
+                		pointStrokeColor: "#fff",
+                		pointHighlightFill: "#ccc",
+						data : regs
+					},
+					{
+                		label: payslegend,
+						strokeColor : "#49C73B",
+						highlightFill: "#eee",
+						highlightStroke: "#fff",
+                		pointColor: "#49C73B",
+                		pointStrokeColor: "#fff",
+                		pointHighlightFill: "#ccc",
+						data : pays
+					}
+				]
+			}
+			
+			window.onload = function(){
+				var ctx = document.getElementById("myChart").getContext("2d");
+				window.myBar = new Chart(ctx).Line(barChartData, {
+            		bezierCurve: true,
+            		maintainAspectRatio: false,
+            		scaleLabel: "  <%=value%>",
+            		datasetFill: false
+				});
+				document.getElementById('legendDiv').innerHTML = window.myBar.generateLegend();
+			}
+           	</script>
+			{/literal}
+			<div class="w100 center">
+				<br>
+				<canvas id="myChart" height="200"></canvas>
+				<div id="legendDiv" class="chart-legend"></div>
+			</div>			
+			{/if}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			{if $links}
+			<h3>{$l_affiliate_links|default:"Тематические ссылки для Web-сайта"}</h3>
+			<table class="table lefttd">
+    			<tr>
+        			<th>
+            			{$l_html_code|default:"HTML код"} 
+        			</th>
+        			<th>
+            			{$l_example|default:"Пример"} 
+        			</th>
+    			</tr>
+    			{section name=l loop=$links}
+        		<tr>
+            		<td>
+                		{$links[l].link|escape:"html"}
+            		</td>
+            		<td>
+                		{$links[l].link}
+            		</td>
+        		</tr>
+    			{/section}
+			</table>
+			{/if}
+		</div>
+	</div>
+	{/if}
+</div>	
+<script src="/my/js/partners.js?v=10082016"></script>

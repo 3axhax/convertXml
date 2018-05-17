@@ -1,0 +1,10 @@
+{include file="./includes/header.html"}
+{if $content_message}
+    <div class="action_message">
+        {$content_message}
+    </div>
+{else}
+    {include file=$template}
+{/if}
+{include file="./includes/footer.html"}
+

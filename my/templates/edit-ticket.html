@@ -1,0 +1,36 @@
+<div class="width_70_percent align_center">
+  <div class="align_left">
+    <div>
+      <span style="float: right;"><a href="/my/support">Tickets</a></span>
+      <h3>Edit support ticket</h3>
+    </div>
+    <form action="/my/support?action=edit_ticket" method="post">
+    <table class="width_100_percent open_ticket_table input_style" border="0">
+      <tr>
+        <td>
+          <input type="text" placeholder="Subject" class="width_70_percent boxsizingBorder" name="t_subject" value="{$ticket.subject}"/>
+          <select class="boxsizingBorder" name="t_service">
+            <option value="0">-- choose site --</option>
+            {foreach from=$services item=nitem}
+              <option value="{$nitem.service_id}" {if $nitem.service_id eq $ticket.service_id}selected{/if}>{$nitem.hostname}</option>
+            {/foreach}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <textarea placeholder="Please let as know as more details as you can about issue that you have." class="width_100_percent boxsizingBorder" name="t_message">{$ticket.message}</textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="hidden" name="ticket_id" value="{$ticket.ticket_id}">
+          <input type="submit" value="Save ticket" class="width_100_percent" /> 
+        </td>
+      </tr>
+    </table>
+    </form>
+    <br/>
+    <br/>
+  </div>
+</div>

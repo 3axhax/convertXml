@@ -1,0 +1,147 @@
+<style>
+    .table.bill td {
+        width: 50%;
+        border: 2px solid #eee;
+        padding: 0.7em 1em 1em 1em;
+        text-align: center;
+    }
+    .table.bill td:hover {
+        background-color: #eee;
+    }
+    .pay-methods {
+        width: 100%;
+    }
+    .pay-methods td {
+        padding: 1em;
+    }
+    .pay-methods td:not(:first-child) {
+        width: 1%;
+    }
+    .pay-methods select {
+        width: 150px;
+    }
+</style>
+
+<table class="table bill">
+    <tbody>
+    <tr>
+        <td><h3>Your balance ${$user_info.balance}</h3></td>
+        <td><h3>Current month usage ${$balance_usage}</h3></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Payment methods</div>
+    <div class="panel-body">
+        <form method="post" id="charge">
+        <table class="pay-methods">
+            <tbody>
+            <tr>
+                <td>
+                    <h4>{$l_onetime_payment_paypal}</h4>
+                    <div class="help-block">{$l_payment_process}</div>
+                </td>
+                <td>
+                    <input type="hidden" name="bill_id" value="{$bill.bill_id}" />
+                    <select name="payment_sum" class="form-control">
+                        {foreach from=$payment_range item=p key=k}
+                        <option value="{$k}" label="{$p}">{$p}</option>
+                        {/foreach}
+                    </select>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-md btn-primary">Pay now</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </form>
+    </div>
+    <hr>
+    <div class="panel-body">
+        <form name="charge_strype" id="charge_stripe">
+            <table class="pay-methods">
+                <tbody>
+                <tr>
+                    <td>
+                        <h4>Make a one time credit/debit card payment</h4>
+                        <div class="help-block">{$l_payment_process}</div>
+                    </td>
+                    <td>
+                        <input type="hidden" name="bill_id" value="{$bill.bill_id}" />
+                        <input type="hidden" name="stripeToken" id="stripeToken" value="" />
+                        <select name="payment_sum" id="stripe_payment_sum" class="form-control">
+                            {foreach from=$payment_range item=p key=k}
+                            <option value="{$k}" label="{$p}">{$p}</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" id="customButton" class="btn btn-md btn-primary">Pay now</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Billing history</div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Month</th>
+            <th>Description</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach from=$bh item=b}
+        <tr>
+            <td>
+                {$b.date}
+            </td>
+            <td>
+                {$b.comment}
+            </td>
+            <td class="right">
+                ${$b.amount}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script>
+    window.addEventListener('load', function () {
+        var handler = StripeCheckout.configure({
+            key: '{$stripe_public_key}',
+            image: 'https://s3.amazonaws.com/stripe-uploads/acct_158mIzBTPB1xp1O7merchant-icon-1418387971699-cleantalk-logo-512.png',
+            token: function(token) {
+                // Use the token to create the charge with a server-side script.
+                // You can access the token ID with `token.id`
+                $('stripeToken').value = token.id;
+                $('charge_stripe').submit();
+            }
+        });
+
+        $('#customButton').on('click', function(e) {
+            // Open Checkout with further options
+            handler.open({
+                name: 'CleanTalk Inc',
+                description: 'Hosting antispam',
+                amount: $('stripe_payment_sum').value * 100,
+            });
+            e.preventDefault();
+        });
+
+        // Close Checkout on page navigation
+        $(window).on('popstate', function() {
+            handler.close();
+        });
+    });
+</script>

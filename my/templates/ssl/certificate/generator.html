@@ -1,0 +1,184 @@
+<div class="panel panel-default panel-ripple-loader" id="form-generator">
+    <div class="loader hidden"><div><div></div></div></div>
+    <div class="panel-heading">
+        <div class="panel-title">{$l_ssl_generator_title}</div>
+    </div>
+    <div class="panel-body bg-danger text-danger text-center hidden" id="form-generator-error"></div>
+    <form method="post" data-toggle="validator" role="form">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="common_name_field">{$l_ssl_generator_fields['commonName']['label']}</label>
+                        <input type="text" name="common_name" id="common_name_field" class="form-control" placeholder="{$l_ssl_generator_fields['commonName']['placeholder']}" pattern="{literal}^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,12}${/literal}" required>
+                        <p class="help-block">{$l_ssl_generator_fields['commonName']['help']}</p>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="email_field">{$l_ssl_generator_fields['email']['label']}</label>
+                        <input type="email" name="email" id="email_field" class="form-control" placeholder="{$l_ssl_generator_fields['email']['placeholder']}" required>
+                        <p class="help-block">{$l_ssl_generator_fields['email']['help']}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="organization_field">{$l_ssl_generator_fields['organization']['label']}</label>
+                        <input type="text" name="organization" id="organization_field" class="form-control" placeholder="{$l_ssl_generator_fields['organization']['placeholder']}" required>
+                        <p class="help-block">{$l_ssl_generator_fields['organization']['help']}</p>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label for="organization_unit_field">{$l_ssl_generator_fields['organizationUnit']['label']}</label>
+                        <input type="text" name="organization_unit" id="organization_unit_field" class="form-control" placeholder="{$l_ssl_generator_fields['organizationUnit']['placeholder']}">
+                        <p class="help-block">{$l_ssl_generator_fields['organizationUnit']['help']}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="form-group">
+                        <label for="country_field">{$l_ssl_generator_fields['country']['label']}</label>
+                        <select name="country" id="country_field" class="selectpicker form-control" data-live-search="true" data-size="10" required>
+                            {foreach from=$countries item=name key=code}
+                            <option value="{$code}" class="flag {strtolower($code)}"{if $code == $user_info['country']} selected{/if}>{$name}</option>
+                            {/foreach}
+                        </select>
+                        <p class="help-block">{$l_ssl_generator_fields['country']['help']}</p>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="form-group">
+                        <label for="state_field">{$l_ssl_generator_fields['state']['label']}</label>
+                        <select name="state" id="state_field" class="selectpicker form-control" data-live-search="true" data-size="10" required>
+                            {foreach from=$states item=name key=code}
+                            <option value="{$name}">{$name}</option>
+                            {/foreach}
+                        </select>
+                        <input type="text" name="state_text" id="state_text_field" class="form-control hidden">
+                        <p class="help-block">{$l_ssl_generator_fields['state']['help']}</p>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="form-group">
+                        <label for="locality_field">{$l_ssl_generator_fields['locality']['label']}</label>
+                        <input type="text" name="locality" id="locality_field" class="form-control" placeholder="{$l_ssl_generator_fields['locality']['placeholder']}" required>
+                        <p class="help-block">{$l_ssl_generator_fields['locality']['help']}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-block btn-primary">{$l_ssl_generator_generate}</button>
+        </div>
+    </form>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="generator-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">CSR Generator result</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#tab-details" aria-controls="tab-details" role="tab" data-toggle="tab">Details</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#tab-csr" aria-controls="tab-csr" role="tab" data-toggle="tab">CSR</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#tab-key" aria-controls="tab-key" role="tab" data-toggle="tab">Private Key</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="tab-details">
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr><th>SSL will cover:</th><td id="tab-details-domains"></td></tr>
+                            <tr><th>Common name:</th><td id="tab-details-commonName"></td></tr>
+                            <tr><th>Email address:</th><td id="tab-details-emailAddress"></td></tr>
+                            <tr><th>Organization name:</th><td id="tab-details-organizationName"></td></tr>
+                            <tr><th>Organizational unit name:</th><td id="tab-details-organizationalUnitName"></td></tr>
+                            <tr><th>Country name:</th><td id="tab-details-countryName"></td></tr>
+                            <tr><th>State or province:</th><td id="tab-details-stateOrProvinceName"></td></tr>
+                            <tr><th>Locality name:</th><td id="tab-details-localityName"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab-csr">
+                        <textarea class="form-control" spellcheck="false" id="tab-details-csr" readonly></textarea>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab-key">
+                        <textarea class="form-control" spellcheck="false" id="tab-details-key" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-inline pull-left">
+                    <div class="checkbox text-left">
+                        <label>
+                            <input type="checkbox" id="generator-send-result" checked> Send the CSR and Private key to <span id="details-emailAddress"></span>
+                        </label>
+                        <br>
+                        <label>
+                            <input type="checkbox" id="generator-keep-key" checked> Keep the CSR and Private key in the CleanTalk’s DB for {$keep_certificate_data_default_days} days
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" id="generator-modal-download">Download</button>
+                <button type="button" class="btn btn-success" id="generator-modal-submit">Confirm & Apply CSR</button>
+            </div>
+        </div>
+    </div>
+</div>
+<form action="/my/service" method="post" id="ssl-csr-download">
+    <input type="hidden" name="mode" value="download">
+    <input type="hidden" name="csr" value="" id="download-csr_field">
+    <input type="hidden" name="key" value="" id="download-key_field">    
+</form>
+<script type="text/javascript">
+window.addEventListener('load', function () {
+    $('#generator-keep-key').change(function() {
+        if(this.checked) {
+            $('#certificate-form-keep').val('1');
+        }else{
+            $('#certificate-form-keep').val('0');
+        }
+    });
+    $('#common_name_field').blur(function () {
+        if ($('#common_name_field').val() != '') {
+            $.ajax({
+                type: "GET",
+                url: "/my/ajax?action=check_common_name&common_name=" + $('#common_name_field').val(),
+                beforeSend: function () {
+                    $('#common_name_field').after('<span class="common_name_message">Checking Common name</span>')
+                },
+                success: function (msg) {
+                    if (msg == 'error') {
+                        $('#common_name_field').parent().addClass('has-error has-danger');
+                        $('.common_name_message').html($('#common_name_field').val() + ' doesn\'t exist, please double check the Common name.');
+                        $('.common_name_message').addClass('text-danger');
+                    }
+                    else if (msg == 'success') {
+                        $('#common_name_field').parent().removeClass('has-error has-danger');
+                        $('.common_name_message').remove();
+                    }
+                },
+                error: function ()
+                {
+                    console.log('Error in response');
+                },
+            });
+        }
+    });
+    $('#common_name_field').focus(function () {
+        $('.common_name_message').remove();
+        $('.common_name_message').removeClass('text-danger text-success');
+    })
+}); 
+</script>

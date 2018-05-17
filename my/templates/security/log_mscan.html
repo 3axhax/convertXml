@@ -1,0 +1,221 @@
+<div class="log-header row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <h2>Malware Scans Log</h2>
+    </div>
+</div>
+
+<div class="well">
+    <form method="get" id="filter-form">
+        <input type="text" placeholder="Custom dates" class="form-control" style="width:220px; display: inline;" name="customdates" id="customdates" value="{if $start_from && $end_to}{$start_from} - {$end_to}{/if}">
+
+        <select id="result" class="selectpicker" data-width="130px" name="result">
+            <option value="">{$l_result}</option>
+            <option value="0"{if $smarty.get.result == 0 && $smarty.get.result ne ''} selected{/if}>FAILED</option>
+            <option value="2"{if $smarty.get.result == 2} selected{/if}>WARNING</option>
+            <option value="1"{if $smarty.get.result == 1} selected{/if}>PASSED</option>
+        </select>
+
+        <select id="service" name="service" class="selectpicker" data-width="200px">
+            <option value="">{$l_logs_websites}</option>
+            {if $services}
+            <optgroup>
+                {foreach $services as $service}
+                <option value="{$service.service_id}"{if $service.service_id eq $smarty.get.service} selected{/if}>{$service.hostname}</option>
+                {/foreach}
+            </optgroup>
+            {/if}
+            {if $granted_services}
+            <optgroup label="---{$l_granted_services}---">
+                {foreach from=$granted_services item=onegservice key=gk}
+                <option value="{$onegservice.service_id}"{if $onegservice.service_id eq $smarty.get.service} selected{/if}>{if $onegservice.hostname}{$onegservice.hostname}{else}#{$onegservice.service_id}{/if}</option>
+                {/foreach}
+            </optgroup>
+            {/if}
+        </select>
+
+        <button type="submit" class="btn btn-default" id="filter-btn">{$l_show}</button>
+    </form>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-right">
+        <span id="records-found">{$records_found}</span> {$l_page} <span id="current-page">{$current_page}</span> {$l_of} <span id="total-pages">{$total_pages}</span>.
+        {*
+        {$l_items_per_page}
+        <div class="btn-group">            
+            <select id="items-per-page" class="selectpicker" data-width="auto">
+            {foreach $items_per_page_list as $i}
+                <option value="{$i}"{if $i==$items_per_page} selected{/if}>{$i}</option>
+            {/foreach}
+            </select>
+        </div>
+        *}
+
+        <div class="btn-group">
+            <nav aria-label="Page navigation">
+                <ul class="pagination" style="margin: 0; display: block;">
+                    {if $total_pages>1}
+                        {if $current_page==1}
+                            <li class="disabled"><span aria-hidden="true">«</span></li>
+                        {elseif $current_page==2}
+                            <li><a href="{$url}"><span aria-hidden="true">«</span></a></li>
+                        {else}
+                            <li><a href="{$url}&page={$current_page}"><span aria-hidden="true">«</span></a></li>
+                        {/if}
+                        {foreach $pages as $p}
+                            {if $current_page==$p}
+                                <li class="active"><span>{$p}</span></li>
+                            {else}
+                                {if $p==1}
+                                    <li><a href="{$url}">{$p}</a></li>
+                                {else}
+                                    <li><a href="{$url}&page={$p}">{$p}</a></li>
+                                {/if}
+                            {/if}                
+                        {/foreach}
+                        {if $current_page==$total_pages}
+                            <li class="disabled"><span aria-hidden="true">»</span></li>
+                        {else}
+                            <li><a href="{$url}&page={$current_page+1}"><span aria-hidden="true">»</span></a></li>
+                        {/if}
+                    {/if}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <table class="table table-hover simple-sort" id="mscan-log-table">
+        <thead>
+            <th>{$l_date}</th>
+            <th>{$l_site}</th>            
+            <th>{$l_total_files}</th>
+            <th>{$l_result}</th>
+            <th></th>
+        </thead>
+
+        <tbody>
+        {if $rows}
+        {foreach $rows as $row}
+        <tr>
+            <td>{$row.submited}</td>
+            <td>{$row.service_name}</td>
+            <td>{$row.total_core_files}</td>
+            <td><span class="{if $row.result=='PASSED'}text-success{else}text-warning{/if}"{if $service.scan.result!='PASSED'} data-toggle="tooltip" data-placement="top" title="{$l_mscan_warning_hint}"{/if}>{$row.result}</span></td>
+            <td>{if $row.result!='PASSED'}<a href="#" data-id="{$row.log_id}" class="more">{$l_details}</a>{/if}</td>
+        </tr>
+        {/foreach}
+        {else}
+        <tr>
+            <td colspan="5" class="text-center text-danger"><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;{$l_log_no_data}</td>
+        </tr>
+        {/if}
+        </tbody>
+
+        
+    </table>
+    <div class="panel-footer text-right">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {if $total_pages>1}
+                    {if $current_page==1}
+                        <li class="disabled"><span aria-hidden="true">«</span></li>
+                    {elseif $current_page==2}
+                        <li><a href="{$url}"><span aria-hidden="true">«</span></a></li>
+                    {else}
+                        <li><a href="{$url}&page={$current_page}"><span aria-hidden="true">«</span></a></li>
+                    {/if}
+                    {foreach $pages as $p}
+                        {if $current_page==$p}
+                            <li class="active"><span>{$p}</span></li>
+                        {else}
+                            {if $p==1}
+                                <li><a href="{$url}">{$p}</a></li>
+                            {else}
+                                <li><a href="{$url}&page={$p}">{$p}</a></li>
+                            {/if}
+                        {/if}                
+                    {/foreach}
+                    {if $current_page==$total_pages}
+                        <li class="disabled"><span aria-hidden="true">»</span></li>
+                    {else}
+                        <li><a href="{$url}&page={$current_page+1}"><span aria-hidden="true">»</span></a></li>
+                    {/if}
+                {/if}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div id="log-details-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{$l_scan_details}</h4>
+            </div>
+            <div class="modal-body" id="log-details-modal-loading">
+                <div class="text-center"><img src="/images/loading.gif"></div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover hidden" id="log-details-modal-info">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">{$l_failed_files}</th>
+                        </tr>
+                        <tr>
+                            <th>{$l_file_path}</th>
+                            <th>{$l_modify_date}</th>
+                            <th>{$l_file_size}</th>
+                            <th>{$l_MD5_hash}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table class="table table-hover hidden" id="log-details-modal-info-un" style="font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">{$l_unknown_files}</th>
+                        </tr>
+                        <tr>
+                            <th>{$l_file_path}</th>
+                            <th>{$l_modify_date}</th>
+                            <th>{$l_file_size}</th>
+                            <th>{$l_MD5_hash}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{if $show_modal}
+{include file="tools/license_modal.html"}
+{/if}
+<div id="page-loader" class="hidden"><div class="ripple-loader"><div></div><div></div></div></div>
+
+<script>
+var l_details = '{$l_details}';
+var l_log_no_data = '{$l_log_no_data}';
+var l_mscan_warning_hint = '{$l_mscan_warning_hint}';
+
+window.addEventListener('load', function () {
+    $('#license-modal .modal-title').text('License has been expired');
+    $('#customdates').daterangepicker({
+        locale: {
+            format: 'MMM DD, YYYY',
+            cancelLabel: 'Clear'
+        },
+        autoUpdateInput: false,      
+        {if $start_from}startDate: '{$start_from}',{/if}
+        {if $end_to}endDate: '{$end_to}'{/if}
+    }, function (start, end) {
+        $('#customdates').val(start.format('MMM DD, YYYY') + ' - ' + end.format('MMM DD, YYYY'));
+    }); 
+    $('#customdates').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>

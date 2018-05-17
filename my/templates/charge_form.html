@@ -1,0 +1,29 @@
+{if $ct_lang == 'ru'}
+    <form method="post" action="{$MNT_HOST}" class="charge_form" id="charge">
+            <input type="hidden" name="MNT_ID" value="{$MNT_ID}">
+            <input type="hidden" name="MNT_TRANSACTION_ID" value="{$bill.bill_id}">
+            <input type="hidden" name="MNT_CURRENCY_CODE" value="{$MNT_CURRENCY_CODE}">
+            <input type="hidden" name="MNT_AMOUNT" value="{$bill.cost}">
+            <input type="hidden" name="MNT_DESCRIPTION" value="{$bill.comment}">
+            <input type="hidden" name="MNT_TEST_MODE" value="{$MNT_TEST_MODE}">
+            <input type="hidden" name="MNT_SIGNATURE" value="{$MNT_SIGNATURE}"> 
+            <input type="hidden" name="paymentSystem.unitId" value="{$MNT_paymentSystem_id}">
+            <input type="hidden" name="moneta.locale " value="{$smarty.cookies.ct_lang}">
+    </form>
+{else}
+    <form action="{$post_action}" method="post" target="_top" id="charge">
+    {if $pay_method == 'paypal'}
+        <input type="hidden" name="bill_id" value="{$bill.bill_id}">
+    {/if}
+    {if $pay_method == '2CO'}
+        {include file="2CO_params.html"}
+    {/if}
+    </form>
+{/if}
+
+{if $choose_payment_service}
+    <a href="/my/bill/recharge{$offer_tariff_id_param}"><button type="button" class="btn btn-primary">{$pay_button}</button></a>
+{else}
+    <a href="#" onclick="javascript:$('charge').submit(); return false;" /><button type="button" class="btn btn-primary">{$pay_button}</button></a>
+{/if}
+

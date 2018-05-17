@@ -1,0 +1,26 @@
+{if $flash_message}<div class="alert alert-danger text-center">{$flash_message}</div>{/if}
+<div>
+    <div class="alert alert-info">
+        What to include in my <a href="https://cleantalk.org/help/SSL-how-to-generate-CSR&lang=en" target="_blank" class="alert-link">CSR</a> to get my cert ASAP?
+        <button type="button" class="btn btn-success btn-xs pull-right" style="margin-left:10px" id="btn-csr">Already have CSR?</button>
+        <button type="button" class="btn btn-success btn-xs pull-right hidden" style="margin-left:10px" id="btn-generator">CSR Generator</button>
+        <a href="https://cleantalk.org/help/SSL-how-to-generate-CSR&lang=en" target="_blank" class="btn btn-primary btn-xs pull-right">Show</a>
+    </div>
+
+    {include file="./ssl/certificate/generator.html"}
+    {include file="./ssl/certificate/csr.html"}
+
+    <form action="/my/service" method="post" id="certificate-form">
+        <input type="hidden" name="mode" value="email">
+        <input type="hidden" name="csr" id="certificate-form_csr" value="">
+        <input type="hidden" name="key" id="certificate-form_key" value="">
+        <input type="hidden" name="send" id="certificate-form-send" value="yes">
+        <input type="hidden" name="keep" id="certificate-form-keep" value="1">
+    </form>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        new SSL();
+    });
+</script>

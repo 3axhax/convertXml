@@ -1,0 +1,41 @@
+    <tr class="h_left_v_top">
+        <td class="align_center">
+            <table class="align_center width_100_percent bonuses_table" border="0">
+                <tr>
+                    {if $show_early_pay}
+                    <td class="user_bonus valign_top{if $bonuses.early_pay.activated} bonus_activated{/if}">
+                        <h3>{$bonuses.early_pay.title}</h3>
+                        <div class="bonus_desc">
+                            {$bonuses.early_pay.desc}
+                        </div>
+                        {if $bonuses.early_pay.activated}
+                            <div class="bonus_activated">
+                                {$bonuses.early_pay.activated}
+                            </div>
+                        {else}
+                            <div class="bonus_button">
+                                <a href="/my/bill/recharge" class="giveone">{$l_take_free_months}</a>
+                            </div>
+                        {/if}
+                    </td>
+                    {/if}
+                    {if $user_info.first_pay_id && !$no_bonus && $optionslinks}
+                    <td class="width_50_percent user_bonus valign_top{if $bonuses.review.activated} bonus_activated{/if}">
+                        {if $bonuses.review.activated}
+                            <h3>{$bonuses.review.title}</h3>
+                            <div class="bonus_desc">
+                                {$bonuses.review.desc}
+                            </div>
+                            <div class="bonus_activated">
+                            <span class="green_text">{$bonuses.review.activated}</span>
+                            </div>
+                        {else}
+                            {include file="review_hint.html"}
+                        {/if}
+                    </td>
+                    {/if}
+                </tr>
+            </table>
+        </td>
+    </tr>
+

@@ -1,0 +1,173 @@
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css"/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <h2>{$l_api_trends_title}</h2>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            <input type="text" placeholder="Custom dates" class="form-control datepicker-here" style="width: 210px; display: inline;" data-range="true" data-multiple-dates-separator=" - " id="customdates" value="{$period.start_t} - {$period.end_t}">
+            <button class="btn btn-default" id="datessearch">{$l_api_show}</button>
+            <br><br>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-{if $period.interval eq 7}primary{else}default{/if} btn-sm filter" id="7">7 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $period.interval eq 30}primary{else}default{/if} btn-sm filter" id="30">30 {$l_date_days}</button>
+                <button type="button" class="btn btn-{if $period.interval eq 365}primary{else}default{/if} btn-sm filter" id="365">365 {$l_date_days}</button>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <br>
+            <select id="stat_method" class="form-control stat_select">
+                <option value="0">{$l_api_all_methods}</option>
+                {foreach from=$methods item=m}
+                <option value="{$m.name}"{if $m.selected} selected{/if}>{$m.name}()</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <canvas id="methods-chart" width="1200" height="250"></canvas>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            <table class="table table-hover nobtmmargin">
+                <thead>
+                <tr>
+                    <th>{$l_api_date}</th>
+                    <th title="{$l_api_calls_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_calls}</th>
+                    <th title="{$l_api_checks_help_}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_checks_}</th>
+                    <th title="{$l_api_blacklisted_checks_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_blacklisted_checks}</th>
+                    <th title="{$l_api_efficiency_help}" data-toggle="tooltip" data-placement="left" data-container="body">{$l_api_efficiency}, %</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $stats as $stat}
+                {if $stat.display_date}
+                <tr>
+                    <td align="left">{$stat.display_date}</td>
+                    <td align="left" data-order="{$stat.calls}">{number_format($stat.calls, 0, '', ' ')}</td>
+                    <td align="left" data-order="{$stat.checks}">{number_format($stat.checks, 0, '', ' ')}</td>
+                    <td align="left" data-order="{$stat.blacklisted_checks}">{number_format($stat.blacklisted_checks, 0, '', ' ')}</td>
+                    <td align="left" data-order="{$stat.efficiency}">{number_format($stat.efficiency, 2, '.', ' ')}</td>
+                </tr>
+                {/if}
+                {/foreach}
+                </tbody>
+                {if $stat}
+                <tfoot>
+                <tr>
+                    <th align="left">{$l_api_total}</th>
+                    <th align="left">{number_format($stat.calls, 0, '', ' ')}</th>
+                    <th align="left">{number_format($stat.checks, 0, '', ' ')}</th>
+                    <th align="left">{number_format($stat.blacklisted_checks, 0, '', ' ')}</th>
+                    <th align="left">{number_format($stat.efficiency, 2, '.', ' ')}</th>
+                </tr>
+                </tfoot>
+                {/if}
+            </table>
+        </div>
+    </div>
+</div>
+<script src="./js/Chart.js"></script>
+<script>
+    var chart_data = {$chart};
+    var currentFilterMethod = '';
+    var isInt = {if isset($smarty.get.int)}{$smarty.get.int}{else}false{/if};
+</script>
+{literal}
+<script>
+    var chartLabels = [];
+    var chartPoints = [];
+    for (var month in chart_data) {
+        chartLabels.push(month);
+        chartPoints.push(chart_data[month] || 0);
+    }
+    if(!chart_data){
+        $("#methods-chart").hide();
+    }
+
+    $(document).ready(function () {
+        new Chart(document.getElementById("methods-chart").getContext("2d")).Line({
+            labels: chartLabels,
+            datasets: [{
+                data: chartPoints,
+                strokeColor : "#49C73B",
+                highlightFill: "#eee",
+                highlightStroke: "#fff",
+                pointColor: "#49C73B",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#ccc"
+            }]
+        }, {
+            bezierCurve: true,
+            maintainAspectRatio: false,
+            scaleLabel: "  <%=value%>",
+            datasetFill: false
+        });
+
+        function reloadPage(filterPeriod) {
+            if (!filterPeriod) {
+                if (isInt) return reloadPage('int=' + isInt);
+
+                return reloadPage('int=7');
+            }
+            if ($('#stat_method').val() != '0') {
+                window.location.replace('/my/stat?' + filterPeriod + '&method=' + $('#stat_method').val());
+            } else {
+                window.location.replace('/my/stat?' + filterPeriod);
+            }
+        }
+
+        $('.btn.filter').click(function (e) {
+            reloadPage('int=' + e.currentTarget.id);
+        });
+
+        $('#datessearch').click(function () {
+            var datesarr = $('#customdates').val().split('-');
+            var start_from = new Date(Date.parse(datesarr[0])).getTime() / 1000;
+            var end_to = new Date(Date.parse(datesarr[1])).getTime() / 1000;
+            reloadPage('start_from=' + start_from + '&end_to=' + end_to);
+        });
+
+        $('.stat_select').change(function () {
+            reloadPage();
+        });
+
+        $('.table').DataTable({
+            "paging":   false,
+            "ordering": true,
+            "info":     false,
+            "searching": false,
+            "columns": [{ "type": "date" }, { "type": "num" }, { "type": "num" }, { "type": "num" }, { "type": "num" }],
+            "order": [[ 0, "desc" ]],
+            "stateSave": true,
+            "stateDuration": 60 * 60 * 24 * 365
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script src="/my/js/datepicker.js?v=21032016"></script>
+<link href="/my/css/datepicker.min.css?v=21032016" rel="stylesheet">
+<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.16/sorting/date-de.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.16/type-detection/formatted-num.js"></script>
+
+{/literal}

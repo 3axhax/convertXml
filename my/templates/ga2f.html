@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>
+    	{if $ga_lang eq ru}Введите проверочный код{/if}
+    	{if $ga_lang eq en}Enter the verification code{/if}
+    	{if $ga_lang eq fr}Entrez le code de vérification{/if}
+    </title>
+    <link rel="stylesheet" type="text/css" href="/my/css/style.css?v=09122015">
+    <link rel="stylesheet" type="text/css" href="/css/style.css?v=26112015" />
+    <link rel="stylesheet" type="text/css" href="/my/css/nav.css?v=26112015" />
+     <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mootools-more/1.4.0.1/mootools-more-yui-compressed.min.js"></script>
+    <script type="text/javascript" src="/my/js/tools.js?v=26112015"></script>
+    <script type="text/javascript" src="/js/tools.js"></script>
+</head>
+<body onload="focus_on_field('checkmy')">
+<table class="container" id="container" border="0">
+<tr class="header_tr"><td class="header_td" id="top"><table class="header_table width_100_percent" border="0"><tr><td class="top_left_go_main min_width_200px" id="logo_main"><div><a href="/" class="bold_link" id="main_page_link"><img src="/images/cleantalk-logo-main.png" class="main_page_log" title="" alt="CleanTalk logo" /><span id="brand_name"><span class="brand_part1">Clean</span><span class="brand_part2">Talk</span></span></a></div></td><td class="dashboard_menu_tools_profile align_right"></td></tr></table></td></tr>
+<tr class="h_left_v_top">
+    <td class="container">
+
+
+<table class="inner_container align_center">
+    <tr class="h_left_v_top">
+        <td class="container_notice_cell">
+            &nbsp;
+        </td>
+    </tr>
+    <tr class="h_left_v_top">
+        <td class="container_main_cell">
+
+        <table border="0" align="center">
+        <tr align="center">
+            <td colspan="2">
+                                                            <form method="get" action="/my">
+                                                                {if $ga_redirect}<input type="hidden" name="r" value="{$ga_redirect}">{/if}
+            <table border="0" class="reg_table_login" style="outline: 1px dashed #ccc;">
+                <tr align="center" class="login_caption">
+                    <td>{if $ga_lang eq ru}Введите проверочный код{/if}{if $ga_lang eq en}Enter the verification code{/if}{if $ga_lang eq fr}Entrez le code de vérification{/if}</td>
+                </tr>
+
+                                <tr>
+                    <td colspan="2" class="align_center"><input type="text" name="checkmy" id="checkmy" class="text" required /><br />
+                    <span class="grey_text s10pt_text">
+                    {if $ga_lang eq ru}Одноразовый код можно получить в Google Authenticator{/if}
+                        {if $ga_lang eq en}Run Google Authenticator to obtain one-time password{/if}
+                        {if $ga_lang eq fr}Exécutez Google Authenticator pour obtenir un mot de passe{/if}
+                    </span>
+                    </td>
+                </tr>
+                                <tr align="center">
+                    <td colspan="2">
+                        <input type="submit" value="{if $ga_lang eq ru}Отправить{/if}{if $ga_lang eq en}Send{/if}{if $ga_lang eq fr}Envoyer{/if}" class="reset" tabindex="3" />
+                        <br />
+
+                                            </td>
+                </tr>
+            </table>
+            </form>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+
+
+{strip}
+    </td>
+        </tr>
+        <tr class="img_valign_bottom{if $marked_top_row} light_dark_background{/if}">
+            <td class="finish_bottom_row">
+                    <div class="sign_lp">
+                    <div>
+                    <a href="/">{$smarty.server.HTTP_HOST}</a>
+                    <a href="/my" title="{$l_dashboard}">{$l_dashboard}</a>
+                    <a href="/blacklists" title="{$l_blacklists_link}">{$l_blacklists_link}</a>
+                    <a href="/price" title="{$l_pricing|default:"Стоимость"}">{$l_pricing|default:"Стоимость"}</a>
+                    <a href="/help" title="{$l_help|default:"Помощь"}">{$l_help|default:"Помощь"}</a>
+                    {if $blog_url}
+                    <a href="{$blog_url}" title="{$l_blog}">{$l_blog}</a>
+                    {/if}
+                    <a href="/publicoffer">{$l_license|default:"Лицензионное соглашение"}</a>
+                    {if $ct_lang == 'en'}
+                    <a href="/publicoffer#privacy">{$l_privacy_policy}</a>
+                    <a href="/publicoffer#refund">{$l_refund_policy}</a>
+                    {/if}
+                    {if !$is_auth}
+                    <a href="/go?url=https://drive.google.com/folderview?id=0B4UbSmWLmPBgWG1xcW1NQThtdGc&amp;usp=sharing" title="{$l_presskit}">{$l_presskit}</a>
+                    {/if}
+                    <a href="/contacts" title="{$l_contacts_menu|default:"Контакты"}">{$l_contacts_menu|default:"Контакты"}</a>
+                    <a href="/about" title="{$l_about|default:"О проекте"}">{$l_about|default:"О проекте"}</a>
+                    </div>
+
+                    <div id="translate_tool">
+                       <ul id="nav">
+                            <li class="top_link"><a href=""><img src="/images/langs/{$ct_lang}.png" alt="{$ct_langs.ct_lang}" class="flag_icon" />{$ct_lang|upper}</a>
+                                <ul class="langs" id="nav_langs">
+                                    {foreach from=$ct_langs item=l key=k}
+                                    <li><a href="#" onclick="write_lang('{$k}', null, true); return true;" class="submenu"><img src="/images/langs/{$k}.png" alt="{$k}" title="{$l}" />{$k|upper}</a></li>
+                                    {/foreach}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                {if $show_footer_lp}
+                    <div class="centered" style="font-size: 10pt;">
+                        {include file="footer_lp_sign.html"}
+                    </div>
+               {/if}
+               <br />
+        </td>
+    </tr>
+</table>
+
+{* -- Рамка -- *}
+    </td>
+</tr>
+</table>
+
+
+
+</body>
+</html>

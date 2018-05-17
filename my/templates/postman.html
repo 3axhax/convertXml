@@ -1,0 +1,52 @@
+	{if $smarty.get.subscribed}
+		<p>{$l_subscribes_changed|default:"Изменения в подписки внесены!"} <img src="/images/icons/button_ok.png" valign="middle"></p>
+		<div class="action_message">
+		<a href="/my/postman">{$l_go_postman|default:"Вернуться к почтовым подпискам"} >>></a>
+		</div>
+	{else}
+        <center>
+		<h3>{$l_subscribes_title|default:"Почтовые рассылки"}</h3><br />
+        </center>
+		<form method="post">
+		<table border="0" align="center" class="reg_table">
+			<tr>
+				<td colspan="2">
+					&nbsp;
+				</td>
+			</tr>
+			{section loop=$postman_info name=task}
+			<tr align="left" valign="top">
+				<td width="600" style="padding-left: 1em;">
+				{$postman_info[task].title}
+				{if $postman_info[task].notice}
+					<br />
+					<span class="hint">{$postman_info[task].notice}</span>
+				{/if}
+				</td>
+				<td width="200" align="center">
+					<input type="checkbox" name="task_id:{$postman_info[task].task_id}" class="normal" {if $postman_info[task].enable}checked{/if}>
+				{*
+				{if $postman_info[task].last_sent}
+					<br />
+					<span class="hint">Последнее уведомление отправлено<br />{$postman_info[task].last_sent|default:''}</span>
+				{/if}
+				*}
+				</td>
+			</tr>
+			{/section}
+			<tr>
+				<td colspan="2">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" value="{$l_subscribe|default:"Подписаться"}">
+				</td>
+			</tr>
+		</table>
+		</form>
+	{/if}
+<div class="action_message">
+<a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+</div>

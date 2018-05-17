@@ -1,0 +1,230 @@
+{*
+    Загружаем данные о серверах из PHP в JS
+*}
+<script type="text/javascript">
+    var paid_addons = {$paid_addons};
+</script>
+
+{if $smarty.get.show_notice}
+    <div class="action_message">
+        <p>{$l_contact_thanks} <img src="/images/icons/button_ok.png" valign="middle" /></p>
+    </div>
+    <div class="action_message">
+    <a href="/my">{$l_go_panel|default:"Перейти в панель управления"} >>></a>
+    </div>
+
+{else}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1 col-lg-1 center">
+            &nbsp;
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 center">
+            <br><br><br>
+            {if $errors}
+            <div class="alert alert-danger" role="alert">
+                {section name="e" loop=$errors}
+                    <span>{$errors[e]}</span><br />
+                {/section}
+            </div>
+            {/if}
+            {if $smarty.cookies.profile_updated}
+            <div class="alert alert-success" role="alert">
+                {$l_profile_updated|default:"Профиль обновлен!"}
+            </div>
+            {/if}
+            {if $smarty.get.need_info}
+            <div class="alert alert-danger" role="alert">
+                {$l_fill_contacts|default:"Пожалуйста укажите контактную информацию в анкете пользователя!"}
+            </div>
+            {/if}
+        </div>
+        <div class="col-md-1 col-lg-1 center">
+            &nbsp;
+        </div>
+    </div>
+    <form method="post" id="profile_form" action="/my/profile">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 center">
+            <h3>{$l_account} {$user_info.email}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1 col-lg-1">
+            &nbsp;
+        </div>
+        <div class="cols-xs-6 col-sm-6 col-md-5 col-lg-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-title">{$l_contact_info}</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="first_name">{$l_first_name|default:"Имя"}:</label>
+                        <input type="text" class="form-control" name="first_name" id="first_name" value="{$info.first_name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">{$l_last_name|default:"Фамилия"}:</label>
+                        <input type="text" class="form-control" name="last_name" id="last_name" value="{$info.last_name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{$l_phone|default:"Мобильный телефон"}:</label>
+                        <input type="text" class="form-control" name="phone" id="phone" value="{$info.phone}">
+                    </div>
+                    <div class="form-group">
+                        <label for="signature">{$l_signature|default:"Подпись"}:</label>
+                        <textarea class="form-control" name="signature" id="signature"  maxlength="100" rows="3" style="resize:vertical">{$info.signature}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-title">{$l_org_contacts}</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="org">{$l_org}:</label>
+                        <input type="text" class="form-control" name="org" id="org" value="{$info.org}">
+                    </div>
+                    {if $ct_lang == 'ru'}
+                    <div class="form-group">
+                        <label for="org_inn">{$l_org_inn}:</label>
+                        <input type="text" class="form-control" name="org_inn" id="org_inn" value="{$info.org_inn}" placeholder="0123456789123">123
+                    </div>
+                    <div class="form-group">
+                        <label for="org_ogrn">{$l_org_ogrn}:</label>
+                        <input type="text" class="form-control" name="org_ogrn" id="org_ogrn" value="{$info.org_ogrn}">
+                    </div>
+                    {/if}
+                    <div class="form-group">
+                        <label for="org_ceo">{$l_org_ceo}:</label>
+                        <input type="text" class="form-control" name="org_ceo" id="org_ceo" value="{$info.org_ceo}">
+                    </div>
+                    <div class="form-group">
+                        <label for="org_address">{$l_org_address}:</label>
+                        <textarea class="form-control" name="org_address" id="org_address"  maxlength="100" rows="3" style="resize:vertical">{$info.org_address}</textarea>
+                    </div>
+                </div>
+            </div>
+            {if $user_info.hoster_api_key}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-title">{$l_API_options}</span>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="org_ceo">{$l_hoster_api_key}:</label>
+                        <input type="text" class="form-control" id="hoster_api_key" value="{$hoster_api_key_a}" readonly>
+                        <span class="gray">{$l_hoster_api_key_hint}</span>
+                        <input type="hidden" id="hoster_api_key_h" value="{$user_info.hoster_api_key}">
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </div>
+        <div class="cols-xs-6 col-sm-6 col-md-5 col-lg-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-title">{$l_profile_options|default:"Настройки профиля"}</span>
+                </div>
+                <div class="panel-body">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="subscribe_news" id="subscribe_news" value="{$info.subscribe_news}" {if $info.subscribe_news}checked{/if}>
+                            {$l_subscribe_news|default:"Получать новости сервиса"}
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="subscribe_week_report" id="subscribe_week_report" value="{$info.subscribe_week_report}" {if $info.subscribe_week_report}checked{/if}>
+                            {$l_subscribe_week_report|default:"Получать еженедельный отчет защиты Web-сайта от спама"}
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="subscribe_account" id="subscribe_account" value="{$info.subscribe_account}" {if $info.subscribe_account}checked{/if}>
+                            {$l_subscribe_account|default:"Получать еженедельный отчет защиты Web-сайта от спама"}
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="enable_token_auth" id="enable_token_auth" value="{$info.enable_token_auth}" {if $info.enable_token_auth}checked{/if}>
+                            {$l_enable_token_auth}
+                        </label>
+                    </div>
+                    <span class="gray">{$enable_token_auth_hint}</span>
+                    <br><br>
+                    <div class="form-group">
+                        <label for="timezone">{$l_timezone|default:"Часовой пояс"}:</label>
+                        <select id="timezone" name="timezone" class="form-control">
+                            {foreach from=$timezones_list item=tz}
+                            <option value="{$tz.value}"{if $info.timezone == $tz.value} selected{/if}>{$tz.title}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ct_langs">{$l_ct_langs|default:"Язык Email оповещений"}:</label>
+                        <select id="ct_langs" name="lang" class="form-control">
+                        {html_options options=$ct_langs selected=$info.lang}
+                        </select>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="keep_history" id="keep_history"{if $keep_history_checked eq 1} checked{/if}
+                            {*data-html="true" data-toggle="popover" data-placement="bottom" data-content="{$paid_addons_s.keep_history_45_days.notice}" title="Popover title"*}
+                            onclick="check_access_addon_bs(null, 'addon_notice', 'keep_history', paid_addons.keep_history_45_days);"
+                            />
+                            {$keep_history} <span class="label label-warning">{$l_addon} <a href="/extra-package" target="_blank" class="text-muted">[?]</a></span>
+                        </label>
+                    </div>
+                    <div class="collapse" id="addon_notice">
+                      <div class="well">
+                      {$paid_addons_s.keep_history_45_days.notice}
+                      </div>
+                    </div>
+                    <span class="gray">{$l_keep_history_hint}</span>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="logging_restriction" id="logging_restriction"{if $info.logging_restriction eq 1} checked{/if}>
+                            {$l_log_restriction}
+                        </label>
+                    </div>
+                    <span class="gray">{$l_log_restriction_hint}</span>
+                    {if $gais_admin}
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="ga2f" id="ga2f"{if $info.google_auth_secret} checked{/if}>
+                            {$l_twoway_auth}
+                        </label>
+                    </div>
+                    {/if}
+                    {if $ga_qrcode}
+                        <img src="{$ga_qrcode}"><br><br><span class="gray">{$l_gakey_expl}</span><br><br>{$ga_code}<br>
+                    {/if}
+                    <input type="hidden" name="hasga2f" value="{$hasga2f}">
+                    <br>
+                    <div class="right">
+                        <a href="/my/delete-account">                 {$l_delete_account|default:"удалить аккаунт"}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 center">
+            {if $smarty.get.need_info}
+                <input type="hidden" value="1" name="need_info" />
+            {/if}
+            <button class="btn btn-primary">{$l_save|default:"Сохранить"}</button>
+        </div>
+    </div>
+    {include file="tools/form_token.html"}
+    </form>
+</div>
+{/if}
+<script src="/my/js/profile.js?v=21032016"></script>
+

@@ -1,0 +1,194 @@
+<script type="text/javascript">
+
+	var paid_addons = {$paid_addons};
+
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            {if $info.service_id}
+                <h3>{$l_service_num|default:"Услуга №"}{$info.service_id}</h3>
+                <span>{$l_site_protection|default:"Защита веб-сайта от спама"}</span>
+            {else}
+                <h3>{$l_new_site|default:"Добавить новый сайт"}</h3>
+                <div class="gray">{$l_new_website_hint}</div>
+            {/if}
+            {if $info.auth_key}
+            <div style="padding-top: 2em;">
+                {$l_auth_key|default:"Ключ доступа"}:
+                <span id="auth_key_{$info.service_id}">********</span>
+                <a href="#/" id="key_{$info.service_id}" title="{$l_show|default:"Показать"}" class="auth_key_link"><img src="/images/icons/16x16/Key.png" alt="" /></a>
+                <input type="hidden" id="auth_key_h_{$info.service_id}" value="{$info.auth_key}">
+            </div>
+            {/if}
+            {if $connect_info}
+            <div style="padding-top: 2em;">
+			    {$connect_info}
+            </div>
+            {/if}
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        	<br>
+        	{if $smarty.cookies.service_updated}
+    			<div class="alert alert-success center" role="alert">
+    				<span>{$l_service_updated|default:"Изменения сохранены!"}</span>
+    			</div>
+			{/if}
+			{if $service_updated}
+    			<div class="alert alert-success center" role="alert">
+    				<p>
+    					<span>{$service_updated}</span> <img src="/images/icons/button_ok.png" valign="middle" />
+    				</p>
+    				{if $setup_key}
+        				<p>
+            				{$setup_key}
+        				</p>
+    				{/if}
+    				<a href="/my" class="gray">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+    			</div>
+			{/if}
+			{if $services_overlimit}
+    			<div class="alert alert-danger" role="alert">
+    				<span>{$services_overlimit}</span>
+    			</div>
+    			{if $show_offer}
+            		{include file="upgrade_offer.html"}
+            		{include file="switch_diff.html"}
+        		{/if}
+			{/if}
+        	<form method="post">
+        	<div class="panel panel-default">
+				<div class="panel-heading">
+					{$l_settings|default:"Настройки"}
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label for="hostname">{$l_hostname|default:"Адрес сайта"}:</label>
+						<input  name="hostname" id="hostname" value="{$info.hostname}" class="form-control" type="text">
+					</div>
+					<div class="form-group">
+						<label for="name">{$l_service_name_page|default:"Имя сервиса (необязательно)"}:</label>
+						<input type="text" name="name" id="name" value="{$info.name}" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="engine">{$l_cms|default:"Платформа (CMS)"}:</label>
+						<select id="engine" class="form-control" name="engine">
+							{foreach from=$sorted_platforms item=v key=k name=g}
+                        		<optgroup label="--- {$k} ---">{$k}</optgroup>
+                        		{foreach from=$v item=e}
+                            		<option value="{$e.engine}" {if $e.engine == $info.engine}selected{/if}>{$e.info}</option>
+                        		{/foreach}
+                    		{/foreach}
+						</select>
+					</div>
+					{if $info.service_id}
+					<div class="form-group">
+						<label for="response_lang">{$l_api_response_lang}:</label>
+						<select id="response_lang" class="form-control" name="response_lang">
+							{foreach from=$response_langs item=v key=k}
+                        		<option value="{$k}" {if $k == $info.response_lang}selected{/if}>{$v}</option>
+                    		{/foreach}
+						</select>
+						<div class="gray pad2em">
+							{$l_api_language_hint}
+						</div>
+					</div>
+					{/if}
+					{if $info.service_id}
+						{if $show_allow_links}
+							<div class="checkbox">
+								<label for="allow_links_enable">
+									<input type="checkbox" name="allow_links_enable" id="allow_links_enable" class="reset" {if $info.allow_links_enable}checked{/if} >
+									{$l_allow_links_enable|default:"Разрешить HTTP ссылки в сообщениях"}
+								</label>
+								<div class="gray pad2em">{$l_allow_links_enable_hint}</div>
+							</div>
+						{/if}
+						{if $user_info.tariff.sms == 1}
+							<div class="checkbox">
+								<label for="sms_test_enable">
+									<input type="checkbox" name="sms_test_enable" id="sms_test_enable" class="reset" {if $info.sms_test_enable}checked{/if} >
+									{$l_sms_test_enable|default:"Включить регистрацию новых пользователей по SMS коду"}
+								</label>
+							</div>
+						{/if}
+						{if $info.show_move_to_spam}
+							<div class="checkbox">
+								<label for="move_to_spam_enable">
+									<input type="checkbox" name="move_to_spam_enable" id="move_to_spam_enable" class="reset" {if $info.move_to_spam_enable}checked{/if} >
+									{$l_move_to_spam_enable|default:"Перемещать спам сообщения в папку 'СПАМ'"}
+								</label>
+								<div class="gray pad2em">{$l_move_to_spam_hint}</div>
+							</div>
+						{/if}
+						<div class="checkbox">
+							<label for="stop_list_enable">
+								<input type="checkbox" name="stop_list_enable" id="stop_list_enable" class="reset" {if $info.stop_list_enable}checked{/if} >
+								{$l_stop_list_enable|default:"Включить проверку сообщений на стоп-слова"}
+							</label>
+							{if $paid_addons_s.words_stop_list.show_label}
+                        		<span class="label label-warning">{$l_addon} <a href="/extra-package" target="_blank" class="underline white">[?]</a></span>
+                        	{/if}
+                        	<div class="gray pad2em">{$stop_list_enable_hint}</div>
+                        	<div style="margin-left: 2em;" class="alert alert-danger displaynone" id="stop_list_notice" role="alert"></div>
+						</div>
+						{if $info.show_offtop_enable}
+							<div class="form-group">
+                        		<label for="offtop_enable">{$l_oftop_enable}</label>
+                        		<select name="offtop_enable" id="offtop_enable" class="form-control">
+                        			{foreach from=$l_on_off_auto item=oneit key=k}
+                        			<option value="{$k}"{if $k eq $info.offtop_enable} selected{/if}>{$oneit}</option>
+                        			{/foreach}
+                        		</select>
+                        		<div class="gray pad2em">{$l_offtop_enable_hint}</div>
+                        	</div>
+                    	{/if}
+                    {else}
+                    	<br>
+					{/if}
+					<button type="submit" class="btn btn-primary btn-block">{$button_label}</button>
+					<input type="hidden" name="service_id" value="{$info.service_id}" />
+				</div>
+			</div>
+			</form>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        	{if $services}
+        		<br>
+            	<label for="service_change">{$l_choose_service}</label>
+            	<br />
+            	<select id="service_change" class="form-control">
+                	{foreach from=$services item=s key=k}
+               	 		<option value="{$k}" {if $k == $smarty.get.service_id}selected{/if}>{$s.service_name}</option>
+                	{/foreach}
+            	</select>
+            {/if}
+            {if $info.service_id}
+            	<br>
+            	<div class="gray marg5px underline">
+           			<div><a href="/my/stat?service_id={$info.service_id}">{$l_analytics}</a></div>
+                	<div><a href="/my/show_requests?service_id={$info.service_id}&int=week">{$l_log}</a></div>
+                	<div><a href="/install?platform={$info.engine}" title="{$l_setup_manual}" target="_blank">{$l_setup_manual}</a></div>
+               		<div><a href="/my/service?action=delete&amp;service_id={$info.service_id}" title="{$l_settings}">{$l_delete_service}</a></div>
+               		<br>
+                	{if $info.service_id && $info.stop_list_enable}
+                    	<div><a href="/my/stop_list?service_id={$info.service_id}" title="{$l_stop_words}">{$l_stop_list|default:"Стоп слова"}</a></div><br>
+                	{/if}
+                	<div><a href="/my/show_private?service_id={$info.service_id}">{$l_black_white_lists}</a></div>
+                </div>
+            {/if}
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+
+        </div>
+    </div>
+</div>
+<script src="/my/js/service.js?v=28032016"></script>

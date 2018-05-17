@@ -1,0 +1,38 @@
+<div class="action_message">
+	{if $activated}
+		<p>Тариф "{$tariffs[$subscribed_tid].name|default:$tariffs[$user_info.fk_tariff].name}" успешно <b>подключен</b>!</p>
+	{else if $subscribed_tid && $bill.cost eq ''}
+		<p>Активация тарифа "{$tariffs[$subscribed_tid].name}" будет произведена в течении нескольких минут!</p>
+	{else if $subscribed_tid}
+		<p>Тариф "{$tariffs[$subscribed_tid].name}" успешно <b>подключен</b>!</p>
+		<p>Для его активации необходимо пополнить баланс на <span style="font-size: 16pt;"><b>{$bill.cost}</b><sup>*</sup></span> рублей.<br /><br />
+	{else}
+		<p>У Вас есть возможность перейти на тариф <b>"{$premium_info.name}"</b>.</p>
+		<form method="post">
+		<table border="0" align="center" class="change_tariff">
+			<tr>
+				<td>
+				<ul style="text-align: left;">
+					<li>Положительных ответов на новые регистрации/сообщения до <b>{$premium_info.mpd}</b> в сутки.</li>
+					<li>Стоимость <b>{$premium_info.cost} рублей</b> в месяц.
+				</ul>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" name="agree" id="agree">&nbsp;<label for="agree" class="hint_black">Я согласен c условиями <a href="/publicoffer" target="blank">сервиса</a> и тарифа "{$premium_info.name}"</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="hidden" value="{$tariff_id}" name="tariff_id" />
+					<input type="submit" value="Подключить" onclick="return check_agree('agree');" class="reset" />
+				</td>
+			</tr>
+		</table>
+		</form>
+	{/if}
+</div>
+<div class="action_message">
+<a href="/my">Веруться в панель управления >>></a>
+</div>
+

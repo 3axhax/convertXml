@@ -1,0 +1,72 @@
+{literal}
+<script type="text/javascript">
+function delete_top_word() {
+	$('delete_word').value = 1;	
+	$('word_form').submit();
+	return true;
+}
+
+function word_change(value){
+	if (value.length >= 3)
+		$('delete_word_btn').disabled = false;
+	else
+		$('delete_word_btn').disabled = true;
+		
+	return true;
+}
+
+function fill_word(item) {
+	$('word').value = $(item.id).get('html');
+	word_change($('word').value);
+	$('word').focus();
+	return true;
+}
+</script>
+{/literal}
+
+<div class="action_message">
+	<table align="center">
+		<tr>
+		<td align="left">
+			<form class="tw_input" id="word_form" method="post">
+				<input type="text" id="word" name="word" value="{$info.word}" onkeyup="word_change(value);">
+				<input type="submit" value="{$l_add_btn|default:'Добавить'}" class="buttons">
+				<input type="button" value="{$l_del_btn|default:'Удалить'}" class="buttons" onclick="javascript:delete_top_word();" id="delete_word_btn" disabled>
+				<input type="hidden" id="delete_word" name="delete_word" value="0" class="buttons">
+				<br />
+				<span id="word_hint" class="hint">{$l_word_hint|default:"Введите либо кликнете по ключевому слову. <br />
+				Минимальная длина слова 3 буквы, максимальная 128"}</span>
+			</form>
+		</td>
+		</tr>
+	</table>
+	
+	<br />
+	{if $notice}
+		<span id="hint" class="notice_hint" {if $warning}style="background: #FFCC66;"{/if}>{$notice}</span>
+        <script type="text/javascript">
+            setTimeout("$('hint').style.display = 'none'", {$notice_delay}); word_change($('word').value);
+        </script>
+	{/if}
+	<br />
+	<br />
+
+	<div class="tw_links">
+	{section loop=$top_words name=word}
+		<a href="" style="font-size: {$top_words[word].font_size}pt; color: #{$top_words[word].color};" 
+			class="tw_link" id="tw_{$top_words[word].word_id}" title="{$top_words[word].frequency} упоминаний, последнее {$top_words[word].updated}"
+			onclick="fill_word(this); return false;">{$top_words[word].word}</a>
+	{/section}
+	</div>
+{if $top_words}
+	<br />
+	<br />
+	<p><span style="background: #CC3300;">&nbsp;&nbsp;&nbsp;</span> - {$l_manual_added|default:"слово добавлено пользователем"}, <span style="background: #3399FF;">&nbsp;&nbsp;&nbsp;</span> - {$l_auto_added|default:"слово добавлено автоматически сервисом"}, <span style="background: #cccccc;">&nbsp;&nbsp;&nbsp;</span> - {$l_tw_out_dictionary|default:"слово не используется для опредления релевантности текста (в связи с ограничениями тарифа)"}.</p>
+	<p>{$l_tw_stat}</p>	
+{else}
+	<p>{$l_add_first_word|default:"Добавьте первое слово в словарь!"}</p>
+{/if}
+</div>
+</div><div class="action_message">
+	<a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+</div>

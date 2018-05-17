@@ -1,0 +1,93 @@
+{foreach from=$requests item=onereq}
+                <tr id="tr_{$onereq.request_id}" class="tr_request_height">
+                    <td width="25%">{$onereq.datetime}</td>
+                    <td width="25%">
+                        <span class="{if $onereq.allow && $onereq.moderate == 1}green{else}red{/if}">
+                            {$onereq.short_result}
+                        </span>
+                        {if $onereq.visible_hostname}
+                        <br />
+                        <span class="gray">{$onereq.visible_hostname}</span>
+                        {/if}
+                        {if $onereq.feedback_result_message}
+                        <br />
+                        <span id="report_result_{$onereq.request_id}" class="gray">
+                            {$onereq.feedback_result_message}
+                        </span>
+                        {/if}
+                    </td>
+                    <td class="authoripemail" id="td_{$onereq.request_id}">
+                        {if $onereq.sender_nickname}
+                        {$onereq.sender_nickname}<br />
+                        {/if}
+                        {if $onereq.sender_email && $onereq.show_approved}
+                        <a href="?ipemailnick={$onereq.sender_email}" class="filter seaemail">{$onereq.sender_email}</a>
+                        <a href="/blacklists/{$onereq.sender_email}" title="{$onereq.sender_email}" target="_blank"><img src="/images/icons/external_link.gif"></a>
+                        {else}
+                        {$onereq.sender_email}
+                        {/if}
+                        {if $onereq.sender_ip}
+                            {if $onereq.country}
+                            <img src="/images/flags/{$onereq.country|lower}.png" title="{$onereq.country}" alt="" class="sender_ip_country"/>&nbsp;
+                            {/if}
+                            <a href="?ipemailnick={$onereq.sender_ip}" class="filter seaip">{$onereq.sender_ip}</a>
+                            <a href="/blacklists/{$onereq.sender_ip}" title="{$onereq.sender_ip}" target="_blank">
+                            <img src="/images/icons/external_link.gif"></a>
+                        {/if}
+                        <div id="menu_{$onereq.request_id}" class="displaynone">
+                            <a href="#/"  id="show_details_{$onereq.request_id}" class="show_details">{$l_details}</a>
+                            {if $grantwrite}
+                                &nbsp;|
+                                {if $onereq.moderate == 1}
+                                    {if $onereq.show_report_not_spam}
+                                    <a href="#/" id="feedback_{$onereq.request_id}_1" alt="" class="feedback">{$l_not_spam}</a>&nbsp;|
+                                    {/if}
+                                    {if $onereq.show_report_spam}
+                                        <a href="#/" id="feedback_{$onereq.request_id}_0" alt="" class="feedback">{$l_spam}</a>&nbsp;|
+                                    {/if}
+                                    <a href="#/" id="delete_{$onereq.request_id}" class="deletereq">{$l_delete}</a>&nbsp;|
+                                {/if}
+                                <a href="/my/show_private?service_id={$onereq.service_id}">{$l_personal_blacklists}</a>
+                                <div id="message_{$onereq.request_id}" class="alert alert-success displaynone"></div>
+                                <div class="alert alert-warning displaynone" role="alert" id="app_notification_alert_{$onereq.request_id}">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <div>This is a test</div>
+                                </div>
+                            {/if}
+                        </div>
+                    </td>
+                </tr>
+                <tr id="details_{$onereq.request_id}" class="{if !$single_request}displaynone {/if}details">
+                    <td colspan="4">
+                        <div class="w100">
+                            CleanTalk ID
+                            <a href="/my/show_requests?request_id={$onereq.request_id}">{$onereq.request_id}</a>
+                            {if $onereq.page_url}, {$l_go_to_messages|lower}
+                            <a href="{$onereq.page_url}">{$onereq.page_url}</a>{/if}
+                            {if $onereq.referer},
+                            <a href="{$onereq.referer}">{$onereq.referer}</a>
+                            {/if}
+                            {if $onereq.message && !$onereq.message_array}
+                                <br>
+                                {$l_request_text},
+                                <div class="well">{$onereq.message}</div>
+                            {/if}
+                            {if $onereq.message_array}
+                                <br>
+                                {$l_request_text},
+                                <div class="well">
+                                {foreach from=$onereq.message_array item=i key=k}
+                                    <h5>{$k}</h5>
+                                    <div class="text-indent-4">{$i}</div>
+                                {/foreach}
+                                </div>
+                            {/if}
+                            {if $onereq.comment}
+                                <br>
+                                {$l_response_comment},
+                                <div class="well">{$onereq.comment_server}</div>
+                            {/if}
+                        </div>
+                    </td>
+                </tr>
+{/foreach}

@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="alert alert-border-white text-center" id="license-wait-block">
+            <h4>Thank you for the payment!</h4>
+            <div>You will be available to order the new SSL certificate within a few seconds.</div>
+            <br><img src="/my/images/loading.gif">
+        </div>
+        <div class="alert alert-border-white text-center hidden" id="add-cert-block">
+            <h4>We have got the payment.</h4>
+            <div>Please click here to submit request to the new certificate.</div>
+            <br><a href="/my/service" class="btn btn-primary">SUBMIT REQUEST</a>
+        </div>
+        <div class="alert alert-border-white text-center hidden" id="view-cert-block">
+            <h4>We have got the payment.</h4>
+            <div>Please click here to go to the control panel.</div>
+            <div>The change of status may take up to 3-5 minutes.</div>
+            <br><a href="/my" class="btn btn-primary" id="view-cert-link">Activate certificate for :DOMAIN:</a>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+<script>
+    window.addEventListener('load', function () {
+        new SSLBillSuccess();
+    });
+</script>

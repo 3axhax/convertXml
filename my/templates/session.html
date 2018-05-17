@@ -1,0 +1,49 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <br><br><br><br><br><br>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+    	</div>
+    	<div class="col-xs-12 col-sm-12 col-md-5 col-lg-5" style="border-right: 1px solid #eee; padding-right: 30px;">
+    		{if $welcome_notice}
+        		<h3>{$l_welcome} {$user_info.email}!</h3>
+        		<br />
+        		<div class="gray">{$redirect_notice}</div>
+        		{if $show_auth_notice}
+        			<br />
+        			<br />
+        			<div class="important_hint width_60_percent">
+            			{$l_readonly_access_notice}
+            			<br />
+            			<br />
+            			<span>
+            				<a href="/my/session?password_login=1">{$l_login_page}</a>
+            			</span>
+        			</div>
+        		{/if}
+			{else}
+                {if $show_auth_notice}
+                <div class="alert alert-success" role="alert">
+                    {$l_auth_notice_hint}
+                </div>
+                {/if}
+                {if $onetime_code_notice}
+                <div  class="alert alert-success" role="alert">
+                    {$onetime_code_notice}
+                </div>
+                {/if}
+                {include file="reg_table.html"}
+                {include file="reg_forgot.html"}
+            {/if}
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5" style="padding-left: 30px;">
+            <br>
+            {$l_login_right_text}
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+        </div>
+    </div>
+</div>

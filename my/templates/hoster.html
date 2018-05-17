@@ -1,0 +1,134 @@
+{literal}
+<style type="text/css">
+    .info_part {padding-top: 2em;}
+</style>
+{/literal}
+
+
+<table border="0" class="width_80_percent align_center">
+    <!-- IPs table -->
+    <tr>
+        <th>
+            IP licenses
+        </th>
+    </tr>
+    <tr>
+        <td>
+            {if $ips}
+            <table class="width_100_percent service_table_main" border="0">
+                <tr class="st_header">
+                    <th class="width_50_percent">
+                        IP address (Hostname)
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Week requests count
+                    </th>
+                </tr>
+                {foreach from=$ips item=i}
+                <tr class="align_center item_new h_left_v_top">
+                    <td class="align_left">
+                        <a href="hoster-ip?ip_id={$i.ip_id}&action=edit"  class="grey_text">{$i.visible_name}</a>
+                    </td>
+                    <td class="service_status">
+                        <span class="{$i.status_message_class}">{$i.status}</span>
+                    </td>
+                    <td>
+                        {$i.week_requests_count}
+                    </td>
+                </tr>
+                {/foreach}
+            </table>
+            {/if}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <!-- Customers table -->
+    {if $users}
+    <tr>
+        <th>
+            Customers
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <table class="width_100_percent service_table_main" border="0">
+                <tr class="st_header">
+                    <th class="width_50_percent">
+                        Account name
+                    </th>
+                    <th>
+                        Signed up
+                    </th>
+                    <th>
+                        Week requests count
+                    </th>
+                </tr>
+                {foreach from=$users item=u}
+                <tr class="align_center item_new h_left_v_top">
+                    <td class="align_left">
+                        {$u.email}
+                    </td>
+                    <td class="service_status">
+                        <span class="{$i.status_message_class}">{$u.created_visible}</span>
+                    </td>
+                    <td>
+                        {$u.week_requests_count}
+                    </td>
+                </tr>
+                {/foreach}
+            </table>
+        </td>
+    </tr>
+    {/if}
+    <!-- Info table -->
+    <tr>
+        <td class="info_part">
+            {if $ips}
+                <div class="width_80_percent important_hint_hoster align_center">
+                    <p>1. {$l_setup_hosting_addon}</p>
+                    <p>2. Look your <a href="/my/profile">profile</a> to find Hoster API key.</p>
+                </div>
+            {else}
+                <div>{$l_to_start_work}</div>
+                <br />
+                <br />
+                <div><a href="hoster-ip?action=new" class="giveone">{$l_submit_ip}</a></div>
+            {/if}
+        </td>
+    </tr>
+    <tr>
+        <td class="info_part" align="left">
+          <div class="pricing_hints">
+            <ul class="links">
+              <li class="mark"><a name="what">What are the billing terms that my account is subject to?</a></li>
+              <p>
+                Payments are debited on a monthly basis for all IP addresses.
+              </p>
+              <li>&nbsp;</li>
+              <li class="mark">I have made a payment, but are not sure what my monthly bill will be?</li>
+              <p>
+                You can see all payments on <a href="/my/billing">Dashboard -> Billing</a>.
+              </p>
+              <li>&nbsp;</li>
+              <li class="mark">What access key(s) should my customers use?</li>
+              <p>
+                Your customers don't use access key, plugin will work without access key on all IP addresses, which you added in CleanTalk Control Panel. But if your customers need anti-spam statistics, they should register in CleanTalk service. During registration we send access key. It need for get statistics.
+              </p>
+              <li>&nbsp;</li>
+              <li class="mark">Do you have auto payments?</li>
+              <p>
+                No, we don't have auto payments. You can pay as required.
+              </p>
+            </ul>
+          </div>
+        </td>
+    </tr>
+</table>
+

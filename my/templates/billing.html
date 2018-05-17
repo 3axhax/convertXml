@@ -1,0 +1,161 @@
+{literal}
+<style type="text/css">
+    .bill_table td {padding: 1em;}
+    .bill_table td.container {border: 2px solid #eee;}
+    .bill_payments_methods_table td {border: 2px solid #eee;}
+    .border_2px {border: 2px solid #eee;}
+    .payment_table {border: 2px solid #eee; background: #F8F8F8;}
+    .billing_history_table {border: 2px solid #eee;}
+    .billing_history_table td {border: 1px solid #eee; padding: 0.5em;}
+    .payment_sum select{
+        padding: 0.5em;
+        border: 1px solid #eee;
+        margin-right: 1em;
+    }
+    .balance_hint {color: #666; font-size: 12pt;}
+</style>
+{/literal}
+
+<table border="0" class="width_80_percent align_center bill_table">
+    <!-- Balance & usage row --!>
+    <tr>
+        <td>
+            <table border="0" class="align_center bill_balance_table width_100_percent">
+                <tr class="align_center">
+                    <td class="width_50_percent container">
+                        <div class="container">
+                            <h3>Your balance ${$user_info.balance}</h3>
+                        </div>
+                    </td>
+                    <td class="container">
+                        <div class="container">
+                            <h3>Current month usage ${$balance_usage}</h3>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- Payment methods row --!>
+    <tr>
+        <td>
+            <table border="0" class="align_center width_100_percent">
+                <tr>
+                    <td class="align_left border_2px">
+                        <h3>Payment methods</h3>
+                        
+                        <table class="width_100_percent payment_table">
+                            <tr>
+                                <td>
+                                   {$l_onetime_payment_paypal} 
+                                    <br />
+                                    <span class="hint_black">{$l_payment_process}</span>
+                                </td>
+                                <td class="payment_sum align_right">
+                                    <form method="post" class="charge_form" id="charge">
+                                    <input type="hidden" name="bill_id" value="{$bill.bill_id}" />
+                                    <select name="payment_sum">
+                                        {foreach from=$payment_range item=p key=k}
+                                            <option value="{$k}" label="{$p}">{$p}</option>
+                                        {/foreach}
+                                    </select>
+                                    <input type="submit" class="giveone" value="Pay now" />
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <table class="width_100_percent payment_table">
+                            <tr>
+                                <td>
+                                    <div>Make a one time credit/debit card payment</div>
+                                    <span class="hint_black">{$l_payment_process}</span>
+                                </td>
+                                <td class="payment_sum align_right">
+                                    <form name="charge_strype" id="charge_stripe">
+                                    <input type="hidden" name="bill_id" value="{$bill.bill_id}" />
+                                    <input type="hidden" name="stripeToken" id="stripeToken" value="" />
+                                    <select name="payment_sum" id="stripe_payment_sum">
+                                        {foreach from=$payment_range item=p key=k}
+                                            <option value="{$k}" label="{$p}">{$p}</option>
+                                        {/foreach}
+                                    </select>
+                                    <input type=button id="customButton" class="giveone" value="Pay now" />
+                                    </form>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<script>
+  var handler = StripeCheckout.configure({
+    key: '{$stripe_public_key}',
+    image: 'https://s3.amazonaws.com/stripe-uploads/acct_158mIzBTPB1xp1O7merchant-icon-1418387971699-cleantalk-logo-512.png',
+    token: function(token) {
+      // Use the token to create the charge with a server-side script.
+      // You can access the token ID with `token.id`
+      $('stripeToken').value = token.id;
+      $('charge_stripe').submit();
+    }
+  });
+
+  $('customButton').addEvent('click', function(e) {
+    // Open Checkout with further options
+    handler.open({
+      name: 'CleanTalk Inc',
+      description: 'Hosting antispam',
+      amount: $('stripe_payment_sum').value * 100, 
+    });
+    e.preventDefault();
+  });
+
+  // Close Checkout on page navigation
+  $(window).addEvent('popstate', function() {
+    handler.close();
+  });
+</script>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- Billing history row --!>
+    <tr>
+        <td>
+            <table border="0" class="align_center width_100_percent">
+                <tr>
+                    <td class="align_left border_2px">
+                        <h3>Billing history</h3>
+                        <table class="width_100_percent billing_history_table">
+                            <tr>
+                                <th class="width_30_percent">
+                                    Month
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th class="width_10_percent">
+                                    Amount 
+                                </th>
+                            </tr>
+                            {foreach from=$bh item=b}
+                            <tr>
+                                <td>
+                                    {$b.date}
+                                </td>
+                                <td>
+                                    {$b.comment}
+                                </td>
+                                <td class="align_right">
+                                    ${$b.amount}
+                                </td>
+                            </tr>
+                            {/foreach}
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

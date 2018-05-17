@@ -1,0 +1,391 @@
+<div class="antispam-service">
+    {if $services_overlimit}
+    <div class="container">
+        <div class="alert alert-danger">{$services_overlimit}</div>
+        {if $show_offer}
+        <div class="alert alert-warning text-center" role="alert">
+            {if $offer_title}
+                <h3>{$offer_title}</h3>
+            {/if}
+            {if !$hide_charge_form}
+                {include file="charge_form.html"}
+            {/if}
+            {if $free_months_notice}
+                <p>{$free_months_notice}</p>
+            {/if}
+            {include file="switch_diff.html"}
+        </div>
+        {/if}
+    </div>
+    {/if}
+
+    <div class="{if !$service_updated}hidden{/if}" id="success-box">
+        <div class="back-link back-link-md-hide">
+            <a href="/my">
+                <i class="glyphicon glyphicon-arrow-left"></i>
+                Dashboard
+            </a>
+        </div>
+        <div class="container">
+            <div class="alert alert-success text-center" role="alert" id="success-message">
+                <span>{$service_updated}{$action}</span>
+                {if $setup_key}<p>{$setup_key}</p>{/if}
+            </div>
+            {if !$info.service_id && $platforms}
+            <div class="cms alert hidden">
+                <h2 class="text-center">{$l_manuals_title}</h2>
+                <div class="pull-right text-muted order">{$l_order_by}: <a href="#" class="disabled" data-order="count">{$l_order_popularity}</a>, <a href="#" data-order="name">{$l_order_name}</a></div>
+                <div class="cms_list">
+                {foreach $platforms as $platform}
+                    <a href="/install?platform={$platform.engine}" data-count="{if $platform.services_count}{$platform.services_count}{else}0{/if}" data-name="{$platform.info}" target="_blank">
+                    <img src="/images/{$platform.engine}.ico" alt="{$platform.info}" width="16" height="16"> {$platform.info}
+                    </a>
+                {/foreach}
+                </div>
+
+            </div>
+            <div class="back-link">
+                <a href="/my">
+                    <i class="glyphicon glyphicon-arrow-left"></i>
+                    Dashboard
+                </a>
+            </div>
+            {/if}
+        </div>
+
+    </div>
+    {if $already_exists}<div class="alert alert-danger text-center">{$already_exists}</div>{/if}
+    <div class="alert alert-danger text-center hidden" id="error-box"></div>
+
+    {if $update_service}
+    <div class="row" id="add-box">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-2">
+            {if $info.service_id}
+                <h3>{$l_service_num|default:"Услуга №"}{$info.service_id}</h3>
+                <span>{$l_site_protection|default:"Защита веб-сайта от спама"}</span>
+            {else}
+                <h3>{$l_new_site|default:"Добавить новый сайт"}</h3>
+                <div class="gray">{$l_new_website_hint}</div>
+            {/if}
+            {if $info.auth_key && $main_user_site}
+                <div id="antispam-service-auth-key">
+                    <button type="button" class="btn btn-success btn-block" id="antispam-service-auth-key-button" data-key="{$info.auth_key}">{$l_show_auth_key|default:"Показать ключ доступа"}</button>
+                </div>
+            {/if}
+            {if $connect_info}
+                <p>{$connect_info}</p>
+            {/if}
+        </div>
+        <div class="col-xs-6">
+            <div class="text-center hidden" id="preloader-api"><div class="preloader"></div></div>
+            {if $smarty.cookies.service_updated}
+            <div class="alert alert-success text-center" role="alert">
+                <span>{$l_service_updated|default:"Изменения сохранены!"}</span>
+            </div>
+            {/if}
+            <form method="post" id="service-form" {if !$info.service_id}class="sform"{/if}>
+                <div class="panel panel-default">
+                    <div class="panel-heading">{$l_settings|default:"Настройки"}</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <a href="/my/service?action=new&multiple=1" style="color: #777;" class="pull-right">{$l_multiple_sites}</a>
+                            <label for="hostname">{$l_hostname|default:"Адрес сайта"}:</label>
+                            <input  name="hostname" id="hostname" value="{$info.hostname}" class="form-control" placeholder="example.com" pattern="{literal}^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)${/literal}"  type="text"{if !$grantwrite} readonly{/if} autocomplete="off">
+                        </div>
+                        {if $info.service_id}
+                        <div class="form-group">
+                            <label for="name">{$l_service_name_page|default:"Имя сервиса (необязательно)"}:</label>
+                            <input type="text" name="name" id="name" value="{$info.name}" class="form-control"{if !$grantwrite} readonly{/if}>
+                        </div>
+                        {*<div class="form-group">
+                            <label for="service_engine">{$l_cms|default:"Платформа (CMS)"}:</label>
+                            <select class="selectpicker form-control" name="engine" data-live-search="true" data-size="10" id="service_engine"{if !$grantwrite} readonly="" {/if}>
+                            {foreach from=$sorted_platforms item=v key=k name=g}
+                            <optgroup label="{$k}">
+                                {foreach from=$v item=e}
+                                <option value="{$e.engine}" class="platform {$e.engine}" {if $e.engine == $info.engine}selected{/if}>{$e.info}</option>
+                                {/foreach}
+                            </optgroup>
+                            {/foreach}
+                            </select>
+                        </div>*}
+                        
+                        <div class="form-group">
+                            <label for="response_lang">{$l_api_response_lang}:</label>
+                            <select id="response_lang" class="selectpicker form-control" name="response_lang"{if !$grantwrite} disabled{/if}>
+                            {foreach from=$response_langs item=v key=k}
+                            <option value="{$k}" class="flag {$k}" {if $k == $info.response_lang}selected{/if}>{$v}</option>
+                            {/foreach}
+                            </select>
+                            <p class="help-block">{$l_api_language_hint}</p>
+                        </div>
+                        {/if}
+                        {if $info.show_move_to_spam}
+                        <div class="form-group">
+                            <label for="move_to_spam_enable">{$l_move_to_spam_enable|default:"Перемещать спам сообщения в папку 'СПАМ'"}:</label>
+                            <select id="move_to_spam_enable" name="move_to_spam_enable" class="selectpicker form-control"{if !$grantwrite} disabled{/if}>
+                                <option value="1"{if $info.move_to_spam_enable == 1} selected{/if}>{$l_move_to_spam_folder}</option>
+                                <option value="2"{if $info.move_to_spam_enable == 2} selected{/if}>{$l_move_to_trash}</option>
+                                {if !$info.move_to_spam_enable}
+                                <option value="0" selected>{$l_ban_comment}</option>
+                                {else}
+                                <option value="3"{if $info.move_to_spam_enable == 3} selected{/if}>{$l_ban_comment}</option>
+                                {/if}
+                                <option value="4"{if $info.move_to_spam_enable == 4} selected{/if}>{$l_smart_comments_filter}</option>
+                            </select>
+                            <p class="help-block hidden" id="move_to_spam_1">{$l_move_to_spam_hint}</p>
+                            <p class="help-block hidden" id="move_to_spam_2">{$l_move_to_trash_hint}</p>
+                            <p class="help-block hidden" id="move_to_spam_{if $info.move_to_spam_enable}3{else}0{/if}">{$l_ban_comment_hint}</p>
+                            <p class="help-block hidden" id="move_to_spam_4">{$l_smart_comments_filter_hint}</p>
+                        </div>
+                        {/if}
+                    </div>
+                    {if $info.service_id}
+                    {if $show_allow_links}
+                    <div class="panel-body checkbox property-all" data-id="allow_links">
+                        <label>
+                            <input type="checkbox" name="allow_links_enable" id="allow_links_enable" {if $info.allow_links_enable}checked{/if}{if !$grantwrite} readonly{/if}>
+                            {$l_allow_links_enable|default:"Разрешить HTTP ссылки в сообщениях"}
+                        </label>
+                        <div class="help-block">{$l_allow_links_enable_hint}</div>
+                        <div class="text-right">
+                            <label for="allow_links_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="allow_links_enable_all" id="allow_links_enable_all">
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="panel-body checkbox property-all" data-id="send_log_to_email">
+                        <a id="send_log_to_email"></a>
+                        <label>
+                            <input type="checkbox" name="send_log_to_email" id="send_log_to_email_field" {if $info.send_log_to_email}checked{/if}{if !$grantwrite} readonly{/if}>
+                            {$l_send_log_to_email}
+                        </label>
+                        <div class="help-block">{$send_log_to_email_hint}</div>
+                        <div class="text-right">
+                            <label for="send_log_to_email_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="send_log_to_email_all" id="send_log_to_email_all">
+                        </div>
+                    </div>
+                    {if $user_info.tariff.sms == 1}
+                    <div class="panel-body checkbox property-all" data-id="sms_test">
+                        <label>
+                            <input type="checkbox" name="sms_test_enable" id="sms_test_enable" {if $info.sms_test_enable}checked{/if}{if !$grantwrite} readonly{/if}>
+                            {$l_sms_test_enable|default:"Включить регистрацию новых пользователей по SMS коду"}
+                        </label>
+                        <div class="text-right">
+                            <label for="sms_test_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="sms_test_enable_all" id="sms_test_enable_all">
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="panel-body checkbox property-all" data-id="words_stop_list">
+                        <label>
+                            <input type="checkbox" name="stop_list_enable" id="words_stop_list_enable" {if $info.stop_list_enable}checked{/if}{if !$grantwrite} disabled{/if}>
+                            {$l_stop_list_enable|default:"Включить проверку сообщений на стоп-слова"}
+                        </label>
+                        {if $paid_addons_s.words_stop_list.show_label}
+                        <span class="label label-warning">{$l_addon} <a href="/extra-package" target="_blank">[?]</a></span>
+                        {/if}
+                        <div class="help-block">{$stop_list_enable_hint}</div>
+                        <div style="margin-left: 2em;" class="alert alert-danger hidden" id="words_stop_list_notice" role="alert"></div>
+                        <div class="text-right">
+                            <label for="words_stop_list_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="stop_list_enable_all" id="words_stop_list_enable_all">
+                        </div>
+                    </div>
+                    <div class="panel-body checkbox property-all" data-id="server_response_addon">
+                        <label for="server_response_addon_enable">
+                            <input type="checkbox" name="server_response_enable" id="server_response_addon_enable" {if $info.server_response}checked{/if}{if !$grantwrite} readonly{/if}/>
+                            {$l_server_response_title}
+                            {if $paid_addons_s.server_response_addon.show_label}
+                            <span class="label label-warning">{$l_addon} <a href="/extra-package" target="_blank">[?]</a></span>
+                            {/if}
+                        </label>
+                        <div id="server_response_addon_additional" class="{if !$info.server_response}hidden{/if}">
+                            <textarea class="form-control" rows="3" id="server_response" name="server_response" placeholder="{$l_server_response_title}">{$info.server_response}</textarea>
+                        </div>
+                        <div class="help-block">{$server_response_notice}
+                            <div class="alert alert-danger hidden" id="server_response_addon_notice" role="alert"></div>
+                        </div>
+                        <div class="text-right">
+                            <label for="server_response_addon_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="server_response_enable_all" id="server_response_addon_enable_all">
+                        </div>
+                    </div>
+                    <div class="panel-body checkbox property-all" data-id="logging_restriction">
+                        <label>
+                            <input type="checkbox" name="logging_restriction" id="logging_restriction_enable"{if $info.logging_restriction eq 1} checked{/if}{if !$grantwrite} disabled{/if}>
+                            {$l_log_restriction}
+                        </label>
+                        <div class="help-block">{$l_log_restriction_hint}</div>
+                        <div style="margin-left: 2em;" class="alert alert-danger hidden" id="logging_restriction_notice" role="alert"></div>
+                        <div class="text-right">
+                            <label for="logging_restriction_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="logging_restriction_all" id="logging_restriction_enable_all">
+                        </div>
+                    </div>
+                    {if $info.engine=='wordpress'}
+                    <div class="panel-body checkbox property-all" data-id="auto_update_app">
+                        <label>
+                            <input type="checkbox" name="auto_update_app" id="auto_update_app_enable"{if $info.auto_update_app eq 1} checked{/if}{if !$grantwrite} disabled{/if}>
+                            {$l_auto_update_title}
+                        </label>
+                        <div class="help-block">{$l_auto_update_description}</div>
+                        <div style="margin-left: 2em;" class="alert alert-danger hidden" id="auto_update_app_notice" role="alert"></div>
+                        <div class="text-right">
+                            <label for="auto_update_app_enable_all">{$l_apply_for_all}</label>
+                            <input type="checkbox" name="auto_update_app_all" id="auto_update_app_enable_all">
+                        </div>
+                    </div>
+                    {/if}
+                    {if $services || $granted_services}
+                    <div class="panel-body checkbox property-all" data-id="apply_to_all">
+                        <label>
+                            <input type="checkbox" name="apply_to_all" id="apply_to_all"{if !$grantwrite} disabled{/if}>
+                            {$l_apply_for_all}
+                        </label>
+                        <div class="help-block">{$l_apply_for_all_hint}</div>
+                    </div>
+                    {/if}
+                    {/if}
+                    {if $info.service_id}
+                    <div class="panel-footer">
+                        <button type="{if !$grantwrite}button{else}submit{/if}" class="btn btn-primary btn-block{if !$grantwrite} disabled{/if}">{$button_label}</button>
+                        <input type="hidden" name="service_id" value="{$info.service_id}" />
+                    </div>
+                    {else}
+                    <div class="panel-footer">
+                        <button type="submit" class="btn btn-primary btn-block disabled" id="add_new">{$button_label}</button>
+                    </div>
+                    {/if}
+                </div>
+            </form>
+        </div>
+        {if $info.service_id}
+        <div class="col-xs-2">
+            {if $services || $granted_services}
+            <label for="service_change">{$l_choose_service}</label>
+            <select id="service_change" class="form-control selectpicker" data-dropdown-align-right="true">
+                {foreach from=$services item=s key=k}
+                <option value="{$k}" {if $k == $smarty.get.service_id}selected{/if}>{$s.service_name}</option>
+                {/foreach}
+                {if $granted_services}
+                <optgroup label="{$l_granted_services}">
+                    {foreach from=$granted_services item=onegrservice}
+                    <option value="{$onegrservice.service_id}" {if $onegrservice.service_id == $smarty.get.service_id}selected{/if}>
+                    {if $onegrservice.hostname}
+                        {$onegrservice.hostname}
+                    {else}
+                        #{$onegrservice.service_id}
+                    {/if}
+                    </option>
+                    {/foreach}
+                </optgroup>
+                {/if}
+            </select>
+            {/if}
+
+            {if $info.service_id}
+            <ul>
+                <li><a href="/my/stat?service_id={$info.service_id}">{$l_analytics}</a></li>
+                <li><a href="/my/show_requests?service_id={$info.service_id}&int=week">{$l_log}</a></li>
+                {if $main_user_site}
+                <li><a href="/install?platform={$info.engine}" title="{$l_setup_manual}" target="_blank">{$l_setup_manual}</a></li>
+				<li><a href="/my/service?action=delete&amp;service_id={$info.service_id}" title="{$l_settings}" onclick="return confirm('{$delete_service}')">{$l_delete_service}</a></li>
+                {/if}
+                <li class="empty">&nbsp;</li>
+                {if $info.service_id && $info.stop_list_enable}
+                <li><a href="/my/show_private?service_id={$info.service_id}&service_type=antispam&add_word=1&record_type=8" title="{$l_stop_words}">{$l_stop_list|default:"Стоп слова"}</a></li>
+                {/if}
+                <li><a href="/my/show_private?service_id={$info.service_id}">{$l_black_white_lists}</a></li>
+				{if $show_rate_notice && $info.rate_url}
+    			<link href="/my/css/cleantalk.css?v=01112017" rel="stylesheet">
+				<li class="empty">&nbsp;</li>
+				<li class="give_feedback">
+					<a href="/go?url={$info.rate_url}" target="_blank">{$l_rate_us}</a>
+					<img src="/images/icons/star.png" alt="" />
+				</li>
+				{/if}
+            </ul>
+            {/if}            
+        </div>
+        <div class="col-xs-1"></div>
+        {/if}
+    </div>
+    {/if}
+
+        
+</div>
+<script>
+    {if $info.show_move_to_spam}
+    function move_to_spam_update() {
+        $('#move_to_spam_1').addClass('hidden');
+        $('#move_to_spam_2').addClass('hidden');
+        $('#move_to_spam_{if $info.move_to_spam_enable}3{else}0{/if}').addClass('hidden');
+        $('#move_to_spam_' + $('#move_to_spam_enable').val()).removeClass('hidden');
+    }
+    {/if}
+    window.addEventListener('load', function () {
+        AntispamService({$paid_addons});
+        {if $info.show_move_to_spam}
+        move_to_spam_update();
+        
+        $('#move_to_spam_enable').change(move_to_spam_update);
+        {/if}
+        if (document.getElementById('apply_to_all')) {
+            $('#service-form').submit(function () {
+                if ($('#apply_to_all').prop('checked')) {
+                    return confirm('{$l_apply_for_all_confirm}');
+                }
+                return true;
+            });
+        };
+        {if $other_services}
+        $('#hostname').typeahead({
+            source: {$other_services},
+            afterSelect: function(item) {
+                var parts = item.split('#');
+                $('#hostname').val(parts[0]);
+            },
+            updater: function(item) {
+                var parts = item.split('#');
+                return parts[0];
+            },
+            highlighter: function(item) {
+                var parts = item.split('#');
+                html = '<img src="'+parts[2]+'" class="favdd" />'+parts[0]+' <span class="text-muted">('+parts[1]+')</span>';
+                return html;
+            },
+            autoSelect: false,
+            items: '10',
+            showHintOnFocus: 'all',
+            minLength: 0,
+            fitToElement: true,
+        });
+        {/if}
+    });
+{if $grantwrite}
+    var l_service_created_title = '{$l_service_created_title}';
+    var l_service_created_js = '{$l_service_created_js}';
+    var l_already_exists = '{$l_already_exists}';
+    var email = '{$user_info.email}';
+    var user_token = '{$user_info.user_token}';
+    var lang = '{$ct_lang}';
+    var product_name = 'antispam';
+{/if}
+</script>
+<style type="text/css">
+.favdd{ margin-bottom: 2px;margin-right: 5px;min-width: 16px;width: 16px;}
+.dropdown-menu>.active>a .text-muted{ color:#f2dede;}
+.alert-link{ text-decoration: underline;}.alert-link:hover{ text-decoration: none;}
+.cms_list { margin-top: 60px;}
+.cms_list a{ display: inline-block; min-width: 200px;margin-bottom: 15px;}
+.order { margin-top: 15px; }
+.order a.disabled{ color: #777; }
+.order a.disabled:hover, .order a.disabled:focus{ text-decoration: none;cursor: not-allowed; }
+#preloader-api{ position: absolute; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.5); z-index: 1; margin-left: -15px;}
+.preloader { border: 5px solid #f3f3f3; -webkit-animation: spin 1s linear infinite; animation: spin 1s linear infinite; border-top: 5px solid #3090c7; border-radius: 50%; width: 50px; height: 50px; margin: 75px 0 0 0; display: inline-block; background: white; z-index: 2;}
+@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); }  100% { -webkit-transform: rotate(360deg); }}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+</style>

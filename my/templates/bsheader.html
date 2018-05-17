@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {if $header.refresh}
+    <meta http-equiv="refresh" content="{$header.refresh}" />
+    {/if}
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{$head.title}</title>
+
+    <!-- Bootstrap -->
+    <link href="/my/css/bootstrap.min.css?v=20062016" rel="stylesheet">
+    <link href="/my/css/cleantalk.css?v=01112017" rel="stylesheet">
+
+    <script src="/js/jquery.min.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<style type="text/css">
+    #subnav {
+        position: fixed;
+        left: 0;
+        top: 52px;
+        width: 100%;
+        z-index: 1029;
+        min-height: 0;
+        font-size: 12px;
+        background-color: rgba(255, 255, 255, 1) !important;
+    }
+    #subnav ul {
+        width: 100%;
+        margin-left: 0!important;
+        padding-left: 135px;
+    }
+    #subnav ul a {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    @media (max-width: 768px) {
+      #subnav {
+        display: none;
+      }
+    }
+    @media (max-width: 1120px) {
+      .user_email {
+        display: none;
+      }
+    }
+    @media (max-width: 965px) {
+      .nav>li>a {
+        padding: 15px 7px;
+      }
+    }
+    #uppermenu .nav .btn .glyphicon-plus {
+      display: none;
+    }
+    @media (max-width: 820px) {
+      #uppermenu .nav .btn .glyphicon-plus {
+        display: inline-block;
+      }
+      #uppermenu .nav .btn strong {
+        display: none;
+      }
+    }
+    @media (max-width: 767px) {
+      #uppermenu .nav .btn .glyphicon-plus {
+        display: none;
+      }
+      #uppermenu .nav .btn strong {
+        display: inline;
+      }
+      .user_email {
+        display: inline;
+      }
+    }
+    
+    
+    {if $notification}
+    body {
+        padding-top: 6em;
+    }
+    .notification-block {
+        background-color: #d9534f;
+        border-bottom: 1px solid #a9231f;
+        color: #fff;
+        z-index: 1029;
+        position: fixed;
+        top: 53px;
+        left: 0;
+        width: 100%;
+        font-size: 12px;
+        line-height: 24px;
+    }
+    .notification-block > div {
+        padding: 0 25px;
+    }
+    .notification-block .glyphicon {
+        margin-right: 1em;
+    }
+    .notification-block .glyphicon-remove {
+        float: right;
+        margin-top: 4px;
+        font-weight: normal;
+        opacity: 0.5;
+        cursor: pointer;
+    }
+    .notification-block .glyphicon-remove:hover {
+        opacity: 1;
+    }
+    .notification-block a {
+        color: #fff;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+    .notification-block a:hover {
+        text-decoration: none;
+    }
+    {else}
+    body {
+        padding-top: 4em;
+    }
+    {/if}
+    {if $news}
+    #news-notification { padding-top: 18px; padding-bottom: 12px; margin-right: 15px; position: relative; }
+    #news-notification .glyphicon { font-size: 16px; }
+    #news-notification .label { position: absolute; top: 8px; left: 25px; border-radius: 100px; }
+    #news-block { position: absolute; top: 53px; right: -175px; width: 400px; max-height: 600px; padding: 15px 15px 0 15px; overflow-y: auto; background-color: #f8f8f8; border: 1px solid #e7e7e7; border-bottom-width: 3px; border-right-width: 2px; display: none; }
+    #news-block.show { display: inline-block; }
+    #news-block > div > h4 { display: block; text-align: center; }
+    #news-block > div > div { box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.5); background-color: #fff; padding: 15px; margin-bottom: 15px; }
+    #news-block > div > div p { margin-top: 10px; }
+    #news-block > div > div > a { display: inline-block; text-transform: uppercase; margin-right: 15px; }
+    #news-block > div > a { display: block; text-align: center; padding: 5px 0 15px 0; }
+    {/if}
+    .avatar {
+        width: 30px;
+        height: 30px;
+        margin: 0 10px;
+        border-radius: 500px;
+        position: absolute;
+        left: 0;
+        top: 10px;
+    }
+    .profile-link {
+        padding-left: 50px !important;
+    }
+    #readonly-link {
+        position: absolute;
+        background-color: transparent;
+        color: #a45554;
+        width: 100%;
+        padding: 2px 5px;
+        text-align: center;
+        top: 53px;
+        text-decoration: underline;
+    }
+    #readonly-link:hover {
+        text-decoration: none;
+    }
+.dropdown-menu {
+  z-index: 25000 !important;
+}
+#dashboard-tour a.btn,
+.popover-content .modal-footer a{
+  text-decoration: none!important;  
+}
+.popover-content .modal-footer a.btn{
+  padding: 6px 12px!important;
+}
+.popover-content .modal-footer{
+  padding: 9px 0 0 0;
+  min-width: 400px;
+}
+.popover-content{
+  font-size: 14px;
+}
+.popover-title{
+  font-size: 18px;
+}
+.rate_it{
+  margin-top: 9px;
+  display: inline-block;
+}
+.popover{
+  max-width: 600px;
+}
+#subnav ul:nth-child(2) {
+    margin-left: 0px;
+}
+#service-logo{
+  position: absolute;margin-top: 35px;font-size: 12px;color: #777;width: 118px;text-align: right;
+}
+@-moz-document url-prefix() {
+    #service-logo{
+      margin-left: -134px;
+    }
+}
+@-ms-viewport{
+  width:auto!important;
+}
+</style>
+<link href="/my/css/font-awesome.min.css?v=16062016" rel="stylesheet">
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <span id="service-logo">
+      {if $cp_mode == 'antispam'}{$l_website_dashboard_s}{/if}
+      {if $cp_mode == 'hosting-antispam'}{$l_hosting_dashboard_s}{/if}
+      {if $cp_mode == 'api'}{$l_api_dashboard_s}{/if}
+      {if $cp_mode == 'security'}{$l_security_dashboard_s}{/if}
+      {if $cp_mode == 'ssl'}{$l_ssl_dashboard_s}{/if}
+    </span>
+    <div class="navbar-header">      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#uppermenu" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/my">
+        <img alt="Cleantalk" src="/images/cleantalk-logo-main.png" width="20">
+      </a>
+      <a class="navbar-brand" href="/my" style="margin-left: -15px;"><span class="bold"><span class="brand1">Clean</span><span class="brand2">Talk</span></span></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    {if $is_auth}
+    <div class="collapse navbar-collapse" id="uppermenu">
+      <ul class="nav navbar-nav">
+        {if $cp_mode == 'hosting-antispam'}
+            <li><a href="/my/hoster-ip?action=new" title="ADD IP"><button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span>ADD IP</button></a></li>
+        {elseif $cp_mode == 'antispam'}
+            <li><a href="/my/service?action=new" title="{$l_add_website}"><button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span><strong>{$l_add_website}</strong></button></a></li>
+        {elseif $cp_mode == 'security'}
+          <li><a href="/my/service?action=new" title="{$l_add_website}"><button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span><strong>{$l_add_website}</strong></button></a></li>
+        {/if}
+        {foreach from=$m_links item=l key=k}
+       	  	{if $k == 'show_requests'}
+          	<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$l.name} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+				{if $user_info.licenses.antispam.services > 0}
+				<li><a href="/my/show_requests">Anti-Spam {$l_log}</a></li>
+				<li><a href="/my/show_sfw">SpamFireWall {$l_log}</a></li>
+				<li><hr /></li>
+				{/if}
+				{if $user_info.licenses.security.services > 0}
+				<li><a href="/my/logs">Security (Brute force) Log</a></li>
+				<li><a href="/my/logs_firewall">Security Firewall Log</a></li>
+				<li><a href="/my/logs_mscan">Malware Scans Log</a></li>
+				{/if}
+              </ul>
+          	</li>
+          	{else}
+				{if $l.label}
+				<li><a href="{$l.url}">{$l.name}&nbsp;<span class="badge badge-warning">{$l.label}</span></a></li>
+				{else}
+				<li><a href="{$l.url}">{$l.name}{if $l.show_counts && $user_info.free_months_avaible}&nbsp;<span class="badge badge-warning">{$user_info.free_months_avaible}</span>{/if}</a></li>
+				{/if}
+          	{/if}
+        {/foreach}
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          {if $news && !$hide_submenu}
+          <li id="news-link">
+              <a href="#" id="news-notification"><span class="glyphicon glyphicon-bell"></span>{if !$news_readonly}<span class="label label-primary">{count($news)}</span>{/if}</a>
+              <div id="news-block">
+                  <div>
+                      <h4>CleanTalk Notifications</h4>
+                      {foreach from=$news item=n}
+                      <div class="news-item" id="news_{$n.id}">
+                          <strong>{$n.title}</strong>
+                          <p>{$n.content}</p>
+                          {if $news_readonly}
+                          <a href="{$n.link}" target="_blank">Learn more</a>
+                          {else}
+                          <a href="#" class="dismiss" data-id="{$n.id}">Dismiss</a>
+                          <a href="/my/ajax?action=news_more&news_id={$n.id}" target="_blank">Learn more</a>
+                          {/if}
+                      </div>
+                      {/foreach}
+                      <a href="https://community.cleantalk.org/viewforum.php?f=42">All news</a>
+                  </div>
+              </div>
+          </li>
+          {/if}
+          {if !$hide_submenu}
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$l_submenu_services}<span class="caret"></span></a>
+              <ul class="dropdown-menu" style="overflow-y: hidden;">
+                  <li{if $cp_mode == 'antispam'} class="active"{/if}><a href="/my?cp_mode=antispam">{$l_website_dashboard_s}</a></li>
+                  <li{if $cp_mode == 'hosting-antispam'} class="active"{/if}><a href="/my?cp_mode=hosting-antispam">{$l_hosting_dashboard_s}</a></li>
+                  <li{if $cp_mode == 'api'} class="active"{/if}><a href="/my?cp_mode=api">{$l_api_dashboard_s}</a></li>
+                  <li{if $cp_mode == 'security'} class="active"{/if}><a href="/my?cp_mode=security">{$l_security_dashboard_s}</a></li>
+                  <li{if $cp_mode == 'ssl'} class="active"{/if}><a href="/my?cp_mode=ssl">{$l_ssl_dashboard_s}</a></li>
+              </ul>
+          </li>
+          {/if}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle profile-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <img src="{$user_info.avatar}" class="avatar">
+              <span class="user_email">{$user_info.email}</span><span class="caret"></span>
+          </a>
+            
+          <ul class="dropdown-menu">
+            <li><a href="/my/profile">{$l_profile_link|default:"Профиль"}</a></li>
+            {if $cp_mode == 'antispam'}
+            <li><a href="/my/bill/recharge">{$l_billing}</a></li>
+            {/if}
+            {if $cp_mode == 'api'}
+            <li><a href="/my/bill/api">{$l_billing}</a></li>
+            {/if}
+            <li><a href="/my/payments">{$l_payments}</a></li>
+            {if $smarty.cookies.setup_new_password}
+            <li><a href="/my/new_password">{$l_new_password|default:"Новый пароль"}</a></li>
+            {else}
+            <li><a href="/my/new_password">{$l_change_password}</a></li>
+            {/if}
+            <li><a href="/my/change-email">{$l_change_email}</a></li>
+            {if $show_affiliate_program}
+            <li><a href="/my/partners">{$l_affiliate_program}</a></li>
+            {/if}
+            {if $cp_mode == 'antispam'}<li><a href="/my/grants">{$l_grants}</a></li>{/if}
+            <li role="separator" class="divider"></li>
+            <li><a href="/my/logout">{$l_logout|default:"Завершить работу"}</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+    {/if}
+  </div><!-- /.container-fluid -->
+</nav>
+{if $is_auth && !$hide_submenu}
+<nav id="subnav" class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/my?cp_mode=antispam">{$l_sub_antispam}{if !$user_info['services_count']['antispam']} <span class="label label-success">new</span>{/if}</a></li>
+            <li><a href="/my?cp_mode=security">{$l_sub_security}{if !$user_info['services_count']['security']} <span class="label label-success">new</span>{/if}</a></li>
+            <li><a href="/my?cp_mode=ssl">{$l_sub_ssl}{if !$user_info['services_count']['ssl']} <span class="label label-success">new</span>{/if}</a></li>
+            {if !$user_addon}<li><a href="https://cleantalk.org/help/extra-package">Add Extra Package</a></li>{/if}
+
+          {if $user_info.licenses.$cp_mode.valid_till}
+            <li class="pull-right"><a href="/my/payments"><span class="{if $user_info.licenses.$cp_mode.valid_till|strtotime<$smarty.now+(60*60*24*30)}text-warning{/if}">{$user_info.licenses.$cp_mode.valid_till|date_format:"%b %e, %Y"|string_format:$l_valid_till_}</span></a></li>
+          {/if}
+          {if $read_only}
+            <li class="pull-right"><a href="#" data-toggle="modal" data-target="#readonly-modal">Read-only</a></li>
+          {/if}
+          {if $show_dashboard_tour}
+            {strip}<li class="pull-right"><a href="#" data-id="
+            	{if $ct_lang == 'ru'}
+            		{if strpos($smarty.server.REQUEST_URI,'my/stat')}
+            			557
+            		{else}
+            			507
+            		{/if}
+            	{else}
+            		{if strpos($smarty.server.REQUEST_URI,'my/stat')}
+            			555
+            		{else}
+            			506
+            		{/if}            		
+            	{/if}" class="mpopover">{$l_dashboard_tour} <i class="fa fa-question-circle" aria-hidden="true"></i></a></li>{/strip}
+          {/if}
+        </ul>
+        
+    </div>
+</nav>
+{/if}
+{if $notification && !$hide_submenu}
+<div class="notification-block my" data-id="{$notification.id}">
+    <div class="container-fluid">
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>CleanTalk Notification.</strong>
+        {$notification.message}
+        {if $notification.link}| <a href="{$notification.link}" target="_blank">Learn more</a>{/if}
+        <span class="glyphicon glyphicon-remove"></span>
+    </div>
+</div>
+<script>
+    window.addEventListener('load', function () {
+        var cookie_name = 'hide_notification';
+        var notification = document.getElementsByClassName('notification-block');
+        if (notification.length) {
+            notification = notification[0];
+            var notification_id = notification.getAttribute('data-id');
+            notification.getElementsByClassName('glyphicon-remove')[0].addEventListener('click', function () {
+                var expires = 86400 * 30;
+                var d = new Date();
+                d.setTime(d.getTime() + expires * 1000);
+                expires = d.toUTCString();
+
+                var value = encodeURIComponent(notification_id);
+
+                document.cookie = cookie_name + '=' + value + '; expires=' + expires;
+                notification.style.display = 'none';
+            });
+        }
+    });
+</script>
+{/if}
+<div class="modal fade" id="readonly-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center text-danger">
+                You have authorized by private link, access to Dashboard is restricted.<br>
+                To get full access please authorize with login and password.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="/my/logout?authorize=1" class="btn btn-primary">Authorize</a>
+            </div>
+        </div>
+    </div>
+</div>
+ {if $annotation}
+<div class="container" style="margin-top: 4em">
+    <h3>{$annotation.title}</h3>
+    {$annotation.text}
+</div>
+{/if}
+{if $read_only}
+<div class="modal fade" id="readonly-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center text-danger">
+                You have authorized by private link, access to Dashboard is restricted.<br>
+                To get full access please authorize with login and password.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="/my/logout?authorize=1" class="btn btn-primary">Authorize</a>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+<script type="text/javascript">
+var l_btn_prev = '{$l_btn_prev}';
+var l_btn_next = '{$l_btn_next}';
+var l_learn_more = '{$l_learn_more}';
+var l_rate_it = '{$l_rate_it}';
+var l_renew_license = '{$l_renew_license}';
+{if !$smarty.cookies.dtour}
+window.setTimeout(function(){
+    $('#subnav .mpopover').trigger('click');
+    var date = new Date();
+    date.setMonth(date.getMonth()+9);
+    document.cookie = "dtour=1; path=/; expires=" + date.toUTCString();
+}, 15000);
+{/if}
+</script>
+<script type="text/javascript" src="/my/js/dashboard-tour.js?v3_16.11.2017"></script>

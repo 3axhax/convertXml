@@ -1,0 +1,108 @@
+<div class="back-link back-link-md-hide">
+    <a href="/my">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+        {$l_cp}
+    </a>
+</div>
+
+{if $info}<div class="alert alert-success">{$info}</div>{/if}
+{if $error}<div class="alert alert-danger text-center">{$error}</div>{/if}
+
+{if !$hide_form}
+{if $step == 1}
+<div class="alert alert-info">
+    What to include in my <a href="https://cleantalk.org/help/SSL-how-to-generate-CSR&lang=en" target="_blank" class="alert-link">CSR</a> to get my cert ASAP?
+    <a href="https://cleantalk.org/help/SSL-how-to-generate-CSR&lang=en" target="_blank" class="btn btn-info btn-xs pull-right">Show</a>
+</div>
+{/if}
+<div class="panel panel-default">
+    {if $step == 1}
+    <div class="panel-heading">
+        <div class="panel-title">Enter CSR:</div>
+    </div>
+    {if $error}<div class="panel-body bg-danger text-danger text-center">{$error}</div>{/if}
+    <form method="post" data-toggle="validator" role="form">
+        <input type="hidden" name="step" value="1">
+        <div class="panel-body">
+            <div class="form-group{if isset($error_fields['csr'])} has-error{/if}">
+                <textarea name="csr" id="csr-field" class="form-control" rows="10" required></textarea>
+                {if isset($error_fields['csr'])}
+                <p class="help-block">Error: {$error_fields['csr']}</p>
+                {/if}
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-block btn-primary">READ MY CSR</button>
+        </div>
+    </form>
+    {/if}
+    {if $step == 2}
+    <div class="panel-heading">
+        <div class="panel-title">Check if we've got you right</div>
+    </div>
+    {if $error}<div class="panel-body bg-danger text-danger text-center">{$error}</div>{/if}
+    <form method="post" data-toggle="validator" role="form">
+        <input type="hidden" name="step" value="2">
+        <input type="hidden" name="cert_id" value="{$cert_id}">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Cert should be issued for</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="padding-left: 5%">
+                    {$cert.organizationName}<br>
+                    {$cert.localityName}, {$cert.stateOrProvinceName}, {$cert.countryName}<br>
+                    {$cert.emailAddress}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>SSL will cover</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="padding-left: 5%">
+                    {foreach from=$cert['commonName'] item=c}
+                    {$c}<br>
+                    {/foreach}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-primary btn-block">Looks good, onward</button>
+        </div>
+    </form>
+    {/if}
+    {if $step == 3}
+    <div class="panel-heading">
+        <div class="panel-title">Choose email to validate ownership of {$cert.domains}</div>
+    </div>
+    {if $error}<div class="panel-body bg-danger text-danger text-center">{$error}</div>{/if}
+    <form method="post" data-toggle="validator" role="form">
+        <input type="hidden" name="step" value="3">
+        <input type="hidden" name="cert_id" value="{$cert_id}">
+        <div class="panel-body">
+            {foreach from=$emails item=email name=emails}
+            <div class="radio">
+                <label>
+                    <input type="radio" name="email" value="{$email}"{if $smarty.foreach.emails.index == 0} checked{/if}>
+                    {$email}
+                </label>
+            </div>
+            {/foreach}
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-block btn-primary">Send me the validation email</button>
+        </div>
+    </form>
+    {/if}
+</div>
+{/if}

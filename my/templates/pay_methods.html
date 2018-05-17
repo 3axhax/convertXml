@@ -1,0 +1,17 @@
+                <span>{$l_payment_services}:</span>
+                <table border="0" class="pay_methods">
+                    
+                    {foreach from=$payment_methods item=m}
+                    <tr>
+                        <td>
+                            <input type="radio" name="pay_method" id="pay_method" {if $pay_method == $m.name}checked{/if} onclick="use_item('pay_method', '{$m.name}');" />
+                        </td>
+                        <td style="text-align: left;" class="pay_logos_my">
+                            {$m.URL}
+                            <br />
+                            <span class="grey_hint">{$m.info}</span>
+                        </td>
+                    </tr>
+                    {/foreach}
+                </table>
+

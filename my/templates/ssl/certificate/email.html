@@ -1,0 +1,28 @@
+<div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">{$l_ssl_dcv_title} {$commonName}</div>
+        </div>
+        {if $error}<div class="panel-body bg-danger text-danger text-center">{$error}</div>{/if}
+        <form action="/my/service" method="post" data-toggle="validator" role="form">
+            <input type="hidden" name="mode" value="create">
+            <input type="hidden" name="response" value="{$dcv.response}">
+            <input type="hidden" name="csr" value="{$csr}">
+            <input type="hidden" name="key" value="{$key}">
+            <input type="hidden" name="keep" value="{$keep}">
+            <div class="panel-body">
+                {foreach from=$dcv item=email name=emails}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="email" value="{$email}"{if $smarty.foreach.emails.index == 0} checked{/if}>
+                        {$email}
+                    </label>
+                </div>
+                {/foreach}
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-block btn-primary">{$l_ssl_generator_btn_dcv}</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="row">
+    <div class="col-xs-2">
+        {if $update_service}
+        {if $ip.ip_id}
+        <h4>{$l_service_num}{$ip.ip_id}</h4>
+        <p>{$l_hosting_protection}</p>
+        {else}
+        <h4>Add new IP</h4>
+        <p>{$l_new_website_hint}</p>
+        {/if}
+        {/if}
+    </div>
+    <div class="col-xs-8">
+        {if $smarty.get.updated && $update_service}
+        <div class="alert alert-success">
+            {$l_settings_saved}
+        </div>
+        {/if}
+        {if $ip_updated}
+        <div class="alert alert-success">
+            <p>
+                IP updated {$ip_updated} <img src="/images/icons/button_ok.png">
+            </p>
+            <br><br>
+            <h4>What to do next?</h4>
+            <ol>
+                <li>Your's customers (websites owners) now avaible to use anti-spam protection by CleanTalk. You should announce this service to customers and let them know about <a href="https://{$smarty.server.SERVER_NAME}/install" target="_blank">setup manuals</a> to protect their websites.</li>
+                <li>A website owner should get <a href="https://{$smarty.server.SERVER_NAME}/register?new_account=1" target="_blank">personal account</a> at cleantalk.org and fill obtained Access key in plugin settings if he wants to see anti-spam logs for the website. This step is not mandatory, just to do service more usefull for website owners.</li>
+                <li>To get support please ask us <a href="/forum">here</a>.</li>
+            </ol>
+            <br><a href="/my" class="btn btn-primary btn-block">{$l_go_panel}</a>
+        </div>
+        {/if}
+        {if $update_service}
+        {if $errors}
+        <div class="alert alert-danger">
+            {foreach from=$errors item=e}
+            <p>{$e}</p>
+            {/foreach}
+        </div>
+        {/if}
+        <div class="panel panel-default">
+            <div class="panel-heading">{$l_settings}</div>
+            <div class="panel-body">
+                <form method="post">
+                    <input type="hidden" name="ip_id" value="{$info.ip_id}">
+                    <div class="form-group">
+                        <label for="ip">{$l_ip_address}</label>
+                        <input type="text" name="ip" id="ip" value="{$info.ip}" aria-describedby="ip-help-block" class="form-control">
+                        <span class="help-block" id="ip-help-block">{$l_ip_address_hint}</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="hostname">{$l_ip_hostname}</label>
+                        <input type="text" name="hostname" id="hostname" value="{$info.hostname}" aria-describedby="hostname-help-block" class="form-control">
+                        <span class="help-block" id="hostname-help-block">{$l_optional_field}</span>
+                    </div>
+                    <input type="hidden" name="service_id" value="{$info.service_id}">
+                    <button type="submit" class="btn btn-primary btn-block">{$button_label}</button>
+                </form>
+            </div>
+        </div>
+        {/if}
+        {if $confirm_delete}
+        <div class="panel panel-danger">
+            <div class="panel-heading">{$confirm_delete}</div>
+            <div class="panel-body">
+                <form method="post">
+                    <input type="hidden" name="service_id" value="{$info.service_id}" />
+                    <button type="submit" class="btn btn-danger btn-block">{$l_yes_delete}</button>
+                </form>
+            </div>
+            <div class="panel-footer">
+                <a href="/my">{$l_go_panel|default:"Вернуться в панель управления"} >>></a>
+            </div>
+        </div>
+        {/if}
+    </div>
+    <div class="col-xs-2">
+        {if $update_service}
+        {if $services}
+        <div class="form-group">
+            <label for="service_id_new">{$l_choose_service}</label>
+            <select id="service_id_new" onchange="reload_page('{$smarty.get.int}');" class="form-control">
+                {foreach from=$services item=s key=k}
+                <option value="{$k}" {if $k == $smarty.get.service_id}selected{/if}>{$s.service_name}</option>
+                {/foreach}
+            </select>
+        </div>
+        {/if}
+        {if $ip.ip_id}
+        <a href="hoster-ip?ip_id={$ip.ip_id}&amp;action=delete" class="btn btn-danger">{$l_delete_ip}</a>
+        {/if}
+        {/if}
+    </div>
+</div>
+<script>
+    function reload_page() {
+        var service_id = '';
+        if ($('service_id_new').value != '') {
+            service_id = $('service_id_new').value;
+        }
+        var new_href = '?service_id=' + service_id + '&action=edit';
+        window.location.replace(new_href);
+        return true;
+    }
+</script>
+{if $info.auth_key}
+{literal}
+<script type="text/javascript">
+    switch_key();
+</script>
+{/literal}
+{/if}

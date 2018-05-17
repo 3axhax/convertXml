@@ -1,0 +1,13 @@
+<div class="action_message">
+	{if $allow_token_auth_by_sites}
+    <p>{$l_token_auth_disabled}</p>
+	{else}
+    	<p>{$l_token_auth_disabled_by_sites}</p>
+	{/if}
+
+    <p><a href="/my/session{if $smarty.get.email}?email={$smarty.get.email|escape:'url'}{/if}">{$l_login_page}</p>
+</div>
+
+<script type="text/javascript">
+//    window.location.href = "/my/session";
+</script>

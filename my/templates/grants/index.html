@@ -1,0 +1,83 @@
+<div class="grants-block">
+<div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6">
+        <table class="table-header">
+            <tr>
+                <td><h2>{$l_grants_title}</h2></td>
+                <td>
+                    {if $paid_addons_s.grants_addon.show_label}
+                    <div class="btn-group" role="group">
+                        <a href="/my/grants?action=new" id="grants_enable" class="btn btn-sm btn-success">{$l_grants_new}</a><a href="/extra-package" class="btn btn-sm btn-success" target="_blank">?</a>
+                    </div>
+                    {else}
+                    <a href="/my/grants?action=new" id="grants_enable" class="btn btn-sm btn-success">{$l_grants_new}</a>
+                    {/if}
+                    <!--<a href="/my/grants?action=new" id="grants_enable">{$l_grants_new}</a>
+                    {if $paid_addons_s.grants_addon.show_label}
+                    <span class="label label-warning">{$l_addon} <a href="/extra-package" target="_blank">[?]</a></span>
+                    {/if}-->
+                </td>
+            </tr>
+        </table>
+        <p class="text-muted">{$l_grants_description}</p>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-6">
+        <div class="alert alert-danger hidden-ni" id="grants_addon_notice" role="alert"></div>
+        <div class="alert alert-danger hidden-ni" id="mistake"></div>
+        <div class="alert alert-success hidden-ni" id="success"></div>
+    </div>
+</div>
+
+{if $grants}
+<div class="row">
+    <div class="col-xs-12">
+        <br>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>{$l_grants_site}</th>
+                <th>{$l_grants_date}</th>
+                <th>{$l_grants_type}</th>
+                <th>{$l_grants_account}</th>
+                <th>{$l_grants_actions}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach from=$grants item=onegrant}
+            <tr>
+                <td>
+                    {if $onegrant.hostname}
+                    {$onegrant.hostname}
+                    {else}
+                    #{$onegrant.service_id}
+                    {/if}
+                </td>
+                <td>{$onegrant.grantdate}</td>
+                <td>
+                    {if $onegrant.grantread && $onegrant.grantwrite}
+                    {$l_grants_read_write}
+                    {else}
+                    {$l_grants_read}
+                    {/if}
+                </td>
+                <td>{$onegrant.email}</td>
+                <td>
+                    <a href="/my/grants?action=edit&grant_id={$onegrant.grant_id}" class="btn btn-xs btn-primary">{$l_grants_edit}</a>
+                    <a href="/my/grants?action=delete&grant_id={$onegrant.grant_id}" class="btn btn-xs btn-danger" onclick="return confirm('{$l_are_you_sure}?');">{$l_grants_delete}</a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/if}
+<input type="hidden" id="wrong_message" value="{$wrong_message}">
+<input type="hidden" id="success_message" value="{$success_message}">
+</div>
+
+<script type="text/javascript">
+    window.addEventListener('load', function () {
+        GrantsPage({$paid_addons});
+    });
+</script>

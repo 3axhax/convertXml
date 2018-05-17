@@ -1,0 +1,59 @@
+<div class="page-header">
+    <h2 class="text-center">{$l_bonuses_page_title}</h2>
+</div>
+<br><br>
+<div class="row">
+    <div class="col-xs-3 text-center">
+        <h2>{$bonuses.progress.percent}%</h2>
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{$bonuses.progress.current}" aria-valuemin="0" aria-valuemax="{$bonuses.progress.max}" style="width: {$bonuses.progress.percent}%">
+                <span class="sr-only">{$bonuses.progress.percent}%</span>
+            </div>
+        </div>
+        <p class="help-block">{$bonuses.progress.text}</p>
+    </div>
+    <div class="col-xs-9">
+        {if count($bonuses['available'])}
+        {foreach from=$bonuses['available'] item=bonus}
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+                <h3>{$bonus.title}</h3>
+                <p>{$bonus.description}</p>
+                <br>
+                <a href="{$bonus.link}" class="btn btn-lg btn-primary">{$bonus.button}</a>
+                {if isset($bonus.notice)}<br><br><p class="text-danger">{$bonus.notice}</p>{/if}
+            </div>
+        </div>
+        {/foreach}
+        <div class="alert alert-info">
+            {$l_bonuses_attention}
+        </div>
+        {else}
+        {/if}
+
+        {if count($bonuses['activated'])}
+        <br><br>
+        <h2>Activated bonuses</h2>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Bonus name</th>
+                <th>Activated</th>
+                <th>Free months</th>
+                <th>License valid till</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach from=$bonuses['activated'] item=bonus}
+            <tr>
+                <td>{$bonus.bonus_name}</td>
+                <td>{$bonus.activated}</td>
+                <td>{$bonus.free_months}</td>
+                <td>{$bonus.paid_till}</td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+        {/if}
+    </div>
+</div>
