@@ -103,7 +103,7 @@
         <docblock line="56">
           <description></description>
           <long-description></long-description>
-          <tag name="var" line="56" description="&lt;ul&gt;&#10;&lt;li&gt;Список разрешенных тарифов для подписки с сайта&lt;/li&gt;&#10;&lt;/ul&gt;" type="" variable="$work_tariffs"/>
+          <tag name="var" line="56" description="&lt;p&gt;Список разрешенных тарифов для подписки с сайта&lt;/p&gt;" type="" variable="$work_tariffs"/>
         </docblock>
       </property>
       <property static="false" visibility="public" namespace="" line="61" package="Cleantalk">

@@ -21,8 +21,7 @@ class FileController extends SiteController
                 $file = $_FILES['importfile']['tmp_name'];
                 $xml = new ReadXML($file);
                 $res = $xml->getFileData();
-                //$ans = (string)$xml->getXMLElements()->file->class->method[1]['visibility'];
-                //$ans = $xml->getXMLElements();
+                $xml->createWikiFile('../dokuwiki/data/pages/docs/ccs.txt', $res);
                 Report::instance()->addMessage('Download success');
             }
             else Report::instance()->addErrorMessage('Error download file code: ' . $_FILES['importfile']['error']);
